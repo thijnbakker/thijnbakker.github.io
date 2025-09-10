@@ -68,6 +68,8 @@ a.logo {
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: gradient 3s ease infinite;
+    background-size: 200% 200%;
 }
 
 nav {
@@ -203,6 +205,8 @@ nav.scrolled {
     background: var(--gradient);
     color: white;
     box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+    animation: gradient 3s ease infinite;
+    background-size: 200% 200%;
 }
 
 .btn-primary:hover {
