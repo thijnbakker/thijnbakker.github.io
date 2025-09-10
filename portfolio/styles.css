@@ -517,12 +517,13 @@ footer {
 .project-hero-content h1 {
     font-size: 3rem;
     margin-bottom: 1rem;
-    background: var(--gradient);
+    background: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
+    animation: gradient 3s ease infinite;
+    background-size: 200% 200%;
 }
-
 .project-date {
     color: var(--secondary);
     font-size: 1.125rem;
