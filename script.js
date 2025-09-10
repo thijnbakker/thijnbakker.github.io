@@ -88,7 +88,9 @@ document.addEventListener('DOMContentLoaded', function() {
         'AI-Driven Road Safety Analysis': 'projects/road-safety.html',
         'Traffic Sign Detection for Autonomous Vehicles': 'projects/traffic-sign-detection.html',
         'Smart Player Recruitment for NAC Breda': 'projects/nac-breda.html',
-        'AI for Sustainable Development Goals': 'projects/sdg-analysis.html'
+        'AI for Sustainable Development Goals': 'projects/sdg-analysis.html',
+        'EPL Match Prediction & Player Valuation': 'projects/epl-prediction.html',
+        'Graph2Table - Visual Data Extraction': 'projects/graph2table.html'
     };
     
     // Make entire project card clickable

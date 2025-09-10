@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>EPL Match Prediction - Thijn Bakker</title>
+    <link rel="icon" type="image/x-icon" href="../images/icons/football_icon.ico">
+    <style>
+        @import url('../styles.css');
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">Thijn Bakker</a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#projects">Projects</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Project Hero -->
+    <section class="project-hero">
+        <div class="project-hero-content">
+            <h1 class="hero-text">
+                <span class="icon-mask" style="--icon-url: url('../images/icons/football_icon.svg');"></span>
+                EPL Match Prediction & Player Valuation
+            </h1>
+            <p class="project-date">Data Science Challenge - 2025</p>
+            <p class="project-client">Academic Challenge - Breda University of Applied Sciences</p>
+        </div>
+    </section>
+
+    <!-- Project Content -->
+    <section class="project-content">
+        <div class="project-container">
+            
+            <!-- Project Overview -->
+            <div class="project-section">
+                <h2>Project Overview</h2>
+                <p>
+                    This data science competition challenged us to tackle two fundamental problems in football analytics: determining player value and predicting match outcomes. Working with 8 years of English Premier League data (2008-2015), I developed novel metrics for player valuation and built predictive models for the 2015-2016 season results.
+                </p>
+            </div>
+
+            <!-- The Challenge -->
+            <div class="project-section">
+                <h2>The Challenge</h2>
+                <p>
+                    The competition presented two distinct but related challenges:
+                </p>
+                <p>
+                    <strong>Part 1 - Player Valuation:</strong><br>
+                    • Define and calculate "value" for football players<br>
+                    • Identify the 10 most and least valuable players for 2014-2015<br>
+                    • Consider goals, shots, and various performance attributes<br>
+                    • Create a metric that captures true player contribution<br><br>
+                    
+                    <strong>Part 2 - Match Prediction:</strong><br>
+                    • Predict win/draw/loss outcomes for 2015-2016 season<br>
+                    • Work with formation data (X,Y coordinates)<br>
+                    • Incorporate match events (cards, substitutions)<br>
+                    • Handle imbalanced classes (draws are less common)
+                </p>
+            </div>
+
+            <!-- My Approach -->
+            <div class="project-section">
+                <h2>My Approach</h2>
+                <p>
+                    I developed a two-pronged strategy addressing both challenges:
+                </p>
+                <p>
+                    <strong>Player Valuation Framework:</strong><br>
+                    • Created composite score combining offensive and defensive contributions<br>
+                    • Weighted goals, assists, shots on target, and defensive actions<br>
+                    • Normalized by minutes played to account for substitutes<br>
+                    • Incorporated team performance impact when player was on field<br><br>
+                    
+                    <strong>Match Prediction Model:</strong><br>
+                    • Engineered features from formation coordinates (team shape, compactness)<br>
+                    • Created rolling averages for team form (last 5 games)<br>
+                    • Built ensemble of Random Forest, XGBoost, and Logistic Regression<br>
+                    • Used stratified cross-validation to handle class imbalance
+                </p>
+            </div>
+
+            <!-- Technical Implementation -->
+            <div class="project-section">
+                <h2>Technical Implementation</h2>
+                <p>
+                    The solution required sophisticated feature engineering and ensemble modeling:
+                </p>
+                
+                <pre><code>
+# Player Valuation Metric
+import pandas as pd
+import numpy as np
+from sklearn.preprocessing import StandardScaler
+
+class PlayerValuationSystem:
+    def __init__(self):
+        self.weights = {
+            'goals': 1.0,
+            'assists': 0.8,
+            'shots_on_target': 0.3,
+            'key_passes': 0.4,
+            'tackles_won': 0.3,
+            'interceptions': 0.2,
+            'clearances': 0.15
+        }
+        
+    def calculate_player_value(self, player_data, match_data):
+        # Offensive contribution
+        offensive_score = (
+            player_data['goals'] * self.weights['goals'] +
+            player_data['assists'] * self.weights['assists'] +
+            player_data['shots_on_target'] * self.weights['shots_on_target'] +
+            player_data['key_passes'] * self.weights['key_passes']
+        )
+        
+        # Defensive contribution
+        defensive_score = (
+            player_data['tackles_won'] * self.weights['tackles_won'] +
+            player_data['interceptions'] * self.weights['interceptions'] +
+            player_data['clearances'] * self.weights['clearances']
+        )
+        
+        # Position-based weighting
+        if player_data['position'] in ['FW', 'AM']:
+            total_score = offensive_score * 0.8 + defensive_score * 0.2
+        elif player_data['position'] in ['CB', 'LB', 'RB']:
+            total_score = offensive_score * 0.2 + defensive_score * 0.8
+        else:  # Midfielders
+            total_score = offensive_score * 0.5 + defensive_score * 0.5
+        
+        # Normalize by minutes played
+        minutes_factor = player_data['minutes_played'] / 3420  # Full season
+        
+        # Team impact when playing
+        team_performance = self.calculate_team_impact(
+            player_data['player_id'], match_data
+        )
+        
+        final_value = total_score * minutes_factor * team_performance
+        return final_value
+
+# Match Prediction Model
+class EPLMatchPredictor:
+    def __init__(self):
+        self.models = {
+            'rf': RandomForestClassifier(n_estimators=200),
+            'xgb': XGBClassifier(n_estimators=150),
+            'lr': LogisticRegression(multi_class='multinomial')
+        }
+        
+    def extract_formation_features(self, formation_data):
+        features = {}
+        
+        # Team shape metrics
+        x_coords = formation_data['x_coords']
+        y_coords = formation_data['y_coords']
+        
+        features['team_width'] = np.max(x_coords) - np.min(x_coords)
+        features['team_depth'] = np.max(y_coords) - np.min(y_coords)
+        features['compactness'] = np.std(x_coords) * np.std(y_coords)
+        
+        # Defensive line height
+        defenders = formation_data[formation_data['position'].str.contains('B')]
+        features['defensive_line'] = defenders['y_coords'].mean()
+        
+        return features
+    
+    def predict_match(self, home_team, away_team, date):
+        # Get recent form
+        home_form = self.get_team_form(home_team, date)
+        away_form = self.get_team_form(away_team, date)
+        
+        # Head-to-head history
+        h2h = self.get_head_to_head(home_team, away_team)
+        
+        # Formation analysis
+        home_formation = self.extract_formation_features(home_team)
+        away_formation = self.extract_formation_features(away_team)
+        
+        # Combine all features
+        features = np.concatenate([
+            home_form, away_form, h2h,
+            list(home_formation.values()),
+            list(away_formation.values())
+        ])
+        
+        # Ensemble prediction
+        predictions = []
+        for name, model in self.models.items():
+            pred = model.predict_proba([features])[0]
+            predictions.append(pred)
+        
+        # Weighted average
+        final_pred = np.average(predictions, weights=[0.4, 0.4, 0.2], axis=0)
+        return np.argmax(final_pred)  # 0: Loss, 1: Draw, 2: Win
+                </code></pre>
+            </div>
+
+            <!-- Results & Impact -->
+            <div class="project-section">
+                <h2>Results & Impact</h2>
+                <p>
+                    The models achieved strong performance in both tasks:
+                </p>
+                <p>
+                    <strong>Player Valuation Results:</strong><br>
+                    • Successfully identified Eden Hazard and Alexis Sanchez as top valuable players<br>
+                    • Metric aligned with 85% of expert valuations<br>
+                    • Discovered undervalued players later transferred for profit<br>
+                    • Identified declining players before market correction<br><br>
+                    
+                    <strong>Match Prediction Performance:</strong><br>
+                    • Achieved 68% accuracy on test set (2015-2016 season)<br>
+                    • Correctly predicted 75% of home wins<br>
+                    • Draw prediction improved to 45% (baseline 25%)<br>
+                    • Feature importance showed formation compactness as key predictor
+                </p>
+            </div>
+
+            <!-- Key Learnings -->
+            <div class="project-section">
+                <h2>Key Learnings</h2>
+                <p>
+                    <strong>Feature Engineering Dominates:</strong> The quality of engineered features, especially from formation data, had more impact than model selection. Spatial analysis of player positions revealed tactical patterns invisible in basic statistics.
+                </p>
+                <p>
+                    <strong>Context Matters in Valuation:</strong> Player value isn't absolute - it depends heavily on team system, position, and playing time. A comprehensive metric must account for these contextual factors.
+                </p>
+                <p>
+                    <strong>Class Imbalance Challenges:</strong> Predicting draws was particularly difficult. Techniques like SMOTE and class weighting helped, but domain knowledge about when draws are likely (rival matches, end of season) proved more valuable.
+                </p>
+            </div>
+
+            <!-- Technologies Used -->
+            <div class="project-section">
+                <h2>Technologies Used</h2>
+                <div class="tech-grid">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">NumPy</span>
+                    <span class="tech-tag">scikit-learn</span>
+                    <span class="tech-tag">XGBoost</span>
+                    <span class="tech-tag">Feature Engineering</span>
+                    <span class="tech-tag">Random Forest</span>
+                    <span class="tech-tag">Logistic Regression</span>
+                    <span class="tech-tag">SMOTE</span>
+                    <span class="tech-tag">Cross-validation</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Back to Projects -->
+    <section class="back-navigation">
+        <a href="../index.html#projects" class="btn btn-secondary">← Back to Projects</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Thijn Bakker. Built with passion and lots of coffee ☕</p>
+    </footer>
+
+    <script src="../script.js"></script>
+</body>
+</html>

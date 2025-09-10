@@ -12,6 +12,7 @@
     --light: #faf6f0;
     --gray: #8b7355;
     --gradient: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
+    --hero-gradient: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
 }
 
 body {
@@ -607,6 +608,50 @@ footer {
     border-radius: 10px;
     border: 1px solid rgba(212, 165, 116, 0.2);
 }
+
+.project-hero-content .hero-text {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  
+    /* animated gradient text */
+    background: var(--hero-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  
+    animation: hero-gradient-move 3s ease infinite;
+    background-size: 200% 200%;
+  }
+  
+/* SVG-as-mask that uses the exact same animated gradient */
+.icon-mask {
+    width: 1.1em;
+    height: 1.1em;
+    display: inline-block;
+    margin-right: 0.4em;
+    vertical-align: -0.2em;
+    background: var(--hero-gradient);
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+    will-change: background-position;
+  
+    -webkit-mask: var(--icon-url) no-repeat center / contain;
+            mask: var(--icon-url) no-repeat center / contain;
+  }
+
+/* share the same gradient + animation as the text */
+.hero-gradient {
+    background: var(--hero-gradient);
+    animation: hero-gradient-move 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+/* same keyframes used by both text and icon */
+@keyframes hero-gradient-move {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
 
 .tech-grid {
     display: flex;
