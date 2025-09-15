@@ -326,7 +326,7 @@ section {
 
 .language-name {
     font-weight: 600;
-    color: var(--light);
+    color: var(--primary);;
     font-size: 1rem;
 }
 
@@ -360,16 +360,17 @@ section {
 
 .skill-tag {
     padding: 0.5rem 1rem;
-    background: rgba(212, 165, 116, 0.1);
-    border: 1px solid var(--primary);
+    background: rgba(244, 164, 96, 0.1);
+    border: 1px solid var(--secondary);
     border-radius: 20px;
     font-size: 0.875rem;
     transition: all 0.3s ease;
     cursor: pointer;
     display: inline-block;
     text-decoration: none;
-    color: var(--primary);
+    color: var(--secondary);
 }
+
 
 .skill-tag:hover {
     background: var(--primary);
