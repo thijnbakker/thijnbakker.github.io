@@ -298,6 +298,59 @@ section {
     margin-bottom: 1.5rem;
 }
 
+/* These styles to your styles.css file for the Languages section */
+
+.languages {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    margin-top: 1rem;
+}
+
+.language-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0.75rem 1.25rem;
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.05), rgba(244, 164, 96, 0.05));
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 12px;
+    transition: all 0.3s ease;
+}
+
+.language-item:hover {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.1), rgba(244, 164, 96, 0.1));
+    transform: translateX(5px);
+    border-color: var(--primary);
+}
+
+.language-name {
+    font-weight: 600;
+    color: var(--light);
+    font-size: 1rem;
+}
+
+.language-level {
+    font-size: 0.875rem;
+    color: var(--secondary);
+    opacity: 0.9;
+}
+
+/* Mobile responsive */
+@media (max-width: 768px) {
+    .language-item {
+        padding: 0.6rem 1rem;
+    }
+    
+    .language-name {
+        font-size: 0.95rem;
+    }
+    
+    .language-level {
+        font-size: 0.8rem;
+    }
+}
+
 .skills {
     display: flex;
     flex-wrap: wrap;
@@ -312,14 +365,30 @@ section {
     border-radius: 20px;
     font-size: 0.875rem;
     transition: all 0.3s ease;
+    cursor: pointer;
+    display: inline-block;
+    text-decoration: none;
+    color: var(--primary);
 }
 
 .skill-tag:hover {
     background: var(--primary);
     transform: translateY(-2px);
+    color: white;
 }
 
 /* Projects Section */
+
+/* Override default link colors for skill tags */
+a.skill-tag, 
+a.skill-tag:link, 
+a.skill-tag:visited {
+    color: var(--primary) !important;
+}
+
+a.skill-tag:hover {
+    color: white !important;
+}
 .projects-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
