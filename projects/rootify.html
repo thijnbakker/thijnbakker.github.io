@@ -31,6 +31,7 @@
             <h1>🌱 Rootify - Cloud ML for Plant Analysis</h1>
             <p class="project-date">May 2025 - June 2025</p>
             <p class="project-client">Client: Netherlands Plant Eco-phenotyping Centre (NPEC)</p>
+            <p class="project-peers">Team Members: Zsombor Szőcs, Kajetan Neweś, Márk Molnár, Felipe Davila Cadena</p>
         </div>
     </section>
 
@@ -63,9 +64,9 @@
 
             <!-- My Approach -->
             <div class="project-section">
-                <h2>My Approach</h2>
+                <h2>Our Approach</h2>
                 <p>
-                    I approached this project with a strong focus on MLOps best practices and production-ready architecture. My strategy involved:
+                    We approached this project with a strong focus on MLOps best practices and production-ready architecture. Our strategy involved:
                 </p>
                 <p>
                     <strong>1. Code Refactoring:</strong> Transformed Jupyter notebooks into a modular Python package with clear separation of concerns<br>
@@ -84,19 +85,73 @@
                 </p>
                 
                 <pre><code>
-# Example of the modular architecture
-rootify/
-├── src/
-│   ├── models/           # Deep learning models
-│   ├── preprocessing/    # Image preprocessing pipeline
-│   ├── segmentation/     # Root segmentation algorithms
-│   ├── landmarks/        # Landmark detection
-│   └── api/              # REST API endpoints
-├── azure/
-│   ├── pipelines/        # Azure ML pipelines
-│   ├── endpoints/        # Deployment configurations
-│   └── experiments/      # Experiment tracking
-└── tests/                # Comprehensive test suite
+                    project_2d/
+                    ├── data/
+                    │   ├── raw/                   # Original images from NPEC
+                    │   ├── processed/             # Cropped and patched images
+                    │   │   ├── train_images/      # 70% of processed data for training
+                    │   │   ├── val_images/        # 10% of processed data for validation
+                    │   │   └── test_images/       # 20% of processed data for testing
+                    ├── deployment/                 # Deployment framework
+                    │   ├── api/
+                    │   │   └── main.py            # API entry point
+                    ├── docs/                      # Documentation including technical and user guides
+                    │   ├── README.md              # Project overview
+                    │   ├── data_pipeline.md       # Data processing pipeline documentation
+                    │   ├── model_training.md      # Model training process and evaluation
+                    │   └── user_guide.md          # How to use the final product
+                    ├── frontend/
+                    │   └── app.py                 # Frontend code (probably Streamlit, maybe Shiny)
+                    ├── models/
+                    │   ├── best_model.h5          # Best performing model out of the 5 of us
+                    │   └── metadata.json          # Model metadata (e.g. hyperparameters)
+                    ├── notebooks/
+                    │   ├── petri_dish.ipynb       # Petri dish detection and extraction
+                    │   ├── instance_segmentation.ipynb  # Plant instance segmentation
+                    │   └── dataset_prep.ipynb     # Dataset preparation for model training
+                    ├── src/
+                    │   ├── __init__.py
+                    │   ├── data/
+                    │   │   ├── __init__.py
+                    │   │   ├── data_ingestion.py        # Reading image data
+                    │   │   ├── data_preprocessing.py    # Petri dish + plant segmentation
+                    │   │   ├── data_validation.py       # Checks for data quality and integrity
+                    │   │   └── data_splitting.py        # Train/validation/test split
+                    │   ├── features/
+                    │   │   ├── __init__.py
+                    │   │   └── feature_extraction.py    # Extracts relevant features from data (it depends on what do we want to achieve with the project)
+                    │   ├── models/
+                    │   │   ├── __init__.py
+                    │   │   ├── model.py                 # Model architecture code
+                    │   │   └── inference.py             # Model inference code
+                    │   └── utils/
+                    │       ├── __init__.py
+                    │       ├── helpers.py               # Includes the functions used (e.g. the custom F1 function, the padder function, the patcher function)
+                    │       └── logger.py                # Logging functions
+                    ├── tests/
+                    │   ├── __init__.py
+                    │   ├── data/
+                    │   │   ├── __init__.py
+                    │   │   ├── test_data_ingestion.py        # Unit tests for reading image data
+                    │   │   ├── test_data_preprocessing.py    # Unit tests for data pre-processing
+                    │   │   ├── test_data_validation.py       # Unit tests for checking for data quality and integrity
+                    │   │   └── test_data_splitting.py        # Unit tests for train/validation/test split
+                    │   ├── features/
+                    │   │   ├── __init__.py
+                    │   │   └── test_feature_extraction.py    # Unit tests for extracting relevant features from data
+                    │   ├── models/
+                    │   │   ├── __init__.py
+                    │   │   ├── test_model.py                 # Unit tests for model loading/prediction
+                    │   │   └── test_inference.py             # Unit tests for model inference code
+                    │   └── utils/
+                    │       ├── __init__.py
+                    │       ├── test_helpers.py               # Unit tests for helper functions
+                    │       └── test_logger.py                # Unit tests for logging functions
+                    ├── .gitignore                      
+                    ├── LICENSE                         
+                    ├── README.md                       # Main project README with intro and setup guide
+                    └── pyproject.toml                  # Project metadata and dependencies
+                    
                 </code></pre>
 
                 <p>

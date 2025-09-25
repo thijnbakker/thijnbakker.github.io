@@ -130,3 +130,63 @@ window.addEventListener('pageshow', function(event) {
 window.addEventListener('load', function() {
     document.body.classList.remove('transitioning');
 });
+
+// Presentation slider functionality
+let currentSlideIndex = 1;
+
+function showSlide(n) {
+    const slides = document.querySelectorAll('.slide');
+    const indicators = document.querySelectorAll('.indicator');
+    const totalSlides = slides.length;
+    
+    if (n > totalSlides) currentSlideIndex = 1;
+    if (n < 1) currentSlideIndex = totalSlides;
+    
+    // Hide all slides
+    slides.forEach(slide => slide.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    // Show current slide
+    if (slides[currentSlideIndex - 1]) {
+        slides[currentSlideIndex - 1].classList.add('active');
+    }
+    if (indicators[currentSlideIndex - 1]) {
+        indicators[currentSlideIndex - 1].classList.add('active');
+    }
+    
+    // Update counter
+    const currentSlideSpan = document.querySelector('.current-slide');
+    const totalSlidesSpan = document.querySelector('.total-slides');
+    if (currentSlideSpan) currentSlideSpan.textContent = currentSlideIndex;
+    if (totalSlidesSpan) totalSlidesSpan.textContent = totalSlides;
+    
+    // Update navigation buttons
+    const prevBtn = document.querySelector('.prev-btn');
+    const nextBtn = document.querySelector('.next-btn');
+    if (prevBtn) prevBtn.disabled = currentSlideIndex === 1;
+    if (nextBtn) nextBtn.disabled = currentSlideIndex === totalSlides;
+}
+
+function changeSlide(n) {
+    showSlide(currentSlideIndex += n);
+}
+
+function currentSlide(n) {
+    showSlide(currentSlideIndex = n);
+}
+
+// Keyboard navigation
+document.addEventListener('keydown', function(e) {
+    if (e.key === 'ArrowLeft') {
+        changeSlide(-1);
+    } else if (e.key === 'ArrowRight') {
+        changeSlide(1);
+    }
+});
+
+// Initialize when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    if (document.querySelector('.presentation-slider')) {
+        showSlide(1);
+    }
+});
