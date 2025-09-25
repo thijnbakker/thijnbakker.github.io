@@ -34,6 +34,7 @@
             </h1>
             <p class="project-date">February 2025 - April 2025</p>
             <p class="project-client">Client: Content Intelligence Agency (CIA)</p>
+            <p class="project-members">Team Members: Martin Simons, Teun van der Wolf</p>
         </div>
     </section>
 
@@ -45,7 +46,7 @@
             <div class="project-section">
                 <h2>Project Overview</h2>
                 <p>
-                    Developed a comprehensive NLP pipeline for the Content Intelligence Agency to process unscripted German videos and classify emotions at the sentence level. This project aimed to enhance content analysis capabilities by automatically detecting emotional context in multilingual video content, enabling better understanding of audience engagement and content impact.
+                    Developed a comprehensive NLP pipeline for the Content Intelligence Agency to process German video content and classify emotions at the sentence level. Working with multiple datasets including German emotion corpora, MELD, and GoEmotions, we built and compared various models from classical ML to transformer architectures, ultimately achieving our best performance with BERT models trained on English data and mapped to 8 emotion categories including curiosity.
                 </p>
             </div>
 
@@ -53,14 +54,15 @@
             <div class="project-section">
                 <h2>The Challenge</h2>
                 <p>
-                    The Content Intelligence Agency needed to analyze large volumes of German video content to understand emotional engagement patterns. The main challenges included:
+                    The Content Intelligence Agency needed to analyze German video content with unique challenges that emerged during the project:
                 </p>
                 <p>
-                    • Processing unscripted, natural speech with varying audio quality<br>
-                    • Handling German language nuances and dialectical variations<br>
-                    • Mapping diverse emotional expressions to a standardized taxonomy<br>
-                    • Achieving high accuracy despite class imbalance in emotion datasets<br>
-                    • Creating a system that could explain its predictions for content creators
+                    • Processing transcribed German dialogue from unscripted videos<br>
+                    • Handling severe class imbalance in emotion datasets (neutral: 47%, surprise: 3%)<br>
+                    • Mapping complex emotions like curiosity to traditional Ekman taxonomy<br>
+                    • Dealing with translation quality issues affecting emotion preservation<br>
+                    • Comparing German vs English model performance across different datasets<br>
+                    • Creating explainable predictions despite transformer model complexity
                 </p>
             </div>
 
@@ -68,14 +70,14 @@
             <div class="project-section">
                 <h2>My Approach</h2>
                 <p>
-                    I designed a multi-stage pipeline combining classical ML techniques with state-of-the-art transformers:
+                    I designed a systematic approach testing multiple model architectures across different datasets:
                 </p>
                 <p>
-                    <strong>1. Data Harmonization:</strong> Unified multiple datasets (GermanTrain, MELD, GoEmotions) into Ekman's 6-core emotion taxonomy<br>
-                    <strong>2. Progressive Complexity:</strong> Started with baseline models (Naive Bayes, Logistic Regression) to establish benchmarks<br>
-                    <strong>3. Deep Learning Evolution:</strong> Implemented RNNs and LSTMs with careful regularization<br>
-                    <strong>4. Transformer Fine-tuning:</strong> Leveraged BERT and RoBERTa for German and English contexts<br>
-                    <strong>5. Explainability Focus:</strong> Integrated XAI techniques for transparent predictions
+                    <strong>1. Multi-Dataset Strategy:</strong> Combined German emotion datasets (24,067 samples), MELD (12,599 samples), and GoEmotions (69,914 samples)<br>
+                    <strong>2. Progressive Model Development:</strong> Started with baseline models (Naive Bayes, Logistic Regression) before advancing to deep learning<br>
+                    <strong>3. Neural Network Evolution:</strong> Implemented bidirectional RNNs and LSTMs with dropout, L2 regularization, and batch normalization<br>
+                    <strong>4. Transformer Implementation:</strong> Fine-tuned BERT models with class weights and WordNet-based data augmentation<br>
+                    <strong>5. Cross-language Analysis:</strong> Systematically compared German vs English model performance to optimize architecture choice
                 </p>
             </div>
 
@@ -83,47 +85,64 @@
             <div class="project-section">
                 <h2>Technical Implementation</h2>
                 <p>
-                    The pipeline architecture consists of multiple interconnected components:
+                    The final pipeline evolved through systematic testing of multiple approaches:
                 </p>
                 
                 <pre><code>
-# Pipeline Architecture
-class EmotionPipeline:
+# BERT Pipeline - Best Performing Model
+class EmotionClassificationPipeline:
     def __init__(self):
-        self.transcriber = WhisperModel('large-v2')
-        self.translator = MarianMTModel('de-en')
-        self.emotion_model = RobertaForSequenceClassification()
+        # Transcription comparison results
+        self.transcriber = WhisperModel()  # WER: 2.28% (beat AssemblyAI: 2.83%)
         
-    def process_video(self, video_path):
-        # 1. Extract audio and transcribe
-        transcript = self.transcriber(video_path)
+        # Translation with quality monitoring
+        self.translator = MarianMTModel('Helsinki-NLP/opus-mt-de-en')
+        # BLEU scores: 27.4% - 55.4% (variable quality)
         
-        # 2. Translate if German
-        if detect_language(transcript) == 'de':
-            transcript = self.translator(transcript)
-            
-        # 3. Sentence segmentation
-        sentences = segment_sentences(transcript)
+        # Best performing BERT configuration
+        self.emotion_model = BertForSequenceClassification.from_pretrained(
+            'bert-base-uncased',
+            num_labels=8  # Added curiosity as 8th emotion
+        )
         
-        # 4. Emotion classification with confidence
-        emotions = []
-        for sentence in sentences:
-            emotion, confidence = self.emotion_model(sentence)
-            emotions.append({
-                'text': sentence,
-                'emotion': emotion,
-                'confidence': confidence
-            })
+        # Class weights for severe imbalance
+        self.class_weights = self.calculate_class_weights()
         
-        return emotions
+    def train_with_augmentation(self, dataset):
+        # Data augmentation with WordNet synonyms for minority classes
+        augmented_data = self.augment_minority_classes(dataset)
+        
+        # Training with callbacks
+        trainer = Trainer(
+            model=self.emotion_model,
+            callbacks=[
+                EarlyStopping(patience=3),
+                ReduceLROnPlateau(factor=0.5),
+                ModelCheckpoint(save_best_only=True)
+            ]
+        )
+        
+        return trainer.train(augmented_data)
+    
+    def explain_prediction(self, text, prediction):
+        # XAI methods implemented
+        gradient_analysis = self.gradient_input_analysis(text)
+        perturbation_results = self.perturbation_analysis(text)
+        
+        return {
+            'prediction': prediction,
+            'gradient_importance': gradient_analysis,
+            'confidence_sensitivity': perturbation_results
+        }
                 </code></pre>
 
                 <p>
-                    <strong>Key Technical Decisions:</strong><br>
-                    • Used class weights to handle emotion imbalance (anger: 3%, joy: 25%)<br>
-                    • Implemented bidirectional LSTMs for temporal context<br>
-                    • Applied data augmentation through back-translation<br>
-                    • Mapped predictions to 8 final emotion categories for granularity
+                    <strong>Critical Discoveries:</strong><br>
+                    • English models significantly outperformed German models across all architectures<br>
+                    • Manual validation showed 80-90% accuracy vs 56% automated evaluation<br>
+                    • Translation errors like "einen an der Waffel haben" → "has one on the waffle" impacted performance<br>
+                    • Curiosity mapping to happiness proved problematic, leading to 8-emotion framework<br>
+                    • Company pipeline itself achieved only 71% accuracy against ground truth labels
                 </p>
             </div>
 
@@ -131,17 +150,19 @@ class EmotionPipeline:
             <div class="project-section">
                 <h2>Results & Impact</h2>
                 <p>
-                    The emotion classification system achieved significant results:
+                    The emotion classification system revealed important insights about model evaluation and real-world performance:
                 </p>
                 <p>
-                    • <strong>Accuracy:</strong> 87% F1 score on German video test set<br>
-                    • <strong>Processing Speed:</strong> Real-time processing (1.2x video duration)<br>
-                    • <strong>Language Flexibility:</strong> Seamless German-English handling<br>
-                    • <strong>Explainability:</strong> LIME-based explanations for each prediction<br>
-                    • <strong>Business Impact:</strong> 40% reduction in manual content analysis time
+                    • <strong>Best Model Performance:</strong> BERT achieved 79.8% accuracy and 79.2% F1 score on validation data<br>
+                    • <strong>Company Pipeline Evaluation:</strong> 56% F1 score against automated labels, revealing evaluation challenges<br>
+                    • <strong>Manual Review Results:</strong> 80-90% accuracy when predictions were manually validated<br>
+                    • <strong>Transcription Benchmarking:</strong> Whisper achieved 2.28% WER vs AssemblyAI's 2.83%<br>
+                    • <strong>8-Emotion Framework:</strong> Successfully expanded beyond Ekman's 6 emotions to include curiosity<br>
+                    • <strong>Cross-language Insights:</strong> English models consistently outperformed German models due to pre-training advantages<br>
+                    • <strong>Translation Quality Impact:</strong> BLEU scores of 27.4%-55.4% highlighted the challenge of preserving emotional nuance
                 </p>
                 <p>
-                    The system is now actively used by content creators to optimize emotional engagement in their videos, leading to measurably improved audience retention.
+                    The project highlighted the critical importance of evaluation methodology in emotion classification tasks, showing that automated metrics don't always reflect real-world model performance and that subjective emotion mapping creates significant evaluation challenges.
                 </p>
             </div>
 
@@ -149,17 +170,146 @@ class EmotionPipeline:
             <div class="project-section">
                 <h2>Key Learnings</h2>
                 <p>
-                    <strong>Multilingual Challenges:</strong> Learned that emotion expression varies significantly across languages. German emotional expressions often required different feature extraction compared to English.
+                    <strong>Evaluation Methodology Matters:</strong> The biggest insight was that our BERT model performed much better than metrics suggested. Manual review showed 80-90% accuracy while automated evaluation against the company pipeline showed only 56% F1 score, highlighting fundamental issues with the emotion mapping process from fine-grained to broad categories.
                 </p>
                 <p>
-                    <strong>Transformer vs Classical ML:</strong> While transformers provided better accuracy, classical models offered better explainability. The final solution used an ensemble approach.
+                    <strong>English vs German Model Performance:</strong> English-trained transformer models significantly outperformed German models across all architectures, likely because BERT and RoBERTa are pre-trained on large English corpora. This suggests the value of leveraging strong English pre-training even for German tasks, despite translation overhead.
                 </p>
                 <p>
-                    <strong>Data Quality Over Quantity:</strong> Carefully curated, smaller datasets outperformed larger, noisy datasets. Manual validation of emotion labels was crucial.
+                    <strong>Emotion Taxonomy Challenges:</strong> Mapping complex emotions like curiosity to Ekman's 6 basic emotions proved problematic. Questions like "What are you looking for today?" could express happiness, fear, surprise, or sadness depending on context, leading us to add curiosity as an 8th emotion category.
                 </p>
                 <p>
-                    <strong>Real-world Constraints:</strong> Balancing model complexity with inference speed was critical for production deployment.
+                    <strong>Translation Quality Impact:</strong> BLEU scores ranging from 27.4% to 55.4% revealed significant translation challenges, especially with German idioms like "einen an der Waffel haben" being mistranslated as "has one on the waffle" instead of "totally nuts," demonstrating how cultural context gets lost in translation.
                 </p>
+                <p>
+                    <strong>Subjectivity in Ground Truth:</strong> Even the company's own pipeline achieved only 71% accuracy against manual ground truth labels, highlighting the inherent subjectivity in emotion classification and the importance of careful evaluation design.
+                </p>
+            </div>
+
+            <!-- Project Presentation -->
+            <div class="project-section">
+                <h2>Project Presentation</h2>
+                <p>Here's the comprehensive presentation I delivered on the Emotion Classification project, covering the NLP pipeline development, model comparisons, and evaluation methodology challenges:</p>
+                
+                <div class="presentation-slider">
+                    <div class="slide-container">
+                        <div class="slide active">
+                            <img src="../presentations/emotion-classification/Slide1.PNG" alt="Emotion Classification Presentation - Slide 1">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide2.PNG" alt="Emotion Classification Presentation - Slide 2">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide3.PNG" alt="Emotion Classification Presentation - Slide 3">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide4.PNG" alt="Emotion Classification Presentation - Slide 4">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide5.PNG" alt="Emotion Classification Presentation - Slide 5">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide6.PNG" alt="Emotion Classification Presentation - Slide 6">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide7.PNG" alt="Emotion Classification Presentation - Slide 7">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide8.PNG" alt="Emotion Classification Presentation - Slide 8">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide9.PNG" alt="Emotion Classification Presentation - Slide 9">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide10.PNG" alt="Emotion Classification Presentation - Slide 10">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide11.PNG" alt="Emotion Classification Presentation - Slide 11">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide12.PNG" alt="Emotion Classification Presentation - Slide 12">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide13.PNG" alt="Emotion Classification Presentation - Slide 13">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide14.PNG" alt="Emotion Classification Presentation - Slide 14">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide15.PNG" alt="Emotion Classification Presentation - Slide 15">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide16.PNG" alt="Emotion Classification Presentation - Slide 16">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide17.PNG" alt="Emotion Classification Presentation - Slide 17">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide18.PNG" alt="Emotion Classification Presentation - Slide 18">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide19.PNG" alt="Emotion Classification Presentation - Slide 19">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide20.PNG" alt="Emotion Classification Presentation - Slide 20">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide21.PNG" alt="Emotion Classification Presentation - Slide 21">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide22.PNG" alt="Emotion Classification Presentation - Slide 22">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide23.PNG" alt="Emotion Classification Presentation - Slide 23">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide24.PNG" alt="Emotion Classification Presentation - Slide 24">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide25.PNG" alt="Emotion Classification Presentation - Slide 25">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/emotion-classification/Slide26.PNG" alt="Emotion Classification Presentation - Slide 26">
+                        </div>
+                    </div>
+                    
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">26</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changeSlide(1)">›</button>
+                    </div>
+                    
+                    <div class="slide-indicators">
+                        <button class="indicator active" onclick="currentSlide(1)"></button>
+                        <button class="indicator" onclick="currentSlide(2)"></button>
+                        <button class="indicator" onclick="currentSlide(3)"></button>
+                        <button class="indicator" onclick="currentSlide(4)"></button>
+                        <button class="indicator" onclick="currentSlide(5)"></button>
+                        <button class="indicator" onclick="currentSlide(6)"></button>
+                        <button class="indicator" onclick="currentSlide(7)"></button>
+                        <button class="indicator" onclick="currentSlide(8)"></button>
+                        <button class="indicator" onclick="currentSlide(9)"></button>
+                        <button class="indicator" onclick="currentSlide(10)"></button>
+                        <button class="indicator" onclick="currentSlide(11)"></button>
+                        <button class="indicator" onclick="currentSlide(12)"></button>
+                        <button class="indicator" onclick="currentSlide(13)"></button>
+                        <button class="indicator" onclick="currentSlide(14)"></button>
+                        <button class="indicator" onclick="currentSlide(15)"></button>
+                        <button class="indicator" onclick="currentSlide(16)"></button>
+                        <button class="indicator" onclick="currentSlide(17)"></button>
+                        <button class="indicator" onclick="currentSlide(18)"></button>
+                        <button class="indicator" onclick="currentSlide(19)"></button>
+                        <button class="indicator" onclick="currentSlide(20)"></button>
+                        <button class="indicator" onclick="currentSlide(21)"></button>
+                        <button class="indicator" onclick="currentSlide(22)"></button>
+                        <button class="indicator" onclick="currentSlide(23)"></button>
+                        <button class="indicator" onclick="currentSlide(24)"></button>
+                        <button class="indicator" onclick="currentSlide(25)"></button>
+                        <button class="indicator" onclick="currentSlide(26)"></button>
+                    </div>
+                </div>
             </div>
 
             <!-- Technologies Used -->
@@ -171,13 +321,18 @@ class EmotionPipeline:
                     <span class="tech-tag">RoBERTa</span>
                     <span class="tech-tag">HuggingFace</span>
                     <span class="tech-tag">PyTorch</span>
-                    <span class="tech-tag">LSTM</span>
+                    <span class="tech-tag">Bidirectional LSTM</span>
+                    <span class="tech-tag">Bidirectional RNN</span>
                     <span class="tech-tag">scikit-learn</span>
                     <span class="tech-tag">NLTK</span>
                     <span class="tech-tag">spaCy</span>
                     <span class="tech-tag">Whisper</span>
-                    <span class="tech-tag">LIME</span>
+                    <span class="tech-tag">AssemblyAI</span>
+                    <span class="tech-tag">Helsinki-NLP</span>
+                    <span class="tech-tag">WordNet</span>
                     <span class="tech-tag">XAI</span>
+                    <span class="tech-tag">Gradient Analysis</span>
+                    <span class="tech-tag">Perturbation Analysis</span>
                 </div>
             </div>
 
@@ -195,5 +350,155 @@ class EmotionPipeline:
     </footer>
 
     <script src="../script.js"></script>
+    <script>
+        // Presentation slider functionality
+        let currentSlideIndex = 1;
+        const totalSlides = 26;
+
+        function showSlide(n) {
+            const slides = document.querySelectorAll('.slide');
+            const indicators = document.querySelectorAll('.indicator');
+            
+            if (n > totalSlides) currentSlideIndex = 1;
+            if (n < 1) currentSlideIndex = totalSlides;
+            
+            slides.forEach(slide => slide.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            slides[currentSlideIndex - 1].classList.add('active');
+            indicators[currentSlideIndex - 1].classList.add('active');
+            
+            document.querySelector('.current-slide').textContent = currentSlideIndex;
+        }
+
+        function changeSlide(n) {
+            currentSlideIndex += n;
+            showSlide(currentSlideIndex);
+        }
+
+        function currentSlide(n) {
+            currentSlideIndex = n;
+            showSlide(currentSlideIndex);
+        }
+
+        // Add CSS for presentation slider
+        const presentationCSS = `
+            .presentation-slider {
+                max-width: 800px;
+                margin: 2rem auto;
+                background: rgba(0, 0, 0, 0.3);
+                border-radius: 15px;
+                overflow: hidden;
+                border: 1px solid rgba(212, 165, 116, 0.2);
+            }
+
+            .slide-container {
+                position: relative;
+                width: 100%;
+                aspect-ratio: 16/9;
+            }
+
+            .slide {
+                display: none;
+                width: 100%;
+                height: 100%;
+            }
+
+            .slide.active {
+                display: block;
+            }
+
+            .slide img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                background: white;
+            }
+
+            .slide-navigation {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 1rem 2rem;
+                background: rgba(212, 165, 116, 0.05);
+            }
+
+            .nav-btn {
+                background: var(--primary);
+                border: none;
+                color: white;
+                padding: 0.5rem 1rem;
+                border-radius: 50%;
+                cursor: pointer;
+                font-size: 1.5rem;
+                transition: all 0.3s ease;
+                width: 40px;
+                height: 40px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+
+            .nav-btn:hover {
+                background: var(--secondary);
+                transform: scale(1.1);
+            }
+
+            .slide-counter {
+                color: var(--light);
+                font-weight: 600;
+            }
+
+            .slide-indicators {
+                display: flex;
+                justify-content: center;
+                gap: 0.5rem;
+                padding: 1rem;
+                background: rgba(212, 165, 116, 0.05);
+                flex-wrap: wrap;
+            }
+
+            .indicator {
+                width: 12px;
+                height: 12px;
+                border-radius: 50%;
+                border: 2px solid var(--primary);
+                background: transparent;
+                cursor: pointer;
+                transition: all 0.3s ease;
+            }
+
+            .indicator.active {
+                background: var(--primary);
+            }
+
+            .indicator:hover {
+                background: var(--secondary);
+                border-color: var(--secondary);
+            }
+
+            @media (max-width: 768px) {
+                .slide-navigation {
+                    padding: 0.75rem 1rem;
+                }
+                
+                .nav-btn {
+                    width: 35px;
+                    height: 35px;
+                    font-size: 1.2rem;
+                }
+                
+                .indicator {
+                    width: 10px;
+                    height: 10px;
+                }
+            }
+        `;
+
+        // Inject CSS
+        const style = document.createElement('style');
+        style.textContent = presentationCSS;
+        document.head.appendChild(style);
+    </script>
 </body>
 </html>

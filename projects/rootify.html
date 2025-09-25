@@ -7,6 +7,30 @@
     <link rel="icon" type="image/x-icon" href="../images/icons/plant_icon.png">
     <style>
         @import url('../styles.css');
+        
+        /* Custom styles to prevent horizontal scroll in code blocks */
+        .project-section pre {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(212, 165, 116, 0.2);
+            border-radius: 10px;
+            padding: 1.5rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            white-space: pre;
+            word-wrap: break-word;
+            max-width: 100%;
+        }
+        
+        .project-section code {
+            color: var(--secondary);
+            font-family: 'Courier New', monospace;
+            line-height: 1.4;
+        }
+        
+        /* Ensure code block doesn't break out of container */
+        .project-container {
+            overflow-x: hidden;
+        }
     </style>
 </head>
 <body>
@@ -31,7 +55,7 @@
             <h1>🌱 Rootify - Cloud ML for Plant Analysis</h1>
             <p class="project-date">May 2025 - June 2025</p>
             <p class="project-client">Client: Netherlands Plant Eco-phenotyping Centre (NPEC)</p>
-            <p class="project-peers">Team Members: Zsombor Szőcs, Kajetan Neweś, Márk Molnár, Felipe Davila Cadena</p>
+            <p class="project-members">Team Members: Zsombor Szőcs, Kajetan Neweś, Márk Molnár, Felipe Davila Cadena</p>
         </div>
     </section>
 
@@ -62,7 +86,7 @@
                 </p>
             </div>
 
-            <!-- My Approach -->
+            <!-- Our Approach -->
             <div class="project-section">
                 <h2>Our Approach</h2>
                 <p>
@@ -84,75 +108,54 @@
                     The technical architecture leverages modern MLOps practices and cloud-native technologies:
                 </p>
                 
-                <pre><code>
+                        <pre><code>
                     project_2d/
                     ├── data/
-                    │   ├── raw/                   # Original images from NPEC
-                    │   ├── processed/             # Cropped and patched images
-                    │   │   ├── train_images/      # 70% of processed data for training
-                    │   │   ├── val_images/        # 10% of processed data for validation
-                    │   │   └── test_images/       # 20% of processed data for testing
-                    ├── deployment/                 # Deployment framework
-                    │   ├── api/
-                    │   │   └── main.py            # API entry point
-                    ├── docs/                      # Documentation including technical and user guides
-                    │   ├── README.md              # Project overview
-                    │   ├── data_pipeline.md       # Data processing pipeline documentation
-                    │   ├── model_training.md      # Model training process and evaluation
-                    │   └── user_guide.md          # How to use the final product
+                    │   ├── raw/                            # Original images from NPEC
+                    │   ├── processed/                      # Cropped and patched images
+                    │   │   ├── train_images/               # 70% for training
+                    │   │   ├── val_images/                 # 10% for validation
+                    │   │   └── test_images/                # 20% for testing
+                    ├── deployment/                         # Deployment framework
+                    │   └── api/
+                    │       └── main.py                     # API entry point
+                    ├── docs/                               # Documentation
+                    │   ├── README.md                       # Project overview
+                    │   ├── data_pipeline.md                # Data processing docs
+                    │   ├── model_training.md               # Training process docs
+                    │   └── user_guide.md                   # Usage instructions
                     ├── frontend/
-                    │   └── app.py                 # Frontend code (probably Streamlit, maybe Shiny)
+                    │   └── app.py                          # Streamlit frontend
                     ├── models/
-                    │   ├── best_model.h5          # Best performing model out of the 5 of us
-                    │   └── metadata.json          # Model metadata (e.g. hyperparameters)
+                    │   ├── best_model.h5                   # Best performing model
+                    │   └── metadata.json                   # Model metadata
                     ├── notebooks/
-                    │   ├── petri_dish.ipynb       # Petri dish detection and extraction
-                    │   ├── instance_segmentation.ipynb  # Plant instance segmentation
-                    │   └── dataset_prep.ipynb     # Dataset preparation for model training
+                    │   ├── petri_dish.ipynb                # Petri dish detection
+                    │   ├── instance_segmentation.ipynb     # Plant segmentation
+                    │   └── dataset_prep.ipynb              # Dataset preparation
                     ├── src/
-                    │   ├── __init__.py
                     │   ├── data/
-                    │   │   ├── __init__.py
-                    │   │   ├── data_ingestion.py        # Reading image data
-                    │   │   ├── data_preprocessing.py    # Petri dish + plant segmentation
-                    │   │   ├── data_validation.py       # Checks for data quality and integrity
-                    │   │   └── data_splitting.py        # Train/validation/test split
+                    │   │   ├── data_ingestion.py           # Reading image data
+                    │   │   ├── data_preprocessing.py       # Preprocessing pipeline
+                    │   │   ├── data_validation.py          # Quality checks
+                    │   │   └── data_splitting.py           # Train/val/test split
                     │   ├── features/
-                    │   │   ├── __init__.py
-                    │   │   └── feature_extraction.py    # Extracts relevant features from data (it depends on what do we want to achieve with the project)
+                    │   │   └── feature_extraction.py       # Feature extraction
                     │   ├── models/
-                    │   │   ├── __init__.py
-                    │   │   ├── model.py                 # Model architecture code
-                    │   │   └── inference.py             # Model inference code
+                    │   │   ├── model.py                    # Model architecture
+                    │   │   └── inference.py                # Model inference
                     │   └── utils/
-                    │       ├── __init__.py
-                    │       ├── helpers.py               # Includes the functions used (e.g. the custom F1 function, the padder function, the patcher function)
-                    │       └── logger.py                # Logging functions
+                    │       ├── helpers.py                  # Helper functions
+                    │       └── logger.py                   # Logging functions
                     ├── tests/
-                    │   ├── __init__.py
-                    │   ├── data/
-                    │   │   ├── __init__.py
-                    │   │   ├── test_data_ingestion.py        # Unit tests for reading image data
-                    │   │   ├── test_data_preprocessing.py    # Unit tests for data pre-processing
-                    │   │   ├── test_data_validation.py       # Unit tests for checking for data quality and integrity
-                    │   │   └── test_data_splitting.py        # Unit tests for train/validation/test split
-                    │   ├── features/
-                    │   │   ├── __init__.py
-                    │   │   └── test_feature_extraction.py    # Unit tests for extracting relevant features from data
-                    │   ├── models/
-                    │   │   ├── __init__.py
-                    │   │   ├── test_model.py                 # Unit tests for model loading/prediction
-                    │   │   └── test_inference.py             # Unit tests for model inference code
-                    │   └── utils/
-                    │       ├── __init__.py
-                    │       ├── test_helpers.py               # Unit tests for helper functions
-                    │       └── test_logger.py                # Unit tests for logging functions
-                    ├── .gitignore                      
-                    ├── LICENSE                         
-                    ├── README.md                       # Main project README with intro and setup guide
-                    └── pyproject.toml                  # Project metadata and dependencies
-                    
-                </code></pre>
+                    │   ├── data/                           # Unit tests for data modules
+                    │   ├── features/                       # Unit tests for features
+                    │   ├── models/                         # Unit tests for models
+                    │   └── utils/                          # Unit tests for utilities
+                    ├── .gitignore
+                    ├── LICENSE
+                    ├── README.md
+                    └── pyproject.toml                      # Dependencies and metadata</code></pre>
 
                 <p>
                     <strong>Key Components:</strong><br>

@@ -85,35 +85,45 @@
                 </p>
                 
                 <pre><code>
-# Integrated Vision-Robotics Pipeline
-class PlantPhenotypingSystem:
-    def __init__(self):
-        self.segmentation_model = UNet(backbone='resnet50')
-        self.landmark_detector = KeypointRCNN()
-        self.robot = OpentronsOT2()
-        self.controller = HybridController()  # PID + RL
-        
-    def process_plant(self, image):
-        # Computer Vision Pipeline
-        root_mask = self.segmentation_model(image)
-        landmarks = self.landmark_detector(root_mask)
-        rsa_features = extract_rsa(root_mask)
-        
-        # Robotic Planning
-        inoculation_points = calculate_targets(landmarks, rsa_features)
-        trajectory = self.plan_path(inoculation_points)
-        
-        # Execute with adaptive control
-        for point in trajectory:
-            self.controller.move_to(point)
-            self.robot.dispense(volume=10)  # microliters
-            
-        return {
-            'rsa_metrics': rsa_features,
-            'points_inoculated': len(inoculation_points),
-            'execution_time': self.robot.elapsed_time
-        }
-                </code></pre>
+                    # U-Net Segmentation Pipeline
+                    class RootSegmentationPipeline:
+                        def __init__(self):
+                            self.unet_model = UNet(backbone='simple')  # Best F1: 0.857
+                            self.regions = [(10, 700), (600, 1200), (1100, 1700), 
+                                           (1500, 2300), (2100, 2700)]
+                            
+                        def process_image(self, image):
+                            # 1. Crop and pad image to standard size
+                            processed_image = self.preprocess_pipeline(image)
+                            
+                            # 2. Generate patches for model input
+                            patches = self.create_patches(processed_image, 
+                                                        patch_size=256, step_size=128)
+                            
+                            # 3. Segment roots using U-Net
+                            root_masks = self.unet_model(patches)
+                            
+                            # 4. Separate into predefined regions
+                            regional_masks = self.separate_regions(root_masks, self.regions)
+                            
+                            # 5. Extract root measurements via skeletonization
+                            measurements = []
+                            for region_mask in regional_masks:
+                                skeleton = skeletonize(region_mask)
+                                branch_data = self.analyze_branches(skeleton)
+                                root_length = self.calculate_length(branch_data)
+                                measurements.append(root_length)
+                                
+                            return measurements
+                    
+                    # Robotic Control Results
+                    class RoboticResults:
+                        # PID Controller Performance:
+                        # - Kp=1.0, Ki=0.01, Kd=0.1
+                        # - Goal reached in 192 steps
+                        # - Working envelope: x=[-0.1875, 0.253], y=[-0.1705, 0.2197], z=[0.1197, 0.2896]
+                        pass
+                    </code></pre>
 
                 <p>
                     <strong>Reinforcement Learning for Robot Control:</strong><br>
@@ -128,18 +138,18 @@ class PlantPhenotypingSystem:
             <div class="project-section">
                 <h2>Results & Impact</h2>
                 <p>
-                    The integrated system achieved impressive results:
+                    The system achieved measurable results in both computer vision and robotics components:
                 </p>
                 <p>
-                    • <strong>Segmentation Accuracy:</strong> 92% IoU on root segmentation<br>
-                    • <strong>RSA Measurement:</strong> Within 5% of manual measurements<br>
-                    • <strong>Kaggle Competition:</strong> Top 15% finish in root length prediction<br>
-                    • <strong>Robotic Precision:</strong> ±0.5mm positioning accuracy<br>
-                    • <strong>Throughput:</strong> 50 plants/hour vs 5 plants/hour manual<br>
-                    • <strong>Liquid Handling:</strong> 99.2% dispensing accuracy at 10μL volumes
+                    • <strong>Segmentation Performance:</strong> U-Net model achieved 0.857 F1 score on validation set<br>
+                    • <strong>Kaggle Competition:</strong> Improved from 110.174 to 2.445 public score through better root length estimation<br>
+                    • <strong>Root Length Extraction:</strong> Successfully implemented skeletonization and branch analysis pipeline<br>
+                    • <strong>Robotic Precision:</strong> PID controller reached target positions in 192 steps within working envelope<br>
+                    • <strong>System Integration:</strong> Separate CV and robotics components developed as proof-of-concept<br>
+                    • <strong>Technical Foundation:</strong> Established groundwork for the later Rootify production system
                 </p>
                 <p>
-                    This proof-of-concept demonstrated the feasibility of fully automated plant phenotyping, leading to continued development and eventual productionization as Rootify.
+                    This proof-of-concept demonstrated the feasibility of automated plant phenotyping, with the computer vision pipeline showing particular promise for root segmentation tasks.
                 </p>
             </div>
 
@@ -147,16 +157,16 @@ class PlantPhenotypingSystem:
             <div class="project-section">
                 <h2>Key Learnings</h2>
                 <p>
-                    <strong>Sim-to-Real Gap:</strong> The biggest challenge was transferring RL policies from simulation to the physical robot. Domain randomization and careful reward shaping were essential.
+                    <strong>Segmentation Challenges:</strong> Root segmentation proved complex due to overlapping structures and varying image quality. The U-Net approach with patch-based processing showed good results but required careful preprocessing.
                 </p>
                 <p>
-                    <strong>Data Annotation Quality:</strong> High-quality root annotations were crucial. We developed custom annotation tools and guidelines to ensure consistency.
+                    <strong>Integration Complexity:</strong> While both computer vision and robotics components worked independently, full system integration remained a future challenge. The project established separate working pipelines that informed later development.
                 </p>
                 <p>
-                    <strong>Integration Complexity:</strong> Synchronizing vision and robotics systems required careful state management and error handling.
+                    <strong>Competition Learning:</strong> The Kaggle competition provided valuable validation, showing significant improvement from basic bounding box approaches to sophisticated root length measurement via skeletonization.
                 </p>
                 <p>
-                    <strong>Biological Variability:</strong> Plant roots are highly variable; the system needed to be robust to unexpected morphologies.
+                    <strong>PID vs RL Trade-offs:</strong> PID controllers proved more reliable than reinforcement learning approaches for precision tasks within the defined working envelope, reaching goals consistently in under 200 steps.
                 </p>
             </div>
             
