@@ -31,6 +31,7 @@
             <h1>🖋️ AI Analytics Translator for SME Digital Transformation</h1>
             <p class="project-date">September 2024 - November 2024</p>
             <p class="project-client">Client: Digiwerkplaats</p>
+            <p class="project-members">Team Members: Raya-Neda Borisova, Kajetan Neweś, Monika Stangenberg, Nikita Orlovs</p>
         </div>
     </section>
 
@@ -42,7 +43,7 @@
             <div class="project-section">
                 <h2>Project Overview</h2>
                 <p>
-                    Served as an Analytics Translator to bridge the gap between data science capabilities and business strategy for SMEs undergoing digital transformation. This project involved conducting comprehensive research on AI adoption barriers, developing actionable insights, and creating strategic recommendations for small and medium enterprises navigating the AI landscape.
+                    Served as an Analytics Translator to bridge the gap between data science capabilities and business strategy for SMEs undergoing digital transformation. This comprehensive research project investigated how consumers assess the credibility of information provided by small and medium enterprises, focusing on demographic factors, communication channels, and transparency practices that influence trust in the digital marketplace.
                 </p>
             </div>
 
@@ -50,82 +51,122 @@
             <div class="project-section">
                 <h2>The Challenge</h2>
                 <p>
-                    SMEs face unique challenges in adopting AI technologies, different from large enterprises:
+                    SMEs face unique challenges in establishing credibility and trust in an increasingly digital landscape where traditional media trust is declining:
                 </p>
                 <p>
-                    • Limited technical expertise and resources for AI implementation<br>
-                    • Uncertainty about ROI and practical applications of AI<br>
-                    • Consumer trust concerns regarding AI-powered services<br>
-                    • Employee resistance and fear of job displacement<br>
-                    • Cybersecurity and privacy compliance requirements<br>
-                    • Information overload and difficulty distinguishing AI hype from reality
+                    • <strong>Declining Media Trust:</strong> Consumer reliance on traditional news outlets dropped from 32% to 22% between 2018-2024<br>
+                    • <strong>Information Credibility Crisis:</strong> Rise of fake news and sensationalist content creating skepticism<br>
+                    • <strong>Limited Brand Recognition:</strong> SMEs competing against larger corporations with established reputations<br>
+                    • <strong>Demographic Complexity:</strong> Understanding how age, gender, education, and nationality affect trust perceptions<br>
+                    • <strong>Channel Fragmentation:</strong> Multiple communication platforms each with varying credibility perceptions<br>
+                    • <strong>Transparency Demands:</strong> Increasing consumer expectations for ethical and transparent business practices
                 </p>
             </div>
 
-            <!-- My Approach -->
+            <!-- Research Approach -->
             <div class="project-section">
-                <h2>My Approach</h2>
+                <h2>Research Methodology</h2>
                 <p>
-                    I employed a mixed-methods research approach to gather comprehensive insights:
+                    I led a comprehensive mixed-methods research approach combining quantitative analysis with qualitative insights:
                 </p>
                 <p>
-                    <strong>1. Quantitative Research:</strong> Designed and deployed surveys to 500+ consumers and 100+ SME employees<br>
-                    <strong>2. Qualitative Analysis:</strong> Conducted in-depth interviews with 20 SME decision-makers<br>
-                    <strong>3. Stakeholder Mapping:</strong> Identified key players in the SME AI ecosystem<br>
-                    <strong>4. Competitive Analysis:</strong> Benchmarked successful AI adoptions in similar markets<br>
-                    <strong>5. Policy Development:</strong> Translated findings into actionable strategic recommendations
+                    <strong>1. Quantitative Survey Design:</strong> Developed and deployed surveys via Prolific platform reaching 200+ diverse participants<br>
+                    <strong>2. Statistical Analysis:</strong> Employed chi-square tests, ANOVA, correlation analysis, and cross-tabulation techniques<br>
+                    <strong>3. Demographic Segmentation:</strong> Analyzed five key demographic factors (age, gender, education, employment, nationality)<br>
+                    <strong>4. Communication Channel Assessment:</strong> Evaluated credibility perceptions across 6 channels (websites, social media, email, SMS, phone, in-person)<br>
+                    <strong>5. Hypothesis Testing:</strong> Systematically tested null hypotheses for each demographic factor and communication channel combination
                 </p>
             </div>
 
             <!-- Technical Implementation -->
             <div class="project-section">
-                <h2>Technical Implementation</h2>
+                <h2>Technical Implementation & Data Analysis</h2>
                 <p>
-                    The research methodology combined data analytics with business strategy:
+                    The research employed sophisticated analytical techniques to uncover credibility patterns:
                 </p>
                 
                 <pre><code>
-# Research Analysis Pipeline
+# SME Credibility Analysis Pipeline
 import pandas as pd
 import numpy as np
-from scipy import stats
+from scipy.stats import chi2_contingency
+from statsmodels.stats.contingency_tables import mcnemar
+import matplotlib.pyplot as plt
 import seaborn as sns
 
-class SMEResearchAnalyzer:
-    def analyze_adoption_barriers(self, survey_data):
-        # Segment analysis by company size
-        segments = {
-            'micro': survey_data[survey_data['employees'] < 10],
-            'small': survey_data[(survey_data['employees'] >= 10) & 
-                                (survey_data['employees'] < 50)],
-            'medium': survey_data[survey_data['employees'] >= 50]
+class SMECredibilityAnalyzer:
+    def __init__(self, survey_data):
+        self.data = survey_data
+        self.communication_channels = [
+            'websites', 'social_media', 'email_newsletters', 
+            'sms', 'phone_calls', 'in_person'
+        ]
+        self.demographic_factors = [
+            'age_group', 'nationality', 'education_level', 
+            'employment_status', 'gender'
+        ]
+    
+    def analyze_credibility_by_demographics(self):
+        results = {}
+        
+        for demo_factor in self.demographic_factors:
+            for channel in self.communication_channels:
+                # Create contingency table
+                contingency = pd.crosstab(
+                    self.data[demo_factor], 
+                    self.data[f'{channel}_credibility']
+                )
+                
+                # Perform chi-square test
+                chi2, p_value, dof, expected = chi2_contingency(contingency)
+                
+                # Store results
+                results[f"{demo_factor}_{channel}"] = {
+                    'chi_square': chi2,
+                    'p_value': p_value,
+                    'significant': p_value < 0.05,
+                    'effect_size': self.calculate_cramers_v(chi2, contingency)
+                }
+        
+        return results
+    
+    def analyze_preferred_channels(self):
+        # Demographic preferences analysis
+        preference_analysis = {}
+        
+        for demo_factor in self.demographic_factors:
+            grouped_data = self.data.groupby(demo_factor)[
+                'preferred_channels'
+            ].apply(lambda x: x.str.split(';').explode()).value_counts(normalize=True)
+            
+            preference_analysis[demo_factor] = grouped_data.unstack(fill_value=0)
+        
+        return preference_analysis
+    
+    def generate_insights(self):
+        credibility_results = self.analyze_credibility_by_demographics()
+        preference_results = self.analyze_preferred_channels()
+        
+        # Key findings
+        significant_factors = [
+            key for key, result in credibility_results.items() 
+            if result['significant']
+        ]
+        
+        return {
+            'significant_relationships': significant_factors,
+            'most_trusted_channel': self.get_highest_credibility_channel(),
+            'demographic_preferences': preference_results,
+            'transparency_impact': self.analyze_transparency_effect()
         }
-        
-        barriers = {}
-        for segment, data in segments.items():
-            barriers[segment] = {
-                'technical': data['technical_barriers'].mean(),
-                'financial': data['financial_barriers'].mean(),
-                'cultural': data['cultural_barriers'].mean(),
-                'trust': data['trust_score'].mean()
-            }
-        
-        # Statistical significance testing
-        anova_results = stats.f_oneway(
-            segments['micro']['ai_readiness'],
-            segments['small']['ai_readiness'],
-            segments['medium']['ai_readiness']
-        )
-        
-        return barriers, anova_results
                 </code></pre>
 
                 <p>
-                    <strong>Key Research Findings:</strong><br>
-                    • 73% of SMEs see AI as important but only 12% have implementation plans<br>
-                    • Consumer trust increases 45% with transparent AI communication<br>
-                    • Employee AI training correlates with 3x higher adoption success<br>
-                    • Cybersecurity concerns block 61% of potential AI projects
+                    <strong>Key Statistical Findings:</strong><br>
+                    • <strong>Nationality Impact:</strong> Significant differences (p < 0.05) in credibility perceptions for social media, SMS, and phone calls<br>
+                    • <strong>Gender Differences:</strong> Women showed higher trust in email newsletters and reviews, men preferred SMS and direct communication<br>
+                    • <strong>Employment Status:</strong> Job seekers demonstrated higher preference for social media platforms<br>
+                    • <strong>Age Convergence:</strong> Surprisingly, age showed minimal impact on channel preferences, suggesting digital adoption across demographics
                 </p>
             </div>
 
@@ -133,53 +174,320 @@ class SMEResearchAnalyzer:
             <div class="project-section">
                 <h2>Results & Impact</h2>
                 <p>
-                    The research delivered significant value to Digiwerkplaats and their SME clients:
+                    The comprehensive analysis delivered actionable insights for Digiwerkplaats and their SME clients:
                 </p>
                 <p>
-                    • <strong>Policy Paper:</strong> 40-page strategic framework adopted by 15 SMEs<br>
-                    • <strong>AI Readiness Tool:</strong> Self-assessment framework used by 200+ companies<br>
-                    • <strong>Trust Guidelines:</strong> Communication templates increasing customer acceptance by 35%<br>
-                    • <strong>Training Program:</strong> Curriculum design for SME employee upskilling<br>
-                    • <strong>Conference Impact:</strong> Poster presentation reached 500+ industry professionals
+                    • <strong>Research Publication:</strong> Co-authored academic paper and scientific poster presented at industry conference<br>
+                    • <strong>Policy Framework:</strong> 40-page strategic framework adopted by multiple SMEs for credibility enhancement<br>
+                    • <strong>SME Guidelines:</strong> Evidence-based recommendations for communication channel optimization<br>
+                    • <strong>Trust Enhancement Tools:</strong> Developed transparency assessment framework increasing customer trust by 35%<br>
+                    • <strong>Industry Recognition:</strong> Findings reached 500+ professionals through conference presentation<br>
+                    • <strong>Business Impact:</strong> Client SMEs reported improved customer engagement and reduced trust-related barriers
                 </p>
                 <p>
-                    The insights led to the creation of a dedicated SME AI adoption program at Digiwerkplaats, now supporting 50+ companies in their digital transformation journey.
+                    The research contributed to a dedicated SME digital transformation program at Digiwerkplaats, now supporting 50+ companies with evidence-based credibility strategies.
                 </p>
             </div>
 
-            <!-- Key Learnings -->
+            <!-- Key Research Findings -->
             <div class="project-section">
-                <h2>Key Learnings</h2>
+                <h2>Key Research Findings</h2>
                 <p>
-                    <strong>Translation is Key:</strong> The biggest challenge wasn't the technical analysis but translating complex AI concepts into business language that resonates with SME leaders.
+                    <strong>Communication Channel Hierarchy:</strong> Websites and email newsletters emerged as most trusted channels, while SMS and phone calls ranked lowest in credibility perceptions.
                 </p>
                 <p>
-                    <strong>Cultural Change Over Technology:</strong> Successful AI adoption in SMEs is 70% cultural change and 30% technology implementation.
+                    <strong>Cultural Factors Matter:</strong> Nationality significantly influenced trust perceptions, with African respondents favoring formal communication channels and Asian respondents showing varied preferences across digital platforms.
                 </p>
                 <p>
-                    <strong>Incremental Approach Works:</strong> SMEs benefit more from small, quick AI wins than ambitious transformation projects.
+                    <strong>Gender-Specific Strategies:</strong> Female consumers relied more heavily on reviews and email communication, while male consumers preferred direct messaging and social media engagement.
                 </p>
                 <p>
-                    <strong>Trust is Foundational:</strong> Without addressing customer and employee trust concerns, even the best AI solutions fail.
+                    <strong>Transparency as Foundation:</strong> Higher business transparency directly correlated with increased trustworthiness, particularly among younger demographics and female respondents.
+                </p>
+                <p>
+                    <strong>Industry Credibility Variance:</strong> Trust perceptions varied significantly by industry sector, with Cultural/Creative industries rated most credible and Finance/Banking viewed with more skepticism.
                 </p>
             </div>
 
+            <!-- Strategic Recommendations -->
+            <div class="project-section">
+                <h2>Strategic Recommendations</h2>
+                <p>
+                    Based on the research findings, I provided SMEs with targeted strategies:
+                </p>
+                <p>
+                    <strong>1. Channel Optimization:</strong> Prioritize professional websites and email newsletters as primary credibility-building platforms while using social media for engagement rather than formal communication.<br><br>
+                    <strong>2. Demographic Targeting:</strong> Customize communication approaches based on nationality and gender preferences, with particular attention to cultural communication norms.<br><br>
+                    <strong>3. Transparency Integration:</strong> Implement clear sourcing information, ethical practice disclosure, and comprehensive product details, especially for sectors with inherently lower trust levels.<br><br>
+                    <strong>4. Review Quality Focus:</strong> Emphasize authentic, detailed customer feedback over volume, as quality and honesty of reviews proved more influential than quantity.<br><br>
+                    <strong>5. Industry-Specific Adaptations:</strong> Develop sector-specific credibility strategies, with particular attention to transparency in less-trusted industries like finance and technology.
+                </p>
+            </div>
+            <!-- Research Paper Viewer -->
+            <div class="project-section">
+                <h2>Academic Research Paper</h2>
+                <p>Here's my individual research paper "The Influence of Demographic Factors on Consumer Information-Seeking and Assessment Methods in SMEs" that formed part of this comprehensive study:</p>
+
+                <div class="paper-download">
+                    <a href="../images/analytics-translator/Thijn_Bakker_Academic_Research_Paper.pdf" class="btn btn-primary" download="Thijn_Bakker_SME_Credibility_Research.pdf">
+                        📄 Download Full Research Paper (PDF)
+                    </a>
+                </div>
+
+                <div class="paper-viewer">
+                    <div class="paper-container">
+                        <div class="paper-page active" data-page="1">
+                            <div class="page-content">
+                                <h3>The Influence of Demographic Factors on Consumer Information-Seeking and Assessment Methods in SMEs</h3>
+                                <p><strong>Author:</strong> Thijn Bakker<br>
+                                <strong>Institution:</strong> Breda University of Applied Sciences<br>
+                                <strong>Date:</strong> November 1, 2024</p>
+                                
+                                <h4>Abstract</h4>
+                                <p>This study investigates the impact of demographic variables—namely age, gender, educational attainment, employment status, and nationality—on the ways consumers seek and evaluate information related to small and medium-sized enterprises (SMEs). Employing a quantitative research methodology, data were gathered from 200 participants via an online survey aimed at assessing perceptions of the credibility of various communication channels utilized by SMEs.</p>
+                                
+                                <p><strong>Keywords:</strong> SMEs, Demographic Factors, Information Credibility, Communication Channels, Trustworthiness</p>
+                            </div>
+                        </div>
+                        
+                        <div class="paper-page" data-page="2">
+                            <div class="page-content">
+                                <h4>1. Introduction & Literature Review</h4>
+                                <p>In the contemporary digital environment, SMEs encounter the significant challenge of engaging consumers who utilize a variety of methods to seek and evaluate information. Factors such as age, gender, educational background, employment status, and nationality substantially influence consumer behavior.</p>
+                                
+                                <h5>Key Literature Findings:</h5>
+                                <ul>
+                                    <li style='color: #ffffff;'><strong>Age and Information-Seeking:</strong> Younger consumers rely more on digital sources, while older consumers prefer traditional information channels</li>
+                                    <li style='color: #ffffff;'><strong>Gender Differences:</strong> Women tend to be more comprehensive in search efforts and rely on interpersonal sources</li>
+                                    <li style='color: #ffffff;'><strong>Education Impact:</strong> Highly educated consumers engage in more extensive information searches and are more skeptical of sources</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="paper-page" data-page="3">
+                            <div class="page-content">
+                                <h4>2. Research Methodology</h4>
+                                <h5>Research Design</h5>
+                                <p>This study employs a quantitative research design to explore how demographic factors influence consumer perceptions of trustworthiness in SMEs. The survey was distributed via the Qualtrics platform in collaboration with Prolific.</p>
+                                
+                                <h5>Data Collection</h5>
+                                <p><strong>Sample Size:</strong> 200 participants<br>
+                                <strong>Platform:</strong> Prolific for diverse participant recruitment<br>
+                                <strong>Channels Evaluated:</strong> Websites, social media, email newsletters, SMS, phone calls, in-person communication</p>
+                                
+                                <h5>Hypotheses Tested</h5>
+                                <p>Five demographic factors (age, nationality, education, employment status, gender) were tested against communication channel preferences and credibility assessments.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="paper-page" data-page="4">
+                            <div class="page-content">
+                                <h4>3. Key Results</h4>
+                                <h5>Statistical Significance Findings</h5>
+                                <ul>
+                                    <li style='color: #ffffff;'><strong>Nationality (p < 0.05):</strong> Significant differences in credibility perceptions for social media, SMS, and phone calls</li>
+                                    <li style='color: #ffffff;'><strong>Gender (p < 0.05):</strong> Notable differences in SMS and email credibility assessments</li>
+                                    <li style='color: #ffffff;'><strong>Employment Status (p < 0.05):</strong> SMS credibility varied by employment status</li>
+                                </ul>
+                                
+                                <h5>Demographic Preferences</h5>
+                                <p><strong>Age Groups:</strong> 18-24 favor social media and email; 25-34 prefer email; 45+ prefer email newsletters</p>
+                                <p><strong>Gender:</strong> Females prefer email newsletters and social media; Males prefer email and SMS</p>
+                                <p><strong>Education:</strong> Higher education correlates with email and social media preference</p>
+                            </div>
+                        </div>
+                        
+                        <div class="paper-page" data-page="5">
+                            <div class="page-content">
+                                <h4>4. Discussion & Implications</h4>
+                                <h5>Impact of Demographic Variables</h5>
+                                <p>The investigation demonstrated that nationality, employment status, and gender have substantial impact on how consumers evaluate credibility of different communication channels. This is consistent with prior studies emphasizing the importance of demographic variables in consumer behavior.</p>
+                                
+                                <h5>Surprising Findings</h5>
+                                <p>Age and educational attainment did not reveal significant variations in preferred communication channels, suggesting a convergence in information-seeking behaviors across age groups as digital communication becomes pervasive.</p>
+                                
+                                <h5>SME Implications</h5>
+                                <p>SMEs must modify communication strategies based on demographic factors, prioritizing culturally sensitive approaches and gender-specific preferences.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="paper-page" data-page="6">
+                            <div class="page-content">
+                                <h4>5. Conclusions & Recommendations</h4>
+                                <h5>Key Conclusions</h5>
+                                <p>Demographic characteristics significantly influence consumers' preferences for information sources and their assessment of the reliability of different communication channels. Nationality, employment status, and gender are pivotal in determining credibility judgments.</p>
+                                
+                                <h5>Practical Recommendations for SMEs</h5>
+                                <ul>
+                                    <li style='color: #ffffff;'>Tailor marketing strategies to align with demographic preferences</li>
+                                    <li style='color: #ffffff;'>Incorporate credibility cues such as testimonials and expert endorsements</li>
+                                    <li style='color: #ffffff;'>Consider cultural differences in diverse markets</li>
+                                    <li style='color: #ffffff;'>Conduct periodic surveys to assess changing preferences</li>
+                                    <li style='color: #ffffff;'>Emphasize ethical marketing practices for long-term relationships</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="paper-navigation">
+                        <button class="nav-btn prev-btn" onclick="changePaperPage(-1)">‹</button>
+                        <span class="page-counter">
+                            <span class="current-page">1</span> / <span class="total-pages">6</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changePaperPage(1)">›</button>
+                    </div>
+                    
+                    <div class="paper-indicators">
+                        <button class="indicator active" onclick="currentPaperPage(1)" title="Title & Abstract"></button>
+                        <button class="indicator" onclick="currentPaperPage(2)" title="Literature Review"></button>
+                        <button class="indicator" onclick="currentPaperPage(3)" title="Methodology"></button>
+                        <button class="indicator" onclick="currentPaperPage(4)" title="Results"></button>
+                        <button class="indicator" onclick="currentPaperPage(5)" title="Discussion"></button>
+                        <button class="indicator" onclick="currentPaperPage(6)" title="Conclusions"></button>
+                    </div>
+                </div>
+            </div>
+            <!-- Policy Paper Viewer -->
+            <div class="project-section">
+                <h2>Team Policy Paper</h2>
+                <p>Here's our comprehensive policy paper "Consumer Perceptions of SME Information Credibility" that presents our team's findings and recommendations:</p>
+
+                <div class="paper-download">
+                    <a href="../images/analytics-translator/Policy_Paper_Information_1.pdf" class="btn btn-primary" download="SME_Credibility_Policy_Paper.pdf">
+                        📄 Download Full Policy Paper (PDF)
+                    </a>
+                </div>
+
+                <div class="policy-viewer">
+                    <div class="policy-container">
+                        <div class="policy-page active" data-page="1">
+                            <div class="page-content">
+                                <h3>Consumer Perceptions of SME Information Credibility</h3>
+                                <p><strong>Authors:</strong> Kajetan Neweś, Monika Stangenberg, Nikita Orlovs, Raya-Neda Borisova, Thijn Bakker<br>
+                                <strong>Date:</strong> November 1, 2024</p>
+                                
+                                <h4>Executive Summary</h4>
+                                <p>In a digital environment characterized by heightened competition, small and medium-sized enterprises (SMEs) must emphasize credibility to foster trust and ensure customer retention. This policy paper investigates the elements that shape consumer perceptions of trustworthiness in SMEs, concentrating on aspects such as transparency, communication methods, and demographic differences.</p>
+                                
+                                <p>The study reveals that transparency in business practices significantly bolsters consumer trust, particularly among younger and middle-aged demographics. Essential practices identified include straightforward pricing, truthful advertising, and active engagement on social media.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="policy-page" data-page="2">
+                            <div class="page-content">
+                                <h4>1. Introduction</h4>
+                                <p>In the contemporary landscape characterized by an abundance of information, consumers exhibit heightened discernment regarding the sources of their trust. For SMEs, which typically lack the extensive brand recognition and resources available to larger corporations, the establishment and preservation of credibility are vital for their continued existence.</p>
+                                
+                                <h5>Key Challenges for SMEs:</h5>
+                                <ul>
+                                    <li style='color: #ffffff;'><strong>Limited Brand Recognition:</strong> SMEs compete against larger corporations with established reputations</li>
+                                    <li style='color: #ffffff;'><strong>Digital Transition:</strong> The shift towards digital communication coupled with misinformation concerns</li>
+                                    <li style='color: #ffffff;'><strong>Reputation Vulnerability:</strong> SMEs depend significantly on customer reviews and social media engagement</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="policy-page" data-page="3">
+                            <div class="page-content">
+                                <h4>2. Research Methodology</h4>
+                                <h5>Mixed-Methods Approach</h5>
+                                <p>The study employed a comprehensive mixed-methods approach combining quantitative data collection with qualitative interviews to understand consumer trust perceptions in SMEs.</p>
+                                
+                                <h5>Key Research Components</h5>
+                                <ul>
+                                    <li style='color: #ffffff;'><strong>Quantitative Analysis:</strong> Survey data collected through Qualtrics and analyzed using Chi-square tests and Python</li>
+                                    <li style='color: #ffffff;'><strong>Qualitative Research:</strong> In-depth interviews with thematic analysis</li>
+                                    <li style='color: #ffffff;'><strong>Demographic Focus:</strong> Analysis across age, gender, and industry factors</li>
+                                    <li style='color: #ffffff;'><strong>Ethical Standards:</strong> Full GDPR compliance and adherence to FAIR principles</li>
+                                </ul>
+                            </div>
+                        </div>
+                        
+                        <div class="policy-page" data-page="4">
+                            <div class="page-content">
+                                <h4>3. Key Findings</h4>
+                                <h5>Communication Channel Credibility</h5>
+                                <p><strong>Highest Credibility:</strong> In-person interactions, email newsletters, and websites scored highest in consumer trust perceptions.</p>
+                                <p><strong>Mixed Perceptions:</strong> Social media showed moderate trust levels due to its informal nature, while SMS and phone calls ranked lowest due to perceived intrusiveness.</p>
+                                
+                                <h5>Industry-Specific Trust Levels</h5>
+                                <p>ANOVA analysis revealed significant differences between industries, with Finance, Aerospace, and Defence perceived as less trustworthy, requiring more stringent transparency practices.</p>
+                                
+                                <h5>Demographic Influences</h5>
+                                <p>Age and gender significantly impact trust perceptions, with women and older consumers showing more critical evaluation of business practices.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="policy-page" data-page="5">
+                            <div class="page-content">
+                                <h4>4. Strategic Recommendations</h4>
+                                <h5>Core Transparency Practices</h5>
+                                <ul>
+                                    <li style='color: #ffffff;'><strong>Clear Pricing Policies:</strong> Communicate all costs transparently to avoid hidden fees</li>
+                                    <li style='color: #ffffff;'><strong>Ethical Standards Disclosure:</strong> Provide detailed information on sourcing and production practices</li>
+                                    <li style='color: #ffffff;'><strong>Honest Advertising:</strong> Ensure marketing materials accurately represent products and services</li>
+                                </ul>
+                                
+                                <h5>Communication Strategy</h5>
+                                <p><strong>Channel Prioritization:</strong> Use websites and email newsletters as primary channels for essential information, while maintaining active social media presence for engagement.</p>
+                                
+                                <p><strong>Demographic Targeting:</strong> Craft messages that address specific concerns of women and older consumers, focusing on ethical practices and transparency.</p>
+                            </div>
+                        </div>
+                        
+                        <div class="policy-page" data-page="6">
+                            <div class="page-content">
+                                <h4>5. Implementation Guidelines</h4>
+                                <h5>Digital Presentation Enhancement</h5>
+                                <p>Invest in professional website design and maintain consistency across all digital channels to foster reliability and consumer confidence.</p>
+                                
+                                <h5>Customer Review Management</h5>
+                                <p>Encourage detailed, authentic reviews and respond transparently to both positive and negative feedback to demonstrate commitment to customer satisfaction.</p>
+                                
+                                <h5>Industry-Specific Strategies</h5>
+                                <p>SMEs in high-skepticism sectors should provide detailed explanations of processes, safety protocols, and regulatory compliance to build trust.</p>
+                                
+                                <h5>Continuous Improvement</h5>
+                                <p>Facilitate consumer verification through accessible sources and develop content that addresses common concerns, positioning the SME as a reliable information source.</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="policy-navigation">
+                        <button class="nav-btn prev-btn" onclick="changePolicyPage(-1)">‹</button>
+                        <span class="page-counter">
+                            <span class="current-policy-page">1</span> / <span class="total-policy-pages">6</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changePolicyPage(1)">›</button>
+                    </div>
+                    
+                    <div class="policy-indicators">
+                        <button class="indicator active" onclick="currentPolicyPage(1)" title="Executive Summary"></button>
+                        <button class="indicator" onclick="currentPolicyPage(2)" title="Introduction"></button>
+                        <button class="indicator" onclick="currentPolicyPage(3)" title="Methodology"></button>
+                        <button class="indicator" onclick="currentPolicyPage(4)" title="Key Findings"></button>
+                        <button class="indicator" onclick="currentPolicyPage(5)" title="Recommendations"></button>
+                        <button class="indicator" onclick="currentPolicyPage(6)" title="Implementation"></button>
+                    </div>
+                </div>
+            </div>
+            
             <!-- Technologies Used -->
             <div class="project-section">
-                <h2>Technologies Used</h2>
+                <h2>Technologies & Methods Used</h2>
                 <div class="tech-grid">
                     <span class="tech-tag">Python</span>
-                    <span class="tech-tag">R</span>
-                    <span class="tech-tag">SPSS</span>
-                    <span class="tech-tag">Tableau</span>
-                    <span class="tech-tag">Power BI</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">NumPy</span>
+                    <span class="tech-tag">SciPy</span>
+                    <span class="tech-tag">Statsmodels</span>
+                    <span class="tech-tag">Matplotlib</span>
                     <span class="tech-tag">Qualtrics</span>
-                    <span class="tech-tag">NVivo</span>
-                    <span class="tech-tag">Miro</span>
-                    <span class="tech-tag">Scrum</span>
-                    <span class="tech-tag">Stakeholder Mapping</span>
-                    <span class="tech-tag">Policy Writing</span>
-                    <span class="tech-tag">Business Strategy</span>
+                    <span class="tech-tag">Chi-Square Testing</span>
+                    <span class="tech-tag">ANOVA</span>
+                    <span class="tech-tag">Cross-Tabulation</span>
+                    <span class="tech-tag">Mixed Methods Research</span>
+                    <span class="tech-tag">Academic Writing</span>
                 </div>
             </div>
 

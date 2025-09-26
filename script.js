@@ -126,6 +126,43 @@ window.addEventListener('pageshow', function(event) {
     }
 });
 
+// Paper viewer functionality
+let currentPaperPageIndex = 1;
+const totalPaperPages = 6;
+
+function changePaperPage(direction) {
+    const newPageIndex = currentPaperPageIndex + direction;
+    
+    if (newPageIndex >= 1 && newPageIndex <= totalPaperPages) {
+        currentPaperPage(newPageIndex);
+    }
+}
+
+
+function currentPaperPage(pageIndex) {
+    // Hide all pages
+    const pages = document.querySelectorAll('.paper-page');
+    const indicators = document.querySelectorAll('.paper-indicators .indicator');
+    
+    pages.forEach(page => page.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    // Show selected page
+    const targetPage = document.querySelector(`[data-page="${pageIndex}"]`);
+    if (targetPage) {
+        targetPage.classList.add('active');
+        indicators[pageIndex - 1].classList.add('active');
+        
+        currentPaperPageIndex = pageIndex;
+        document.querySelector('.paper-navigation .current-page').textContent = pageIndex;
+    }
+}
+
+// Initialize paper viewer
+document.addEventListener('DOMContentLoaded', function() {
+    document.querySelector('.paper-navigation .total-pages').textContent = totalPaperPages;
+});
+
 // Also handle regular load event
 window.addEventListener('load', function() {
     document.body.classList.remove('transitioning');
@@ -188,5 +225,52 @@ document.addEventListener('keydown', function(e) {
 document.addEventListener('DOMContentLoaded', function() {
     if (document.querySelector('.presentation-slider')) {
         showSlide(1);
+    }
+});
+
+// Policy paper viewer functionality
+// Add this code to your existing script.js file
+
+let currentPolicyPageIndex = 1;
+const totalPolicyPages = 6;
+
+function changePolicyPage(direction) {
+    const newPageIndex = currentPolicyPageIndex + direction;
+    
+    if (newPageIndex >= 1 && newPageIndex <= totalPolicyPages) {
+        currentPolicyPage(newPageIndex);
+    }
+}
+
+function currentPolicyPage(pageIndex) {
+    // Hide all policy pages
+    const pages = document.querySelectorAll('.policy-page');
+    const indicators = document.querySelectorAll('.policy-indicators .indicator');
+    
+    pages.forEach(page => page.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    // Show selected page
+    const targetPage = document.querySelector(`.policy-page[data-page="${pageIndex}"]`);
+    if (targetPage) {
+        targetPage.classList.add('active');
+        if (indicators[pageIndex - 1]) {
+            indicators[pageIndex - 1].classList.add('active');
+        }
+        
+        currentPolicyPageIndex = pageIndex;
+        const currentPageElement = document.querySelector('.policy-navigation .current-policy-page');
+        if (currentPageElement) {
+            currentPageElement.textContent = pageIndex;
+        }
+    }
+}
+
+// Initialize policy viewer when page loads
+document.addEventListener('DOMContentLoaded', function() {
+    // Initialize policy paper viewer if it exists
+    const totalPolicyPagesElement = document.querySelector('.policy-navigation .total-policy-pages');
+    if (totalPolicyPagesElement) {
+        totalPolicyPagesElement.textContent = totalPolicyPages;
     }
 });

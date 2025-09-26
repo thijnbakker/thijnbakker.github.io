@@ -512,6 +512,335 @@ a.skill-tag:hover {
     color: var(--secondary);
 }
 
+/* Paper viewer styles */
+.paper-viewer, .policy-viewer {
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.paper-container, .policy-container {
+    position: relative;
+    min-height: 500px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+    overflow: hidden;
+}
+
+.paper-page {
+    display: none;
+    padding: 3rem;
+    color: #333;
+    line-height: 1.7;
+}
+
+.paper-page.active {
+    display: block;
+}
+
+.paper-page h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.paper-page h4 {
+    color: var(--secondary);
+    font-size: 1.25rem;
+    margin: 1.5rem 0 1rem 0;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.5rem;
+}
+
+.paper-page h5 {
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.paper-page p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.paper-page ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.paper-page li {
+    margin-bottom: 0.5rem;
+}
+
+.paper-navigation, .policy-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem 0 1rem 0;
+}
+
+.paper-navigation .nav-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.paper-navigation .nav-btn:hover {
+    background: var(--secondary);
+    transform: scale(1.1);
+}
+
+.paper-navigation .page-counter {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.paper-indicators, .policy-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.paper-indicators .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.paper-indicators .indicator.active {
+    background: var(--primary);
+}
+
+.paper-indicators .indicator:hover {
+    transform: scale(1.2);
+    background: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.paper-indicators .indicator:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+.paper-download {
+    text-align: center;
+    margin: 1.5rem 0 2rem 0;
+}
+
+.paper-download .btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1rem;
+    transition: all 0.3s ease;
+}
+
+.paper-download .btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 25px rgba(212, 165, 116, 0.4);
+}
+
+@media (max-width: 768px) {
+    .paper-page {
+        padding: 2rem 1.5rem;
+    }
+    
+    .paper-navigation {
+        gap: 1rem;
+    }
+    
+    .paper-indicators {
+        gap: 0.3rem;
+    }
+}
+
+/* Policy viewer styles - Add this to your existing styles.css */
+
+.policy-viewer {
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.policy-container {
+    position: relative;
+    min-height: 500px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+    overflow: hidden;
+}
+
+.policy-page {
+    display: none;
+    padding: 3rem;
+    color: #333;
+    line-height: 1.7;
+}
+
+.policy-page.active {
+    display: block;
+}
+
+.policy-page h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.policy-page h4 {
+    color: var(--secondary);
+    font-size: 1.25rem;
+    margin: 1.5rem 0 1rem 0;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.5rem;
+}
+
+.policy-page h5 {
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.policy-page p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.policy-page ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.policy-page li {
+    margin-bottom: 0.5rem;
+}
+
+.policy-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem 0 1rem 0;
+}
+
+.policy-navigation .nav-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.policy-navigation .nav-btn:hover {
+    background: var(--secondary);
+    transform: scale(1.1);
+}
+
+.policy-navigation .page-counter {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.policy-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.policy-indicators .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.policy-indicators .indicator.active {
+    background: var(--primary);
+}
+
+.policy-indicators .indicator:hover {
+    transform: scale(1.2);
+    background: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.policy-indicators .indicator:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .policy-page {
+        padding: 2rem 1.5rem;
+    }
+    
+    .policy-navigation {
+        gap: 1rem;
+    }
+    
+    .policy-indicators {
+        gap: 0.3rem;
+    }
+}
+
 /* Demo section styling */
 .demo-container {
     text-align: center;
