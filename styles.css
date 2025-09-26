@@ -227,6 +227,35 @@ nav.scrolled {
     transform: translateY(-2px);
 }
 
+/* Demo button styling */
+.demo-button {
+    display: inline-block;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 25px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.3);
+    animation: gradient 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+.demo-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 25px rgba(212, 165, 116, 0.4);
+    color: white;
+    text-decoration: none;
+}
+/* Ensure button works on mobile */
+@media (max-width: 768px) {
+    .demo-button {
+        padding: 0.6rem 1.2rem;
+        font-size: 0.85rem;
+    }
+}
 /* Sections */
 section {
     padding: 5rem 5%;
@@ -481,6 +510,31 @@ a.skill-tag:hover {
     border-radius: 15px;
     font-size: 0.75rem;
     color: var(--secondary);
+}
+
+/* Demo section styling */
+.demo-container {
+    text-align: center;
+    margin: 2rem 0;
+    padding: 2rem;
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.05), rgba(244, 164, 96, 0.05));
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 15px;
+}
+
+.demo-gif {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+    border: 2px solid rgba(212, 165, 116, 0.3);
+}
+
+.demo-caption {
+    color: var(--gray);
+    margin-top: 1rem;
+    font-style: italic;
+    font-size: 0.95rem;
 }
 
 .project-links {
