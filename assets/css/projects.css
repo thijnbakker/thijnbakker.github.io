@@ -1,0 +1,614 @@
+/* ==================================
+   PROJECT PAGE STYLES
+   ================================== */
+
+/* Project Hero Section */
+.project-hero {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 5% 4rem;
+}
+
+.project-hero-content h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+.project-hero-content .hero-text {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: var(--hero-gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: hero-gradient-move 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+.project-date {
+    color: var(--secondary);
+    font-size: 1.125rem;
+    margin-bottom: 0.5rem;
+}
+
+.project-client {
+    color: var(--gray);
+    font-size: 1rem;
+}
+
+.project-members {
+    color: var(--gray);
+    font-size: 1rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+}
+
+/* Project Content */
+.project-content {
+    padding: 2rem 5%;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.project-container {
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.1);
+    border-radius: 20px;
+    padding: 3rem;
+}
+
+.project-section {
+    margin-bottom: 3rem;
+}
+
+.project-section h2 {
+    font-size: 1.75rem;
+    margin-bottom: 1.5rem;
+    color: var(--secondary);
+    position: relative;
+    padding-bottom: 0.75rem;
+}
+
+.project-section h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: var(--gradient);
+    border-radius: 2px;
+}
+
+.project-section p {
+    color: var(--light);
+    line-height: 1.8;
+    margin-bottom: 1rem;
+}
+
+.project-section pre {
+    background: rgba(0, 0, 0, 0.3);
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    overflow-x: auto;
+    margin: 1.5rem 0;
+    white-space: pre;
+    word-wrap: break-word;
+    max-width: 100%;
+}
+
+.project-section code {
+    color: var(--secondary);
+    font-family: 'Courier New', monospace;
+    line-height: 1.4;
+}
+
+/* Icon Mask for Gradient Icons */
+.icon-mask {
+    width: 1.1em;
+    height: 1.1em;
+    display: inline-block;
+    margin-right: 0.4em;
+    vertical-align: -0.2em;
+    background: var(--hero-gradient);
+    background-size: 200% 200%;
+    animation: gradient 3s ease infinite;
+    will-change: background-position;
+    -webkit-mask: var(--icon-url) no-repeat center / contain;
+            mask: var(--icon-url) no-repeat center / contain;
+}
+
+.hero-gradient {
+    background: var(--hero-gradient);
+    animation: hero-gradient-move 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+@keyframes hero-gradient-move {
+    0%   { background-position: 0% 50%; }
+    50%  { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+}
+
+/* Back Navigation */
+.back-navigation {
+    text-align: center;
+    padding: 3rem 5%;
+}
+
+/* ==================================
+   PRESENTATION SLIDER
+   ================================== */
+
+.presentation-slider {
+    margin: 2rem 0;
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.1);
+    border-radius: 15px;
+    overflow: hidden;
+}
+
+.slide-container {
+    position: relative;
+    width: 100%;
+    height: 500px;
+    overflow: hidden;
+}
+
+.slide {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    transition: opacity 0.5s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+}
+
+.slide.active {
+    opacity: 1;
+}
+
+.slide img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    border-radius: 10px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+}
+
+.slide-navigation {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 2rem;
+    background: rgba(212, 165, 116, 0.1);
+}
+
+.nav-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.nav-btn:hover {
+    background: var(--secondary);
+    transform: scale(1.1);
+}
+
+.nav-btn:disabled {
+    background: var(--gray);
+    cursor: not-allowed;
+    transform: scale(1);
+}
+
+.slide-counter {
+    color: var(--primary);
+    font-weight: 600;
+    font-size: 1rem;
+}
+
+.slide-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: rgba(212, 165, 116, 0.1);
+    flex-wrap: wrap;
+}
+
+.indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.indicator.active,
+.indicator:hover {
+    background: var(--primary);
+    transform: scale(1.2);
+}
+
+/* ==================================
+   PAPER VIEWER
+   ================================== */
+
+.paper-viewer {
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.paper-container {
+    position: relative;
+    min-height: 500px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+    overflow: hidden;
+}
+
+.paper-page {
+    display: none;
+    padding: 3rem;
+    color: #333;
+    line-height: 1.7;
+}
+
+.paper-page.active {
+    display: block;
+}
+
+.paper-page h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.paper-page h4 {
+    color: var(--secondary);
+    font-size: 1.25rem;
+    margin: 1.5rem 0 1rem 0;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.5rem;
+}
+
+.paper-page h5 {
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.paper-page p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.paper-page ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.paper-page li {
+    margin-bottom: 0.5rem;
+}
+
+.paper-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem 0 1rem 0;
+}
+
+.paper-navigation .nav-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.paper-navigation .nav-btn:hover {
+    background: var(--secondary);
+    transform: scale(1.1);
+}
+
+.paper-navigation .page-counter {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.paper-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.paper-indicators .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.paper-indicators .indicator.active {
+    background: var(--primary);
+}
+
+.paper-indicators .indicator:hover {
+    transform: scale(1.2);
+    background: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.paper-download {
+    text-align: center;
+    margin: 1.5rem 0 2rem 0;
+}
+
+/* ==================================
+   POLICY VIEWER
+   ================================== */
+
+   .policy-viewer {
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    margin: 2rem 0;
+}
+
+.policy-container {
+    position: relative;
+    min-height: 500px;
+    background: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+    overflow: hidden;
+}
+
+.policy-page {
+    display: none;
+    padding: 3rem;
+    color: #333;
+    line-height: 1.7;
+}
+
+.policy-page.active {
+    display: block;
+}
+
+.policy-page h3 {
+    color: var(--primary);
+    font-size: 1.5rem;
+    margin-bottom: 1.5rem;
+    text-align: center;
+}
+
+.policy-page h4 {
+    color: var(--secondary);
+    font-size: 1.25rem;
+    margin: 1.5rem 0 1rem 0;
+    border-bottom: 2px solid var(--primary);
+    padding-bottom: 0.5rem;
+}
+
+.policy-page h5 {
+    color: var(--primary);
+    font-size: 1.1rem;
+    margin: 1rem 0 0.5rem 0;
+}
+
+.policy-page p {
+    margin-bottom: 1rem;
+    text-align: justify;
+}
+
+.policy-page ul {
+    margin: 1rem 0;
+    padding-left: 1.5rem;
+}
+
+.policy-page li {
+    margin-bottom: 0.5rem;
+}
+
+.policy-navigation {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 2rem;
+    margin: 2rem 0 1rem 0;
+}
+
+.policy-navigation .nav-btn {
+    background: var(--primary);
+    color: white;
+    border: none;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.policy-navigation .nav-btn:hover {
+    background: var(--secondary);
+    transform: scale(1.1);
+}
+
+.policy-navigation .page-counter {
+    font-weight: 600;
+    color: var(--primary);
+    font-size: 1.1rem;
+}
+
+.policy-indicators {
+    display: flex;
+    justify-content: center;
+    gap: 0.5rem;
+    margin-top: 1rem;
+}
+
+.policy-indicators .indicator {
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--primary);
+    background: transparent;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+}
+
+.policy-indicators .indicator.active {
+    background: var(--primary);
+}
+
+.policy-indicators .indicator:hover {
+    transform: scale(1.2);
+    background: var(--secondary);
+    border-color: var(--secondary);
+}
+
+.policy-indicators .indicator:hover::after {
+    content: attr(title);
+    position: absolute;
+    bottom: 150%;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    padding: 0.25rem 0.5rem;
+    border-radius: 4px;
+    font-size: 0.75rem;
+    white-space: nowrap;
+    z-index: 1000;
+}
+
+@media (max-width: 768px) {
+    .policy-page {
+        padding: 2rem 1.5rem;
+    }
+    
+    .policy-navigation {
+        gap: 1rem;
+    }
+    
+    .policy-indicators {
+        gap: 0.3rem;
+    }
+}
+
+
+/* ==================================
+   MOBILE RESPONSIVE
+   ================================== */
+
+@media (max-width: 768px) {
+    .project-hero-content h1 {
+        font-size: 2rem;
+    }
+    
+    .project-container {
+        padding: 2rem 1.5rem;
+    }
+    
+    .slide-container {
+        height: 350px;
+    }
+    
+    .slide-navigation {
+        padding: 0.75rem 1rem;
+    }
+    
+    .nav-btn {
+        width: 35px;
+        height: 35px;
+        font-size: 1.25rem;
+    }
+    
+    .slide-indicators {
+        gap: 0.3rem;
+        padding: 0.75rem;
+    }
+    
+    .indicator {
+        width: 10px;
+        height: 10px;
+    }
+    
+    .slide {
+        padding: 0.5rem;
+    }
+    
+    .paper-page {
+        padding: 2rem 1.5rem;
+    }
+    
+    .paper-navigation {
+        gap: 1rem;
+    }
+    
+    .paper-indicators {
+        gap: 0.3rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .slide-container {
+        height: 250px;
+    }
+    
+    .slide-indicators {
+        display: none;
+    }
+}

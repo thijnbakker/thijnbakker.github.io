@@ -4,10 +4,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Emotion Classification - Thijn Bakker</title>
-    <link rel="icon" type="image/x-icon" href="../images/icons/cloud_icon.png">
-    <style>
-        @import url('../styles.css');
-    </style>
+    <meta name="description" content="Emotion Classification project showcasing data science and AI skills">
+    <meta name="author" content="Thijn Bakker">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/icons/cloud_icon.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/projects.css">
 </head>
 <body>
     <div class="bg-animation"></div>
@@ -25,11 +31,11 @@
         </div>
     </nav>
 
-    <!-- Project Hero -->
+<!-- Project Hero -->
     <section class="project-hero">
         <div class="project-hero-content">
             <h1 class="hero-text">
-                <span class="icon-mask" style="--icon-url: url('../images/icons/cloud_icon.svg');"></span>
+                <span class="icon-mask" style="--icon-url: url('../assets../assets/images/icons/cloud_icon.svg');"></span>
                 Emotion Classification from Video Dialogue
             </h1>
             <p class="project-date">February 2025 - April 2025</p>
@@ -349,156 +355,9 @@ class EmotionClassificationPipeline:
         <p>&copy; 2025 Thijn Bakker. Built with passion and lots of coffee ☕</p>
     </footer>
 
-    <script src="../script.js"></script>
-    <script>
-        // Presentation slider functionality
-        let currentSlideIndex = 1;
-        const totalSlides = 26;
-
-        function showSlide(n) {
-            const slides = document.querySelectorAll('.slide');
-            const indicators = document.querySelectorAll('.indicator');
-            
-            if (n > totalSlides) currentSlideIndex = 1;
-            if (n < 1) currentSlideIndex = totalSlides;
-            
-            slides.forEach(slide => slide.classList.remove('active'));
-            indicators.forEach(indicator => indicator.classList.remove('active'));
-            
-            slides[currentSlideIndex - 1].classList.add('active');
-            indicators[currentSlideIndex - 1].classList.add('active');
-            
-            document.querySelector('.current-slide').textContent = currentSlideIndex;
-        }
-
-        function changeSlide(n) {
-            currentSlideIndex += n;
-            showSlide(currentSlideIndex);
-        }
-
-        function currentSlide(n) {
-            currentSlideIndex = n;
-            showSlide(currentSlideIndex);
-        }
-
-        // Add CSS for presentation slider
-        const presentationCSS = `
-            .presentation-slider {
-                max-width: 800px;
-                margin: 2rem auto;
-                background: rgba(0, 0, 0, 0.3);
-                border-radius: 15px;
-                overflow: hidden;
-                border: 1px solid rgba(212, 165, 116, 0.2);
-            }
-
-            .slide-container {
-                position: relative;
-                width: 100%;
-                aspect-ratio: 16/9;
-            }
-
-            .slide {
-                display: none;
-                width: 100%;
-                height: 100%;
-            }
-
-            .slide.active {
-                display: block;
-            }
-
-            .slide img {
-                width: 100%;
-                height: 100%;
-                object-fit: contain;
-                background: white;
-            }
-
-            .slide-navigation {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                padding: 1rem 2rem;
-                background: rgba(212, 165, 116, 0.05);
-            }
-
-            .nav-btn {
-                background: var(--primary);
-                border: none;
-                color: white;
-                padding: 0.5rem 1rem;
-                border-radius: 50%;
-                cursor: pointer;
-                font-size: 1.5rem;
-                transition: all 0.3s ease;
-                width: 40px;
-                height: 40px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-            }
-
-            .nav-btn:hover {
-                background: var(--secondary);
-                transform: scale(1.1);
-            }
-
-            .slide-counter {
-                color: var(--light);
-                font-weight: 600;
-            }
-
-            .slide-indicators {
-                display: flex;
-                justify-content: center;
-                gap: 0.5rem;
-                padding: 1rem;
-                background: rgba(212, 165, 116, 0.05);
-                flex-wrap: wrap;
-            }
-
-            .indicator {
-                width: 12px;
-                height: 12px;
-                border-radius: 50%;
-                border: 2px solid var(--primary);
-                background: transparent;
-                cursor: pointer;
-                transition: all 0.3s ease;
-            }
-
-            .indicator.active {
-                background: var(--primary);
-            }
-
-            .indicator:hover {
-                background: var(--secondary);
-                border-color: var(--secondary);
-            }
-
-            @media (max-width: 768px) {
-                .slide-navigation {
-                    padding: 0.75rem 1rem;
-                }
-                
-                .nav-btn {
-                    width: 35px;
-                    height: 35px;
-                    font-size: 1.2rem;
-                }
-                
-                .indicator {
-                    width: 10px;
-                    height: 10px;
-                }
-            }
-        `;
-
-        // Inject CSS
-        const style = document.createElement('style');
-        style.textContent = presentationCSS;
-        document.head.appendChild(style);
-    </script>
+    <!-- JavaScript -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/components/slider.js"></script>
+    <script src="../assets/js/components/paper-viewer.js"></script>
 </body>
 </html>

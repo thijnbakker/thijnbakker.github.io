@@ -4,11 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Rootify - Thijn Bakker</title>
-    <link rel="icon" type="image/x-icon" href="../images/icons/plant_icon.png">
+    <meta name="description" content="Cloud-based ML application for automated plant root analysis. Production-ready system for NPEC researchers.">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/icons/plant_icon.png">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/projects.css">
+    
+    <!-- Custom styles for code blocks -->
     <style>
-        @import url('../styles.css');
-        
-        /* Custom styles to prevent horizontal scroll in code blocks */
         .project-section pre {
             background: rgba(0, 0, 0, 0.3);
             border: 1px solid rgba(212, 165, 116, 0.2);
@@ -27,7 +34,6 @@
             line-height: 1.4;
         }
         
-        /* Ensure code block doesn't break out of container */
         .project-container {
             overflow-x: hidden;
         }
@@ -75,7 +81,7 @@
             <div class="project-section">
                 <h2>Rootify in Action</h2>
                 <div class="demo-container">
-                    <img src="../images/rootify/rootify_app_long.png" alt="Rootify Application Demo" class="demo-gif">
+                    <img src="../assets/images/rootify/rootify_app_long.png" alt="Rootify Application Demo" class="demo-gif">
                     <p class="demo-caption">
                         From image upload to root segmentation and coordinate detection - see Rootify's ML pipeline in action
                     </p>
@@ -122,54 +128,53 @@
                     The technical architecture leverages modern MLOps practices and cloud-native technologies:
                 </p>
                 
-                        <pre><code>
-                    project_2d/
-                    ├── data/
-                    │   ├── raw/                            # Original images from NPEC
-                    │   ├── processed/                      # Cropped and patched images
-                    │   │   ├── train_images/               # 70% for training
-                    │   │   ├── val_images/                 # 10% for validation
-                    │   │   └── test_images/                # 20% for testing
-                    ├── deployment/                         # Deployment framework
-                    │   └── api/
-                    │       └── main.py                     # API entry point
-                    ├── docs/                               # Documentation
-                    │   ├── README.md                       # Project overview
-                    │   ├── data_pipeline.md                # Data processing docs
-                    │   ├── model_training.md               # Training process docs
-                    │   └── user_guide.md                   # Usage instructions
-                    ├── frontend/
-                    │   └── app.py                          # Streamlit frontend
-                    ├── models/
-                    │   ├── best_model.h5                   # Best performing model
-                    │   └── metadata.json                   # Model metadata
-                    ├── notebooks/
-                    │   ├── petri_dish.ipynb                # Petri dish detection
-                    │   ├── instance_segmentation.ipynb     # Plant segmentation
-                    │   └── dataset_prep.ipynb              # Dataset preparation
-                    ├── src/
-                    │   ├── data/
-                    │   │   ├── data_ingestion.py           # Reading image data
-                    │   │   ├── data_preprocessing.py       # Preprocessing pipeline
-                    │   │   ├── data_validation.py          # Quality checks
-                    │   │   └── data_splitting.py           # Train/val/test split
-                    │   ├── features/
-                    │   │   └── feature_extraction.py       # Feature extraction
-                    │   ├── models/
-                    │   │   ├── model.py                    # Model architecture
-                    │   │   └── inference.py                # Model inference
-                    │   └── utils/
-                    │       ├── helpers.py                  # Helper functions
-                    │       └── logger.py                   # Logging functions
-                    ├── tests/
-                    │   ├── data/                           # Unit tests for data modules
-                    │   ├── features/                       # Unit tests for features
-                    │   ├── models/                         # Unit tests for models
-                    │   └── utils/                          # Unit tests for utilities
-                    ├── .gitignore
-                    ├── LICENSE
-                    ├── README.md
-                    └── pyproject.toml                      # Dependencies and metadata</code></pre>
+                <pre><code>project_2d/
+├── data/
+│   ├── raw/                            # Original images from NPEC
+│   ├── processed/                      # Cropped and patched images
+│   │   ├── train_images/               # 70% for training
+│   │   ├── val_images/                 # 10% for validation
+│   │   └── test_images/                # 20% for testing
+├── deployment/                         # Deployment framework
+│   └── api/
+│       └── main.py                     # API entry point
+├── docs/                               # Documentation
+│   ├── README.md                       # Project overview
+│   ├── data_pipeline.md                # Data processing docs
+│   ├── model_training.md               # Training process docs
+│   └── user_guide.md                   # Usage instructions
+├── frontend/
+│   └── app.py                          # Streamlit frontend
+├── models/
+│   ├── best_model.h5                   # Best performing model
+│   └── metadata.json                   # Model metadata
+├── notebooks/
+│   ├── petri_dish.ipynb                # Petri dish detection
+│   ├── instance_segmentation.ipynb     # Plant segmentation
+│   └── dataset_prep.ipynb              # Dataset preparation
+├── src/
+│   ├── data/
+│   │   ├── data_ingestion.py           # Reading image data
+│   │   ├── data_preprocessing.py       # Preprocessing pipeline
+│   │   ├── data_validation.py          # Quality checks
+│   │   └── data_splitting.py           # Train/val/test split
+│   ├── features/
+│   │   └── feature_extraction.py       # Feature extraction
+│   ├── models/
+│   │   ├── model.py                    # Model architecture
+│   │   └── inference.py                # Model inference
+│   └── utils/
+│       ├── helpers.py                  # Helper functions
+│       └── logger.py                   # Logging functions
+├── tests/
+│   ├── data/                           # Unit tests for data modules
+│   ├── features/                       # Unit tests for features
+│   ├── models/                         # Unit tests for models
+│   └── utils/                          # Unit tests for utilities
+├── .gitignore
+├── LICENSE
+├── README.md
+└── pyproject.toml                      # Dependencies and metadata</code></pre>
 
                 <p>
                     <strong>Key Components:</strong><br>
@@ -251,6 +256,7 @@
         <p>&copy; 2025 Thijn Bakker. Built with passion and lots of coffee ☕</p>
     </footer>
 
-    <script src="../script.js"></script>
+    <!-- JavaScript -->
+    <script src="../assets/js/main.js"></script>
 </body>
 </html>
