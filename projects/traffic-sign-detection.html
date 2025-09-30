@@ -3,8 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Traffic Sign Detection - Thijn Bakker</title>
-    <meta name="description" content="Traffic Sign Detection project showcasing data science and AI skills">
+    <title>DriveSafe - Traffic Sign Detection - Thijn Bakker</title>
+    <meta name="description" content="DriveSafe AI Traffic Sign Detection project showcasing computer vision and deep learning skills">
     <meta name="author" content="Thijn Bakker">
     
     <!-- Favicon -->
@@ -35,11 +35,14 @@
     <section class="project-hero">
         <div class="project-hero-content">
             <h1 class="hero-text">
-                <span class="icon-mask" style="--icon-url: url('../assets../assets/images/icons/traffic_sign_icon.svg');"></span>
-                Traffic Sign Detection for Autonomous Vehicles
+                <span class="icon-mask" style="--icon-url: url('/assets/images/icons/traffic_sign_icon.svg');"></span>
+                DriveSafe - AI Traffic Sign Detection System
             </h1>
-            <p class="project-date">February 2024 - April 2024</p>
-            <p class="project-client">Academic Project - Breda University</p>
+            <p class="project-date">August 2023 - November 2023</p>
+            <p class="project-client">Client: 
+                <a href="https://www.buas.nl/en/collaboration/innovation-square" target="_blank" style="color: var(--secondary);">Innovation Square - Breda University of Applied Sciences</a>
+            </p>
+            <p class="project-members">Individual Project</p>
         </div>
     </section>
 
@@ -51,7 +54,7 @@
             <div class="project-section">
                 <h2>Project Overview</h2>
                 <p>
-                    Developed an adaptive in-vehicle traffic sign detection system using deep learning for autonomous vehicle response. This project uniquely combined computer vision technology with human-centered design, creating not just a detection system but an intuitive driver interface that bridges the gap between full autonomy and driver assistance.
+                    DriveSafe represents my first major AI project during my first year at BUaS - a comprehensive traffic sign detection system that combines deep learning with thoughtful user experience design. This project tackled the challenge of creating a reliable AI system that can identify traffic signs in real-world conditions while designing an intuitive interface that enhances rather than distracts drivers.
                 </p>
             </div>
 
@@ -59,15 +62,14 @@
             <div class="project-section">
                 <h2>The Challenge</h2>
                 <p>
-                    Creating a traffic sign detection system that works in real-world conditions while keeping the human driver engaged:
+                    The project addressed several interconnected challenges in the automotive AI space:
                 </p>
                 <p>
-                    • Detecting signs in diverse weather and lighting conditions<br>
-                    • Processing in real-time at highway speeds (130 km/h)<br>
-                    • Handling partially occluded or damaged signs<br>
-                    • Designing UI that informs without distracting<br>
-                    • Ensuring system works across different driving cultures<br>
-                    • Implementing bias mitigation for global deployment
+                    • <strong>Technical Challenge:</strong> Developing a deep learning model capable of accurately classifying traffic signs in diverse lighting and weather conditions<br>
+                    • <strong>Business Challenge:</strong> Identifying the market need and stakeholder requirements for traffic sign detection systems<br>
+                    • <strong>UX Challenge:</strong> Designing an interface that provides critical information without causing driver distraction<br>
+                    • <strong>Performance Challenge:</strong> Achieving 90%+ accuracy through iterative model improvement<br>
+                    • <strong>Evaluation Challenge:</strong> Conducting rigorous A/B testing to validate design decisions
                 </p>
             </div>
 
@@ -75,14 +77,14 @@
             <div class="project-section">
                 <h2>My Approach</h2>
                 <p>
-                    I took a holistic approach combining technical excellence with user experience:
+                    This project followed a comprehensive methodology spanning business understanding, technical development, and user experience design:
                 </p>
                 <p>
-                    <strong>1. Deep Learning Model:</strong> Developed custom CNN architecture optimized for edge deployment<br>
-                    <strong>2. Data Augmentation:</strong> Created synthetic training data for rare sign types<br>
-                    <strong>3. Human-Centered Design:</strong> Conducted driver studies to understand interaction needs<br>
-                    <strong>4. UI/UX Development:</strong> Designed adaptive interface in Figma with A/B testing<br>
-                    <strong>5. Market Research:</strong> Analyzed automotive AI adoption trends and regulations
+                    <strong>1. Market Research & Stakeholder Analysis:</strong> Identified car manufacturers as primary stakeholders, analyzed the competitive landscape, and defined the value proposition for traffic safety systems<br>
+                    <strong>2. Deep Learning Development:</strong> Built multiple CNN architectures, from simple custom models to transfer learning with MobileNet<br>
+                    <strong>3. Iterative Model Improvement:</strong> Conducted 4 major iterations, progressively improving from 27.5% to 90.8% accuracy<br>
+                    <strong>4. UI/UX Design:</strong> Created two wireframe prototypes in Figma and conducted extensive user testing<br>
+                    <strong>5. Statistical Validation:</strong> Performed rigorous A/B testing with statistical significance analysis
                 </p>
             </div>
 
@@ -90,68 +92,117 @@
             <div class="project-section">
                 <h2>Technical Implementation</h2>
                 <p>
-                    The system uses a lightweight architecture optimized for embedded systems:
+                    The final solution emerged through systematic iteration and experimentation with multiple architectures:
                 </p>
                 
                 <pre><code>
-# Optimized Traffic Sign Detection Model
-import torch
-import torch.nn as nn
-import torch.nn.functional as F
+# DriveSafe Traffic Sign Detection - Final Model Architecture
+import tensorflow as tf
+from tensorflow.keras.applications import MobileNet
+from tensorflow.keras.layers import Dense, GlobalAveragePooling2D
+from tensorflow.keras.models import Model
 
-class EfficientSignDetector(nn.Module):
-    def __init__(self, num_classes=43):
-        super().__init__()
-        # Lightweight backbone
-        self.features = nn.Sequential(
-            # Depthwise separable convolutions for efficiency
-            self.depthwise_conv(3, 32),
-            self.depthwise_conv(32, 64),
-            nn.MaxPool2d(2),
-            self.depthwise_conv(64, 128),
-            self.depthwise_conv(128, 128),
-            nn.MaxPool2d(2),
-            self.depthwise_conv(128, 256),
-            self.depthwise_conv(256, 256),
-            nn.AdaptiveAvgPool2d(1)
+class DriveSafeClassifier:
+    def __init__(self, num_classes=4):
+        # Best performing model: Transfer Learning with MobileNet
+        self.base_model = MobileNet(
+            include_top=False,
+            weights='imagenet',
+            input_shape=(128, 128, 3)
         )
         
-        # Multi-task head
-        self.classifier = nn.Linear(256, num_classes)
-        self.confidence = nn.Linear(256, 1)
-        self.urgency = nn.Linear(256, 3)  # low, medium, high
+        # Custom classification head
+        x = GlobalAveragePooling2D()(self.base_model.output)
+        x = Dense(128, activation='relu')(x)
+        predictions = Dense(num_classes, activation='softmax')(x)
         
-    def depthwise_conv(self, in_ch, out_ch):
-        return nn.Sequential(
-            nn.Conv2d(in_ch, in_ch, 3, padding=1, groups=in_ch),
-            nn.BatchNorm2d(in_ch),
-            nn.ReLU(),
-            nn.Conv2d(in_ch, out_ch, 1),
-            nn.BatchNorm2d(out_ch),
-            nn.ReLU()
+        self.model = Model(inputs=self.base_model.input, outputs=predictions)
+        
+        # Fine-tuning strategy
+        self.base_model.trainable = False  # Freeze base layers initially
+        
+    def compile_model(self):
+        self.model.compile(
+            optimizer='adam',
+            loss='categorical_crossentropy',
+            metrics=['accuracy']
         )
-    
-    def forward(self, x):
-        features = self.features(x).squeeze()
-        sign_class = self.classifier(features)
-        confidence = torch.sigmoid(self.confidence(features))
-        urgency = self.urgency(features)
         
-        return {
-            'class': sign_class,
-            'confidence': confidence,
-            'urgency': F.softmax(urgency, dim=1),
-            'action_required': self.determine_action(sign_class, urgency)
-        }
+    def progressive_training(self, train_data, val_data):
+        # Phase 1: Train classifier head
+        history1 = self.model.fit(
+            train_data,
+            validation_data=val_data,
+            epochs=10,
+            callbacks=[tf.keras.callbacks.EarlyStopping(patience=3)]
+        )
+        
+        # Phase 2: Fine-tune entire model
+        self.base_model.trainable = True
+        
+        # Lower learning rate for fine-tuning
+        self.model.compile(
+            optimizer=tf.keras.optimizers.Adam(1e-5),
+            loss='categorical_crossentropy',
+            metrics=['accuracy']
+        )
+        
+        history2 = self.model.fit(
+            train_data,
+            validation_data=val_data,
+            epochs=5
+        )
+        
+        return history1, history2
+
+# Model Evolution Results:
+# Iteration 1 (Simple CNN): 27.5% accuracy
+# Iteration 2 (Deeper CNN): 52.0% accuracy  
+# Iteration 3 (MobileNet Transfer Learning): 90.8% accuracy ⭐
+# Iteration 4 (Custom MobileNet): 53.1% accuracy
                 </code></pre>
 
                 <p>
-                    <strong>UI/UX Design Decisions:</strong><br>
-                    • Peripheral vision alerts for non-critical signs<br>
-                    • Audio cues for urgent signs (STOP, speed limits)<br>
-                    • Adaptive brightness based on ambient light<br>
-                    • Progressive disclosure of information based on relevance<br>
-                    • Cultural adaptation for sign interpretation
+                    <strong>Key Technical Discoveries:</strong><br>
+                    • Transfer learning with MobileNet dramatically outperformed custom architectures<br>
+                    • Class imbalance was a significant challenge requiring careful evaluation metrics<br>
+                    • Model achieved 90.8% accuracy with precision scores ranging from 59% to 95%<br>
+                    • MobileNet's efficiency made it ideal for potential mobile deployment
+                </p>
+            </div>
+
+            <!-- UI/UX Development & A/B Testing -->
+            <div class="project-section">
+                <h2>User Experience Design & A/B Testing</h2>
+                <p>
+                    The project included comprehensive UX research and statistical validation through A/B testing:
+                </p>
+                
+                <p>
+                    <strong>Design Process:</strong><br>
+                    • Created two distinct wireframe prototypes (A and B) using Figma<br>
+                    • Wireframe A: Minimal, basic interface with essential functionality<br>
+                    • Wireframe B: Enhanced design with improved navigation and visual appeal<br>
+                    • Conducted user testing sessions with think-aloud protocols<br>
+                    • Gathered quantitative feedback using 7-point Likert scales
+                </p>
+                
+                <p>
+                    <strong>Statistical Analysis Results:</strong><br>
+                    • Conducted Independent Samples T-tests with normality and homogeneity checks<br>
+                    • Wireframe B significantly outperformed Wireframe A (p < 0.05)<br>
+                    • Design quality: B received no scores below 3, A received multiple 1s<br>
+                    • Navigation: B received five 7-point scores, A received zero<br>
+                    • User experience: All participants enjoyed Wireframe B vs only 3 for A<br>
+                    • Understanding: B had zero scores below 5, A showed wide variation
+                </p>
+                
+                <p>
+                    <strong>Key UX Insights:</strong><br>
+                    • Visual design significantly impacts perceived usability<br>
+                    • Navigation clarity is crucial for driver-assistance interfaces<br>
+                    • Statistical validation provided objective evidence for design decisions<br>
+                    • User feedback directly informed the final prototype development
                 </p>
             </div>
 
@@ -159,18 +210,19 @@ class EfficientSignDetector(nn.Module):
             <div class="project-section">
                 <h2>Results & Impact</h2>
                 <p>
-                    The system achieved impressive performance in both technical and usability metrics:
+                    DriveSafe achieved significant milestones across technical, business, and design dimensions:
                 </p>
                 <p>
-                    • <strong>Detection Accuracy:</strong> 97.8% on German Traffic Sign Dataset<br>
-                    • <strong>Real-time Performance:</strong> 30 FPS on NVIDIA Jetson Nano<br>
-                    • <strong>User Satisfaction:</strong> 8.7/10 in driver experience studies<br>
-                    • <strong>Attention Metrics:</strong> 40% reduction in missed signs<br>
-                    • <strong>Response Time:</strong> 2.3 seconds average driver response improvement<br>
-                    • <strong>Cross-cultural Testing:</strong> Successfully tested with drivers from 5 countries
+                    • <strong>Technical Achievement:</strong> 90.8% classification accuracy using MobileNet transfer learning<br>
+                    • <strong>Model Performance:</strong> F1 scores ranging from 27% to 94% across different traffic sign classes<br>
+                    • <strong>Class-Specific Success:</strong> Excellent performance on certain sign types (95% precision for some classes)<br>
+                    • <strong>Design Validation:</strong> Statistically significant UX improvements through A/B testing<br>
+                    • <strong>Academic Excellence:</strong> Comprehensive project covering full AI product development lifecycle<br>
+                    • <strong>Business Understanding:</strong> Detailed stakeholder analysis and market research<br>
+                    • <strong>Documentation:</strong> Complete project presentation and demo video created
                 </p>
                 <p>
-                    The research contributed to understanding how to design AI systems that augment rather than replace human capabilities in safety-critical applications.
+                    This first-year project established my foundation in AI development, demonstrating the ability to combine technical machine learning skills with business acumen and user-centered design principles.
                 </p>
             </div>
 
@@ -178,17 +230,105 @@ class EfficientSignDetector(nn.Module):
             <div class="project-section">
                 <h2>Key Learnings</h2>
                 <p>
-                    <strong>Edge Computing Constraints:</strong> Optimizing for embedded devices required creative approaches like knowledge distillation and quantization, achieving 10x model size reduction with only 2% accuracy loss.
+                    <strong>Transfer Learning Power:</strong> The dramatic performance improvement from 52% to 90.8% when switching to MobileNet demonstrated the value of pre-trained models. Custom architectures couldn't match the feature representations learned on ImageNet.
                 </p>
                 <p>
-                    <strong>Human Factors Engineering:</strong> The best AI system fails if humans can't interact with it effectively. User studies revealed counterintuitive preferences that shaped the final design.
+                    <strong>Class Imbalance Reality:</strong> Real-world datasets present significant challenges. Some traffic sign classes had much lower performance (25% precision), highlighting the need for careful data curation and balanced evaluation metrics.
                 </p>
                 <p>
-                    <strong>Bias in Computer Vision:</strong> Discovered significant performance variations across different geographic regions due to training data bias - implemented targeted augmentation to address this.
+                    <strong>Statistical Rigor in UX:</strong> Conducting proper statistical tests (Shapiro-Wilk, Levene's test, Independent T-tests) provided objective evidence for design decisions. Wireframe B's superiority wasn't just subjective - it was statistically significant.
                 </p>
                 <p>
-                    <strong>Safety vs Features:</strong> Learned to prioritize reliability over features - a 95% reliable simple system beats a 85% reliable complex one in safety applications.
+                    <strong>Holistic Product Development:</strong> This project taught me that successful AI systems require more than just model accuracy. Market research, stakeholder analysis, user experience design, and statistical validation are equally crucial.
                 </p>
+                <p>
+                    <strong>Iterative Improvement:</strong> The journey from 27.5% to 90.8% accuracy demonstrated the importance of systematic experimentation and the compound benefits of incremental improvements.
+                </p>
+            </div>
+            
+            <!-- Business Context -->
+            <div class="project-section">
+                <h2>Business Context & Market Analysis</h2>
+                <p>
+                    The project included comprehensive business analysis identifying the commercial potential:
+                </p>
+                <p>
+                    <strong>Primary Stakeholders:</strong> Car manufacturers emerged as the key stakeholder with the highest power and interest in traffic sign detection technology for ADAS (Advanced Driver Assistance Systems) integration.
+                </p>
+                <p>
+                    <strong>Value Proposition:</strong><br>
+                    • Reduced traffic violations and fines for commercial fleets<br>
+                    • Enhanced safety for delivery companies and professional drivers<br>
+                    • Competitive advantage for automotive manufacturers<br>
+                    • Regulatory compliance support for autonomous vehicle development
+                </p>
+                <p>
+                    <strong>Market Opportunity:</strong> Analysis revealed significant demand from government transportation agencies, insurance companies, and end users, with car manufacturers positioned as the ideal integration partner.
+                </p>
+            </div>
+            
+            <!-- Project Presentation -->
+            <div class="project-section">
+                <h2>Project Presentation</h2>
+                <p>Here's the comprehensive presentation I delivered on the Plant Root Analysis & Robotics project, covering the computer vision pipeline, robotic control systems, and integration challenges:</p>
+                
+                <div class="presentation-slider">
+                    <div class="slide-container">
+                        <div class="slide active">
+                            <img src="../presentations/traffic-sign-detection/Slide1.PNG" alt="DriveSafe Presentation - Slide 1">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide2.PNG" alt="DriveSafe Presentation - Slide 2">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide3.PNG" alt="DriveSafe Presentation - Slide 3">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide4.PNG" alt="DriveSafe Presentation - Slide 4">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide5.PNG" alt="DriveSafe Presentation - Slide 5">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide6.PNG" alt="DriveSafe Presentation - Slide 6">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide7.PNG" alt="DriveSafe Presentation - Slide 7">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide8.PNG" alt="DriveSafe Presentation - Slide 8">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/traffic-sign-detection/Slide9.PNG" alt="DriveSafe Presentation - Slide 9">
+                        </div>
+                    </div>
+                    
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">20</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changeSlide(1)">›</button>
+                    </div>
+                    
+                    <div class="slide-indicators">
+                        <button class="indicator active" onclick="currentSlide(1)"></button>
+                        <button class="indicator" onclick="currentSlide(2)"></button>
+                        <button class="indicator" onclick="currentSlide(3)"></button>
+                        <button class="indicator" onclick="currentSlide(4)"></button>
+                        <button class="indicator" onclick="currentSlide(5)"></button>
+                        <button class="indicator" onclick="currentSlide(6)"></button>
+                        <button class="indicator" onclick="currentSlide(7)"></button>
+                        <button class="indicator" onclick="currentSlide(8)"></button>
+                        <button class="indicator" onclick="currentSlide(9)"></button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="paper-download">
+                <a href="https://edubuas-my.sharepoint.com/:v:/g/personal/231131_buas_nl/Ec4Sen-MLQZBm-mlZuD1hHcBiSY_qRMPiUIYH2f46XKdjA?nav=eyJyZWZlcnJhbEluZm8iOnsicmVmZXJyYWxBcHAiOiJTdHJlYW1XZWJBcHAiLCJyZWZlcnJhbFZpZXciOiJTaGFyZURpYWxvZy1MaW5rIiwicmVmZXJyYWxBcHBQbGF0Zm9ybSI6IldlYiIsInJlZmVycmFsTW9kZSI6InZpZXcifX0%3D&e=4eOoXl" class="btn btn-primary">
+                    ⭐ Watch Demo Now!
+                </a>
             </div>
 
             <!-- Technologies Used -->
@@ -196,29 +336,27 @@ class EfficientSignDetector(nn.Module):
                 <h2>Technologies Used</h2>
                 <div class="tech-grid">
                     <span class="tech-tag">Python</span>
-                    <span class="tech-tag">PyTorch</span>
-                    <span class="tech-tag">TensorFlow Lite</span>
-                    <span class="tech-tag">OpenCV</span>
+                    <span class="tech-tag">TensorFlow</span>
+                    <span class="tech-tag">Keras</span>
+                    <span class="tech-tag">MobileNet</span>
+                    <span class="tech-tag">Transfer Learning</span>
                     <span class="tech-tag">Computer Vision</span>
                     <span class="tech-tag">CNN</span>
+                    <span class="tech-tag">OpenCV</span>
                     <span class="tech-tag">Figma</span>
-                    <span class="tech-tag">Unity (Simulation)</span>
                     <span class="tech-tag">A/B Testing</span>
-                    <span class="tech-tag">Human-Centered AI</span>
-                    <span class="tech-tag">Edge Computing</span>
-                    <span class="tech-tag">Responsible AI</span>
+                    <span class="tech-tag">Statistical Analysis</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">NumPy</span>
+                    <span class="tech-tag">Matplotlib</span>
+                    <span class="tech-tag">scikit-learn</span>
+                    <span class="tech-tag">UX Research</span>
                 </div>
             </div>
 
         </div>
     </section>
 
-    <!-- Back to Projects -->
-    <section class="back-navigation">
-        <a href="../index.html#projects" class="btn btn-secondary">← Back to Projects</a>
-    </section>
-
-    
     <!-- Back to Projects -->
     <section class="back-navigation">
         <a href="../index.html#projects" class="btn btn-secondary">← Back to Projects</a>
