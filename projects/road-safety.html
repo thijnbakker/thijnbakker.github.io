@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI-Driven Road Safety Analysis - Thijn Bakker</title>
+    <title>Risk Awareness Application - Thijn Bakker</title>
     <link rel="icon" type="image/x-icon" href="../images/icons/car_icon.png">
     <style>
         @import url('../styles.css');
@@ -28,9 +28,10 @@
     <!-- Project Hero -->
     <section class="project-hero">
         <div class="project-hero-content">
-            <h1>🚗 AI-Driven Road Safety Analysis</h1>
+            <h1>🚗 Risk Awareness - Predictive Road Safety Application</h1>
             <p class="project-date">May 2024 - June 2024</p>
             <p class="project-client">Client: ANWB Safe Driving</p>
+            <p class="project-members">Team Members: Panayiotis Evangelou, Kamil Słęga, Edyta Wlaszczyk</p>
         </div>
     </section>
 
@@ -42,7 +43,7 @@
             <div class="project-section">
                 <h2>Project Overview</h2>
                 <p>
-                    Collaborated with ANWB Safe Driving to develop machine learning models that analyze telematics data for road safety improvements in Breda. The project focused on identifying risky driving patterns, predicting accident hotspots, and providing actionable recommendations for safer mobility infrastructure and driver behavior modification.
+                    Developed the "Risk Awareness" application for ANWB Safe Driving to help drivers identify high-risk areas before entering them. The application uses GPS tracking and machine learning to provide real-time risk scores based on historical incident data, driving behavior patterns, and environmental conditions. When users enter a high-risk zone, their smartphone or smartwatch vibrates with a unique pattern to alert them, promoting safer driving awareness.
                 </p>
             </div>
 
@@ -50,30 +51,29 @@
             <div class="project-section">
                 <h2>The Challenge</h2>
                 <p>
-                    ANWB needed to leverage their vast telematics data to improve road safety:
+                    Modern drivers often lack real-time awareness of high-risk areas, leading to potentially hazardous situations. The project aimed to address several key challenges:
                 </p>
                 <p>
-                    • Processing millions of GPS and sensor readings from vehicles<br>
-                    • Identifying subtle patterns indicating risky driving behavior<br>
-                    • Distinguishing between driver behavior and road design issues<br>
-                    • Ensuring GDPR and AI Act compliance in data processing<br>
-                    • Creating actionable insights for both drivers and city planners<br>
-                    • Building a scalable MLOps pipeline for continuous monitoring
+                    • <strong>Risk Prediction Accuracy:</strong> Building reliable ML models to predict accident probability from telematics data<br>
+                    • <strong>Data Integration:</strong> Combining ANWB incident data with KNMI weather data for comprehensive risk assessment<br>
+                    • <strong>Real-time Processing:</strong> Creating a system capable of processing GPS coordinates and providing instant risk scores<br>
+                    • <strong>Legal Compliance:</strong> Ensuring GDPR and EU AI Act compliance for a high-risk AI system<br>
+                    • <strong>User Experience:</strong> Designing intuitive alerts that inform without distracting drivers<br>
+                    • <strong>Mobile Deployment:</strong> Creating a production-ready mobile application using FlutterFlow
                 </p>
             </div>
 
-            <!-- My Approach -->
+            <!-- My Contribution -->
             <div class="project-section">
-                <h2>My Approach</h2>
+                <h2>My Contribution</h2>
                 <p>
-                    I developed a comprehensive time series analysis system with responsible AI at its core:
+                    As part of the 4-person team, I focused on advanced data preprocessing, model evaluation, and testing infrastructure:
                 </p>
                 <p>
-                    <strong>1. Data Pipeline:</strong> Built ETL processes for telematics data with privacy-preserving transformations<br>
-                    <strong>2. Feature Engineering:</strong> Created 50+ behavioral features from raw sensor data<br>
-                    <strong>3. Model Development:</strong> Implemented ensemble of RNNs and gradient boosting for pattern detection<br>
-                    <strong>4. Responsible AI:</strong> Ensured fairness across demographics and transparent decision-making<br>
-                    <strong>5. MLOps Infrastructure:</strong> Deployed automated retraining and monitoring systems
+                    <strong>1. Advanced Data Preprocessing:</strong> Created SQL scripts for joining ANWB and KNMI datasets, implemented time-based feature extraction functions<br>
+                    <strong>2. Model Development & Evaluation:</strong> Built and optimized KNN regression models, selected appropriate evaluation metrics, and conducted comparative analysis against team models<br>
+                    <strong>3. Testing Infrastructure:</strong> Developed comprehensive unit test cases achieving 30% code coverage as required by project specifications<br>
+                    <strong>4. Database Integration:</strong> Designed PostgreSQL data warehouse schema and implemented efficient data pipeline processing
                 </p>
             </div>
 
@@ -81,61 +81,61 @@
             <div class="project-section">
                 <h2>Technical Implementation</h2>
                 <p>
-                    The system processes streaming telematics data in real-time:
+                    The system processes historical incident data to predict accident probability in specific geographic areas:
                 </p>
                 
                 <pre><code>
-# Time Series Analysis Pipeline
-import torch
-import torch.nn as nn
-from sklearn.ensemble import GradientBoostingClassifier
-
-class DrivingBehaviorAnalyzer:
-    def __init__(self):
-        self.rnn_model = self.build_rnn()
-        self.gbm = GradientBoostingClassifier(n_estimators=100)
-        self.anomaly_threshold = None
-        
-    def build_rnn(self):
-        return nn.Sequential(
-            nn.LSTM(input_size=15, hidden_size=128, num_layers=2, 
-                   batch_first=True, dropout=0.2),
-            nn.Linear(128, 64),
-            nn.ReLU(),
-            nn.Linear(64, 5)  # 5 risk categories
-        )
-    
-    def extract_features(self, telematics_data):
-        features = {
-            'harsh_braking': self.detect_harsh_events(
-                telematics_data['acceleration'], threshold=-4.5),
-            'rapid_acceleration': self.detect_harsh_events(
-                telematics_data['acceleration'], threshold=3.5),
-            'cornering_speed': self.analyze_cornering(
-                telematics_data['gyro'], telematics_data['speed']),
-            'time_of_day_risk': self.temporal_risk_score(
-                telematics_data['timestamp']),
-            'location_risk': self.spatial_risk_score(
-                telematics_data['gps'])
-        }
-        return features
-    
-    def predict_risk(self, features):
-        # Ensemble prediction
-        rnn_pred = self.rnn_model(features['sequences'])
-        gbm_pred = self.gbm.predict_proba(features['aggregated'])
-        
-        # Weighted ensemble
-        final_risk = 0.6 * rnn_pred + 0.4 * gbm_pred
-        return final_risk, self.generate_explanation(features, final_risk)
-                </code></pre>
+                    # Time Series Analysis Pipeline
+                    import torch
+                    import torch.nn as nn
+                    from sklearn.ensemble import GradientBoostingClassifier
+                    
+                    class DrivingBehaviorAnalyzer:
+                        def __init__(self):
+                            self.rnn_model = self.build_rnn()
+                            self.gbm = GradientBoostingClassifier(n_estimators=100)
+                            self.anomaly_threshold = None
+                            
+                        def build_rnn(self):
+                            return nn.Sequential(
+                                nn.LSTM(input_size=15, hidden_size=128, num_layers=2, 
+                                       batch_first=True, dropout=0.2),
+                                nn.Linear(128, 64),
+                                nn.ReLU(),
+                                nn.Linear(64, 5)  # 5 risk categories
+                            )
+                        
+                        def extract_features(self, telematics_data):
+                            features = {
+                                'harsh_braking': self.detect_harsh_events(
+                                    telematics_data['acceleration'], threshold=-4.5),
+                                'rapid_acceleration': self.detect_harsh_events(
+                                    telematics_data['acceleration'], threshold=3.5),
+                                'cornering_speed': self.analyze_cornering(
+                                    telematics_data['gyro'], telematics_data['speed']),
+                                'time_of_day_risk': self.temporal_risk_score(
+                                    telematics_data['timestamp']),
+                                'location_risk': self.spatial_risk_score(
+                                    telematics_data['gps'])
+                            }
+                            return features
+                        
+                        def predict_risk(self, features):
+                            # Ensemble prediction
+                            rnn_pred = self.rnn_model(features['sequences'])
+                            gbm_pred = self.gbm.predict_proba(features['aggregated'])
+                            
+                            # Weighted average
+                            final_risk = 0.6 * rnn_pred + 0.4 * gbm_pred
+                            return final_risk, self.generate_explanation(features, final_risk)
+                                    </code></pre>
 
                 <p>
-                    <strong>AI Act Compliance Measures:</strong><br>
-                    • Implemented audit trails for all predictions<br>
-                    • Created bias detection monitors for age/gender fairness<br>
-                    • Developed human-in-the-loop validation for high-risk predictions<br>
-                    • Ensured right to explanation for all driver scores
+                    <strong>Model Performance Comparison:</strong><br>
+                    • <strong>Gradient Boosting (Final Choice):</strong> MSE: 0.00256, RMSE: 0.0506, R²: 0.902, <1% overfitting<br>
+                    • <strong>Decision Trees:</strong> MSE: 0.00700, RMSE: 0.0837, R²: 0.733, >10% overfitting<br>
+                    • <strong>KNN Regression:</strong> Competitive performance with optimized hyperparameters using GridSearchCV<br>
+                    • <strong>Linear Regression:</strong> Baseline model for comparison (implemented by team member)
                 </p>
             </div>
 
@@ -143,18 +143,49 @@ class DrivingBehaviorAnalyzer:
             <div class="project-section">
                 <h2>Results & Impact</h2>
                 <p>
-                    The system delivered measurable improvements in road safety:
+                    The Risk Awareness application successfully demonstrated the feasibility of predictive road safety systems:
                 </p>
                 <p>
-                    • <strong>Prediction Accuracy:</strong> 84% accuracy in identifying high-risk drivers<br>
-                    • <strong>Accident Reduction:</strong> 18% decrease in incidents among monitored drivers<br>
-                    • <strong>Infrastructure Insights:</strong> Identified 23 dangerous intersections in Breda<br>
-                    • <strong>Processing Scale:</strong> Analyzing 10 million events daily<br>
-                    • <strong>Compliance:</strong> Full GDPR and AI Act compliance certification<br>
-                    • <strong>Driver Engagement:</strong> 65% of drivers improved scores after feedback
+                    • <strong>Model Accuracy:</strong> Gradient Boosting achieved 90.2% R² score with minimal overfitting<br>
+                    • <strong>Real-time Processing:</strong> Successfully processed GPS coordinates to provide instant risk assessments<br>
+                    • <strong>Mobile Application:</strong> Deployed functional iOS and Android apps using FlutterFlow<br>
+                    • <strong>Legal Compliance:</strong> Full GDPR and EU AI Act compliance documentation completed<br>
+                    • <strong>User Interface:</strong> Intuitive map-based visualization with customizable risk zone radius settings<br>
+                    • <strong>Alert System:</strong> Implemented vibration patterns for different risk levels<br>
+                    • <strong>Street-by-Street Analysis:</strong> Users can browse risk scores by specific street names
                 </p>
                 <p>
-                    The insights led to infrastructure improvements at 5 intersections and a new driver coaching program reaching 10,000+ participants.
+                    The project demonstrated how machine learning can enhance driver awareness while maintaining user privacy and regulatory compliance. The modular architecture allows for future enhancements including additional filtering features and customizable dashboard layouts.
+                </p>
+            </div>
+
+            <!-- Data Processing Pipeline -->
+            <div class="project-section">
+                <h2>Data Processing Pipeline</h2>
+                <p>
+                    The preprocessing pipeline handled complex integration of multiple data sources:
+                </p>
+                <p>
+                    <strong>1. Data Sources Integration:</strong><br>
+                    • ANWB Safe Driving table: 500K+ incident records with GPS coordinates, speeds, and severity ratings<br>
+                    • KNMI Precipitation table: Weather data for correlation with incident patterns<br>
+                    • Accident data (2017-2023): Historical accident records for probability calculation
+                </p>
+                <p>
+                    <strong>2. Advanced Preprocessing Steps:</strong><br>
+                    • Missing value imputation using moving average strategy<br>
+                    • Duplicate removal while preserving data integrity<br>
+                    • Outlier detection using both IQR and StandardScaler methods<br>
+                    • Categorical encoding for road conditions, surfaces, and light conditions<br>
+                    • Min-max normalization for consistent model input scaling
+                </p>
+                <p>
+                    <strong>3. Feature Engineering:</strong><br>
+                    • Temporal features: day, week, month, year, hour, dayofweek<br>
+                    • Geospatial clustering using coordinates<br>
+                    • Weather correlation features<br>
+                    • Speed differential calculations (start vs end speed)<br>
+                    • Duration-based risk indicators
                 </p>
             </div>
 
@@ -162,17 +193,212 @@ class DrivingBehaviorAnalyzer:
             <div class="project-section">
                 <h2>Key Learnings</h2>
                 <p>
-                    <strong>Privacy-Utility Balance:</strong> Finding the right balance between data utility and privacy protection was crucial. Differential privacy techniques helped maintain individual privacy while extracting population insights.
+                    <strong>Model Selection Importance:</strong> The comprehensive comparison revealed that Gradient Boosting significantly outperformed Decision Trees due to better generalization. Decision Trees showed >10% overfitting while Gradient Boosting maintained <1% overfitting, making it the clear choice for production deployment.
                 </p>
                 <p>
-                    <strong>Behavioral Change Complexity:</strong> Technical solutions alone don't change behavior - combining ML insights with psychological principles improved driver engagement.
+                    <strong>Data Quality Impact:</strong> Extensive preprocessing was crucial - removing duplicates, handling missing values, and outlier detection improved model performance by approximately 15%. The integration of weather data provided additional predictive power for risk assessment.
                 </p>
                 <p>
-                    <strong>Real-time Constraints:</strong> Processing streaming data required careful optimization. Moving from batch to stream processing improved response time by 100x.
+                    <strong>Legal Complexity in AI Systems:</strong> Building a high-risk AI system required extensive compliance work. GDPR Article 7 (user consent), Article 15 & 21 (data access/control), Article 17 (data deletion), and Article 22 (explanation rights) all needed implementation. EU AI Act Annex III, IV, and XII requirements added significant development overhead.
                 </p>
                 <p>
-                    <strong>Regulatory Navigation:</strong> Early engagement with legal teams on AI Act compliance saved months of potential rework.
+                    <strong>Real-world Deployment Challenges:</strong> Moving from prototype to mobile application revealed the complexity of real-time GPS processing, battery optimization, and user experience design. FlutterFlow provided rapid development capabilities but required careful optimization for production use.
                 </p>
+                <p>
+                    <strong>Team Collaboration in Data Science:</strong> Working with 4 team members on a complex ML project required clear role definition and strong communication. Version control, code documentation, and standardized evaluation metrics were essential for successful collaboration.
+                </p>
+            </div>
+
+            <!-- Project Proposal Presentation -->
+            <div class="project-section">
+                <h2>Project Proposal Presentation</h2>
+                <p>Here's our initial project proposal presentation outlining the Risk Awareness application concept, stakeholder analysis, and technical approach:</p>
+                
+                <div class="presentation-slider">
+                    <div class="slide-container">
+                        <div class="slide active">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide1.PNG" alt="Risk Awareness Proposal - Slide 1">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide2.PNG" alt="Risk Awareness Proposal - Slide 2">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide3.PNG" alt="Risk Awareness Proposal - Slide 3">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide4.PNG" alt="Risk Awareness Proposal - Slide 4">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide5.PNG" alt="Risk Awareness Proposal - Slide 5">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide6.PNG" alt="Risk Awareness Proposal - Slide 6">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide7.PNG" alt="Risk Awareness Proposal - Slide 7">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide8.PNG" alt="Risk Awareness Proposal - Slide 8">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide9.PNG" alt="Risk Awareness Proposal - Slide 9">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide10.PNG" alt="Risk Awareness Proposal - Slide 10">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide11.PNG" alt="Risk Awareness Proposal - Slide 11">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide12.PNG" alt="Risk Awareness Proposal - Slide 12">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide13.PNG" alt="Risk Awareness Proposal - Slide 13">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide14.PNG" alt="Risk Awareness Proposal - Slide 14">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide15.PNG" alt="Risk Awareness Proposal - Slide 15">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide16.PNG" alt="Risk Awareness Proposal - Slide 16">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide17.PNG" alt="Risk Awareness Proposal - Slide 17">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide18.PNG" alt="Risk Awareness Proposal - Slide 18">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide19.PNG" alt="Risk Awareness Proposal - Slide 19">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide20.PNG" alt="Risk Awareness Proposal - Slide 20">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide21.PNG" alt="Risk Awareness Proposal - Slide 21">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/proposal_presentation/Slide22.PNG" alt="Risk Awareness Proposal - Slide 22">
+                        </div>
+                    </div>
+                    
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">22</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changeSlide(1)">›</button>
+                    </div>
+                    
+                    <div class="slide-indicators">
+                        <button class="indicator active" onclick="currentSlide(1)"></button>
+                        <button class="indicator" onclick="currentSlide(2)"></button>
+                        <button class="indicator" onclick="currentSlide(3)"></button>
+                        <button class="indicator" onclick="currentSlide(4)"></button>
+                        <button class="indicator" onclick="currentSlide(5)"></button>
+                        <button class="indicator" onclick="currentSlide(6)"></button>
+                        <button class="indicator" onclick="currentSlide(7)"></button>
+                        <button class="indicator" onclick="currentSlide(8)"></button>
+                        <button class="indicator" onclick="currentSlide(9)"></button>
+                        <button class="indicator" onclick="currentSlide(10)"></button>
+                        <button class="indicator" onclick="currentSlide(11)"></button>
+                        <button class="indicator" onclick="currentSlide(12)"></button>
+                        <button class="indicator" onclick="currentSlide(13)"></button>
+                        <button class="indicator" onclick="currentSlide(14)"></button>
+                        <button class="indicator" onclick="currentSlide(15)"></button>
+                        <button class="indicator" onclick="currentSlide(16)"></button>
+                        <button class="indicator" onclick="currentSlide(17)"></button>
+                        <button class="indicator" onclick="currentSlide(18)"></button>
+                        <button class="indicator" onclick="currentSlide(19)"></button>
+                        <button class="indicator" onclick="currentSlide(20)"></button>
+                        <button class="indicator" onclick="currentSlide(21)"></button>
+                        <button class="indicator" onclick="currentSlide(22)"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Final Project Presentation -->
+            <div class="project-section">
+                <h2>Final Project Presentation</h2>
+                <p>Here's our comprehensive final presentation covering the complete implementation, model evaluation, and deployment of the Risk Awareness application:</p>
+                
+                <div class="presentation-slider" id="final-presentation">
+                    <div class="slide-container">
+                        <div class="slide active">
+                            <img src="../presentations/road-safety/final_presentation/Slide1.PNG" alt="Risk Awareness Final - Slide 1">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide2.PNG" alt="Risk Awareness Final - Slide 2">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide3.PNG" alt="Risk Awareness Final - Slide 3">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide4.PNG" alt="Risk Awareness Final - Slide 4">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide5.PNG" alt="Risk Awareness Final - Slide 5">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide6.PNG" alt="Risk Awareness Final - Slide 6">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide7.PNG" alt="Risk Awareness Final - Slide 7">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide8.PNG" alt="Risk Awareness Final - Slide 8">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide9.PNG" alt="Risk Awareness Final - Slide 9">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide10.PNG" alt="Risk Awareness Final - Slide 10">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide11.PNG" alt="Risk Awareness Final - Slide 11">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide12.PNG" alt="Risk Awareness Final - Slide 12">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide13.PNG" alt="Risk Awareness Final - Slide 13">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide14.PNG" alt="Risk Awareness Final - Slide 14">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/road-safety/final_presentation/Slide15.PNG" alt="Risk Awareness Final - Slide 15">
+                        </div>
+                    </div>
+                    
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn" onclick="changeFinalSlide(-1)">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide-final">1</span> / <span class="total-slides-final">15</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changeFinalSlide(1)">›</button>
+                    </div>
+                    
+                    <div class="slide-indicators">
+                        <button class="indicator active" onclick="currentFinalSlide(1)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(2)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(3)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(4)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(5)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(6)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(7)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(8)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(9)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(10)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(11)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(12)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(13)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(14)"></button>
+                        <button class="indicator" onclick="currentFinalSlide(15)"></button>
+                    </div>
+                </div>
             </div>
 
             <!-- Technologies Used -->
@@ -180,18 +406,21 @@ class DrivingBehaviorAnalyzer:
                 <h2>Technologies Used</h2>
                 <div class="tech-grid">
                     <span class="tech-tag">Python</span>
-                    <span class="tech-tag">Apache Kafka</span>
-                    <span class="tech-tag">Apache Spark</span>
-                    <span class="tech-tag">TensorFlow</span>
-                    <span class="tech-tag">PyTorch</span>
-                    <span class="tech-tag">Time Series Analysis</span>
-                    <span class="tech-tag">RNN/LSTM</span>
-                    <span class="tech-tag">MLflow</span>
-                    <span class="tech-tag">Docker</span>
-                    <span class="tech-tag">Kubernetes</span>
-                    <span class="tech-tag">Grafana</span>
-                    <span class="tech-tag">Responsible AI</span>
-                    <span class="tech-tag">Kanban</span>
+                    <span class="tech-tag">PostgreSQL</span>
+                    <span class="tech-tag">scikit-learn</span>
+                    <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">NumPy</span>
+                    <span class="tech-tag">KNN Regression</span>
+                    <span class="tech-tag">Gradient Boosting</span>
+                    <span class="tech-tag">Decision Trees</span>
+                    <span class="tech-tag">GridSearchCV</span>
+                    <span class="tech-tag">FlutterFlow</span>
+                    <span class="tech-tag">Firebase</span>
+                    <span class="tech-tag">GPS Integration</span>
+                    <span class="tech-tag">GDPR Compliance</span>
+                    <span class="tech-tag">EU AI Act</span>
+                    <span class="tech-tag">Unit Testing</span>
+                    <span class="tech-tag">Data Warehousing</span>
                 </div>
             </div>
 

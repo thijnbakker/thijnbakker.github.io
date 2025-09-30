@@ -109,6 +109,9 @@ document.addEventListener('DOMContentLoaded', function() {
             });
         }
     });
+
+    // Initialize presentation sliders
+    initializePresentationSliders();
 });
 
 // Remove transition class on page load/show
@@ -138,7 +141,6 @@ function changePaperPage(direction) {
     }
 }
 
-
 function currentPaperPage(pageIndex) {
     // Hide all pages
     const pages = document.querySelectorAll('.paper-page');
@@ -158,22 +160,53 @@ function currentPaperPage(pageIndex) {
     }
 }
 
-// Initialize paper viewer
-document.addEventListener('DOMContentLoaded', function() {
-    document.querySelector('.paper-navigation .total-pages').textContent = totalPaperPages;
-});
-
 // Also handle regular load event
 window.addEventListener('load', function() {
     document.body.classList.remove('transitioning');
 });
 
-// Presentation slider functionality
+// Presentation slider functionality - FIXED VERSION
 let currentSlideIndex = 1;
+let currentFinalSlideIndex = 1;
+
+function initializePresentationSliders() {
+    // Initialize first presentation slider (proposal)
+    const proposalSlider = document.querySelector('.presentation-slider:not(#final-presentation)');
+    if (proposalSlider) {
+        const totalSlides = proposalSlider.querySelectorAll('.slide').length;
+        const totalSlidesElement = proposalSlider.querySelector('.total-slides');
+        if (totalSlidesElement) {
+            totalSlidesElement.textContent = totalSlides;
+        }
+        showSlide(1);
+    }
+    
+    // Initialize second presentation slider (final)
+    const finalSlider = document.querySelector('#final-presentation');
+    if (finalSlider) {
+        const totalSlides = finalSlider.querySelectorAll('.slide').length;
+        const totalSlidesElement = finalSlider.querySelector('.total-slides-final');
+        if (totalSlidesElement) {
+            totalSlidesElement.textContent = totalSlides;
+        }
+        showFinalSlide(1);
+    }
+    
+    // Initialize single presentation slider (for other pages)
+    if (document.querySelector('.presentation-slider') && !proposalSlider && !finalSlider) {
+        showSlide(1);
+    }
+    
+    // Initialize paper viewer
+    const paperViewer = document.querySelector('.paper-navigation .total-pages');
+    if (paperViewer) {
+        paperViewer.textContent = totalPaperPages;
+    }
+}
 
 function showSlide(n) {
-    const slides = document.querySelectorAll('.slide');
-    const indicators = document.querySelectorAll('.indicator');
+    const slides = document.querySelectorAll('.presentation-slider:not(#final-presentation) .slide');
+    const indicators = document.querySelectorAll('.presentation-slider:not(#final-presentation) .indicator');
     const totalSlides = slides.length;
     
     if (n > totalSlides) currentSlideIndex = 1;
@@ -192,14 +225,14 @@ function showSlide(n) {
     }
     
     // Update counter
-    const currentSlideSpan = document.querySelector('.current-slide');
-    const totalSlidesSpan = document.querySelector('.total-slides');
+    const currentSlideSpan = document.querySelector('.presentation-slider:not(#final-presentation) .current-slide');
+    const totalSlidesSpan = document.querySelector('.presentation-slider:not(#final-presentation) .total-slides');
     if (currentSlideSpan) currentSlideSpan.textContent = currentSlideIndex;
     if (totalSlidesSpan) totalSlidesSpan.textContent = totalSlides;
     
     // Update navigation buttons
-    const prevBtn = document.querySelector('.prev-btn');
-    const nextBtn = document.querySelector('.next-btn');
+    const prevBtn = document.querySelector('.presentation-slider:not(#final-presentation) .prev-btn');
+    const nextBtn = document.querySelector('.presentation-slider:not(#final-presentation) .next-btn');
     if (prevBtn) prevBtn.disabled = currentSlideIndex === 1;
     if (nextBtn) nextBtn.disabled = currentSlideIndex === totalSlides;
 }
@@ -212,25 +245,81 @@ function currentSlide(n) {
     showSlide(currentSlideIndex = n);
 }
 
+// Final presentation slider functionality
+function showFinalSlide(n) {
+    const finalSlider = document.querySelector('#final-presentation');
+    if (!finalSlider) return;
+    
+    const slides = finalSlider.querySelectorAll('.slide');
+    const indicators = finalSlider.querySelectorAll('.indicator');
+    const totalSlides = slides.length;
+    
+    if (n > totalSlides) currentFinalSlideIndex = 1;
+    if (n < 1) currentFinalSlideIndex = totalSlides;
+    
+    slides.forEach(slide => slide.classList.remove('active'));
+    indicators.forEach(indicator => indicator.classList.remove('active'));
+    
+    if (slides[currentFinalSlideIndex - 1]) {
+        slides[currentFinalSlideIndex - 1].classList.add('active');
+    }
+    if (indicators[currentFinalSlideIndex - 1]) {
+        indicators[currentFinalSlideIndex - 1].classList.add('active');
+    }
+    
+    // Update counter for final presentation
+    const currentSlideElement = finalSlider.querySelector('.current-slide-final');
+    const totalSlidesElement = finalSlider.querySelector('.total-slides-final');
+    if (currentSlideElement) {
+        currentSlideElement.textContent = currentFinalSlideIndex;
+    }
+    if (totalSlidesElement) {
+        totalSlidesElement.textContent = totalSlides;
+    }
+    
+    // Update navigation buttons for final presentation
+    const prevBtn = finalSlider.querySelector('.prev-btn');
+    const nextBtn = finalSlider.querySelector('.next-btn');
+    if (prevBtn) prevBtn.disabled = currentFinalSlideIndex === 1;
+    if (nextBtn) nextBtn.disabled = currentFinalSlideIndex === totalSlides;
+}
+
+function changeFinalSlide(n) {
+    currentFinalSlideIndex += n;
+    showFinalSlide(currentFinalSlideIndex);
+}
+
+function currentFinalSlide(n) {
+    currentFinalSlideIndex = n;
+    showFinalSlide(currentFinalSlideIndex);
+}
+
 // Keyboard navigation
 document.addEventListener('keydown', function(e) {
     if (e.key === 'ArrowLeft') {
-        changeSlide(-1);
+        // Check which slider is visible and navigate accordingly
+        const finalSlider = document.querySelector('#final-presentation');
+        const proposalSlider = document.querySelector('.presentation-slider:not(#final-presentation)');
+        
+        if (finalSlider && finalSlider.getBoundingClientRect().top < window.innerHeight) {
+            changeFinalSlide(-1);
+        } else if (proposalSlider && proposalSlider.getBoundingClientRect().top < window.innerHeight) {
+            changeSlide(-1);
+        }
     } else if (e.key === 'ArrowRight') {
-        changeSlide(1);
-    }
-});
-
-// Initialize when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    if (document.querySelector('.presentation-slider')) {
-        showSlide(1);
+        // Check which slider is visible and navigate accordingly
+        const finalSlider = document.querySelector('#final-presentation');
+        const proposalSlider = document.querySelector('.presentation-slider:not(#final-presentation)');
+        
+        if (finalSlider && finalSlider.getBoundingClientRect().top < window.innerHeight) {
+            changeFinalSlide(1);
+        } else if (proposalSlider && proposalSlider.getBoundingClientRect().top < window.innerHeight) {
+            changeSlide(1);
+        }
     }
 });
 
 // Policy paper viewer functionality
-// Add this code to your existing script.js file
-
 let currentPolicyPageIndex = 1;
 const totalPolicyPages = 6;
 
@@ -265,12 +354,3 @@ function currentPolicyPage(pageIndex) {
         }
     }
 }
-
-// Initialize policy viewer when page loads
-document.addEventListener('DOMContentLoaded', function() {
-    // Initialize policy paper viewer if it exists
-    const totalPolicyPagesElement = document.querySelector('.policy-navigation .total-policy-pages');
-    if (totalPolicyPagesElement) {
-        totalPolicyPagesElement.textContent = totalPolicyPages;
-    }
-});
