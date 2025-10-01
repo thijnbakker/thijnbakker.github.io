@@ -40,6 +40,7 @@
             </h1>
             <p class="project-date">Data Science Challenge - 2025</p>
             <p class="project-client">Academic Challenge - Breda University of Applied Sciences</p>
+            <p class="project-members">Individual Project</p>
         </div>
     </section>
 
@@ -51,7 +52,7 @@
             <div class="project-section">
                 <h2>Project Overview</h2>
                 <p>
-                    This data science competition challenged us to tackle two fundamental problems in football analytics: determining player value and predicting match outcomes. Working with 8 years of English Premier League data (2008-2015), I developed novel metrics for player valuation and built predictive models for the 2015-2016 season results.
+                    This comprehensive data science challenge involved analyzing English Premier League data (2008-2015) to solve two distinct problems: identifying the most and least valuable players for the 2014-2015 season, and predicting match outcomes for the 2015-2016 season. The project combined football domain knowledge with advanced machine learning techniques to extract meaningful insights from complex sports data.
                 </p>
             </div>
 
@@ -59,20 +60,22 @@
             <div class="project-section">
                 <h2>The Challenge</h2>
                 <p>
-                    The competition presented two distinct but related challenges:
+                    The assignment presented two interconnected challenges requiring different analytical approaches:
                 </p>
                 <p>
-                    <strong>Part 1 - Player Valuation:</strong><br>
-                    • Define and calculate "value" for football players<br>
-                    • Identify the 10 most and least valuable players for 2014-2015<br>
-                    • Consider goals, shots, and various performance attributes<br>
-                    • Create a metric that captures true player contribution<br><br>
+                    <strong>Part 1 - Player Valuation (2014-2015 Season):</strong><br>
+                    • Design a comprehensive metric to define "valuable" players<br>
+                    • Analyze 2661 historical matches with detailed player statistics<br>
+                    • Convert X,Y coordinate data to meaningful field positions<br>
+                    • Balance offensive and defensive contributions by position<br>
+                    • Identify the 10 most and 10 least valuable players<br><br>
                     
-                    <strong>Part 2 - Match Prediction:</strong><br>
-                    • Predict win/draw/loss outcomes for 2015-2016 season<br>
-                    • Work with formation data (X,Y coordinates)<br>
-                    • Incorporate match events (cards, substitutions)<br>
-                    • Handle imbalanced classes (draws are less common)
+                    <strong>Part 2 - Match Prediction (2015-2016 Season):</strong><br>
+                    • Predict Win/Draw/Loss outcomes for upcoming season<br>
+                    • Integrate multiple datasets: matches, teams, players, goals<br>
+                    • Handle complex formation data with player coordinates<br>
+                    • Engineer features from team attributes and player skills<br>
+                    • Deal with class imbalance in match outcomes
                 </p>
             </div>
 
@@ -80,20 +83,22 @@
             <div class="project-section">
                 <h2>My Approach</h2>
                 <p>
-                    I developed a two-pronged strategy addressing both challenges:
+                    I developed a systematic methodology combining football analytics expertise with machine learning:
                 </p>
                 <p>
-                    <strong>Player Valuation Framework:</strong><br>
-                    • Created composite score combining offensive and defensive contributions<br>
-                    • Weighted goals, assists, shots on target, and defensive actions<br>
-                    • Normalized by minutes played to account for substitutes<br>
-                    • Incorporated team performance impact when player was on field<br><br>
+                    <strong>Player Valuation Strategy:</strong><br>
+                    • Converted player coordinates to 7 position categories (GK, DEF, DM, MID, AM, FW, ST)<br>
+                    • Created position-specific rating systems with weighted coefficients<br>
+                    • Drew inspiration from Football Manager attribute weights and professional scouting<br>
+                    • Calculated mean performance ratings across all matches per player<br>
+                    • Validated approach using football knowledge and analyst community insights<br><br>
                     
-                    <strong>Match Prediction Model:</strong><br>
-                    • Engineered features from formation coordinates (team shape, compactness)<br>
-                    • Created rolling averages for team form (last 5 games)<br>
-                    • Built ensemble of Random Forest, XGBoost, and Logistic Regression<br>
-                    • Used stratified cross-validation to handle class imbalance
+                    <strong>Match Prediction Pipeline:</strong><br>
+                    • Merged 5 datasets: matches, teams, players, goals, and potential shots<br>
+                    • Engineered team-level features by aggregating player statistics<br>
+                    • Used RandomForestClassifier with RandomizedSearchCV optimization<br>
+                    • Implemented custom threshold tuning for draw predictions<br>
+                    • Applied 7 different modeling approaches across multiple versions
                 </p>
             </div>
 
@@ -101,137 +106,207 @@
             <div class="project-section">
                 <h2>Technical Implementation</h2>
                 <p>
-                    The solution required sophisticated feature engineering and ensemble modeling:
+                    The solution required sophisticated coordinate-to-position mapping and position-aware player evaluation:
                 </p>
                 
                 <pre><code>
-# Player Valuation Metric
-import pandas as pd
-import numpy as np
-from sklearn.preprocessing import StandardScaler
-
-class PlayerValuationSystem:
-    def __init__(self):
-        self.weights = {
-            'goals': 1.0,
-            'assists': 0.8,
-            'shots_on_target': 0.3,
-            'key_passes': 0.4,
-            'tackles_won': 0.3,
-            'interceptions': 0.2,
-            'clearances': 0.15
-        }
-        
-    def calculate_player_value(self, player_data, match_data):
-        # Offensive contribution
-        offensive_score = (
-            player_data['goals'] * self.weights['goals'] +
-            player_data['assists'] * self.weights['assists'] +
-            player_data['shots_on_target'] * self.weights['shots_on_target'] +
-            player_data['key_passes'] * self.weights['key_passes']
-        )
-        
-        # Defensive contribution
-        defensive_score = (
-            player_data['tackles_won'] * self.weights['tackles_won'] +
-            player_data['interceptions'] * self.weights['interceptions'] +
-            player_data['clearances'] * self.weights['clearances']
-        )
-        
-        # Position-based weighting
-        if player_data['position'] in ['FW', 'AM']:
-            total_score = offensive_score * 0.8 + defensive_score * 0.2
-        elif player_data['position'] in ['CB', 'LB', 'RB']:
-            total_score = offensive_score * 0.2 + defensive_score * 0.8
-        else:  # Midfielders
-            total_score = offensive_score * 0.5 + defensive_score * 0.5
-        
-        # Normalize by minutes played
-        minutes_factor = player_data['minutes_played'] / 3420  # Full season
-        
-        # Team impact when playing
-        team_performance = self.calculate_team_impact(
-            player_data['player_id'], match_data
-        )
-        
-        final_value = total_score * minutes_factor * team_performance
-        return final_value
-
-# Match Prediction Model
-class EPLMatchPredictor:
-    def __init__(self):
-        self.models = {
-            'rf': RandomForestClassifier(n_estimators=200),
-            'xgb': XGBClassifier(n_estimators=150),
-            'lr': LogisticRegression(multi_class='multinomial')
-        }
-        
-    def extract_formation_features(self, formation_data):
-        features = {}
-        
-        # Team shape metrics
-        x_coords = formation_data['x_coords']
-        y_coords = formation_data['y_coords']
-        
-        features['team_width'] = np.max(x_coords) - np.min(x_coords)
-        features['team_depth'] = np.max(y_coords) - np.min(y_coords)
-        features['compactness'] = np.std(x_coords) * np.std(y_coords)
-        
-        # Defensive line height
-        defenders = formation_data[formation_data['position'].str.contains('B')]
-        features['defensive_line'] = defenders['y_coords'].mean()
-        
-        return features
+# Coordinate-to-Position Mapping System
+def get_player_position_and_category(x, y):
+    """Convert X,Y coordinates to football positions using tactical knowledge"""
+    # Goalkeeper
+    if x == 1 and y == 1:
+        return 'GK', 'Goalkeeper'
     
-    def predict_match(self, home_team, away_team, date):
-        # Get recent form
-        home_form = self.get_team_form(home_team, date)
-        away_form = self.get_team_form(away_team, date)
+    # Defenders - Full backs, Centre backs, Wing backs
+    elif (x, y) in [(1, 3), (9, 3)]:
+        return ('LWB', 'Defender') if x == 1 else ('RWB', 'Defender')
+    elif (x, y) in [(2, 3), (8, 3)]:
+        return ('LB', 'Defender') if x == 2 else ('RB', 'Defender')
+    elif (x, y) in [(3, 3), (4, 3), (5, 3), (6, 3), (7, 3)]:
+        return 'CB', 'Defender'  # Centre backs
+    
+    # Defensive Midfielders
+    elif (x, y) in [(3, 5), (3, 6), (5, 5), (5, 6), (4, 6), (6, 6), (7, 5), (7, 6)]:
+        return 'CDM', 'Defensive Midfielder'
+    
+    # Midfielders - Central and wide
+    elif (x, y) in [(1, 7), (2, 7), (8, 7), (8, 8)]:
+        return ('LM', 'Midfielder') if x <= 2 else ('RM', 'Midfielder')
+    elif (x, y) in [(3, 7), (3, 8), (4, 7), (4, 8), (5, 7), (5, 8), (6, 7), (6, 8), (7, 7), (7, 8)]:
+        return 'CM', 'Midfielder'
+    
+    # Attacking Midfielders
+    elif (x, y) == (5, 9):
+        return 'CAM', 'Attacking Midfielder'
+    elif (x, y) in [(4, 9), (6, 9)]:
+        return ('LAM', 'Attacking Midfielder') if x == 4 else ('RAM', 'Attacking Midfielder')
+    
+    # Forwards and Strikers
+    elif (x, y) in [(3, 10), (4, 10), (5, 10), (6, 10), (7, 10)]:
+        return 'FW', 'Forwarder'
+    elif (x, y) in [(4, 11), (5, 11), (6, 11)]:
+        return 'ST', 'Striker'
+    
+    return 'Unknown', 'Unknown'
+
+# Position-Specific Rating Calculations
+class PlayerEvaluationSystem:
+    """Football Manager-inspired rating system with position-specific weights"""
+    
+    @staticmethod
+    def calculate_goalkeeper_rating(player):
+        return (
+            player['gk_diving'] * 0.25 +
+            player['gk_handling'] * 0.20 +
+            player['gk_kicking'] * 0.20 +
+            player['gk_positioning'] * 0.20 +
+            player['gk_reflexes'] * 0.15
+        )
+    
+    @staticmethod
+    def calculate_defender_rating(player):
+        return (
+            player['marking'] * 0.25 +
+            player['standing_tackle'] * 0.20 +
+            player['sliding_tackle'] * 0.15 +
+            player['strength'] * 0.15 +
+            player['interceptions'] * 0.10 +
+            player['jumping'] * 0.10 +
+            player['aggression'] * 0.05
+        )
+    
+    @staticmethod
+    def calculate_attacking_midfielder_rating(player):
+        """Key attributes: vision for playmaking, dribbling for creativity"""
+        return (
+            player['vision'] * 0.30 +          # Critical for playmaking
+            player['dribbling'] * 0.25 +       # Beat defenders, create space
+            player['short_passing'] * 0.20 +   # Link-up play
+            player['ball_control'] * 0.15 +    # First touch, tight spaces
+            player['agility'] * 0.10           # Quick turns, acceleration
+        )
+    
+    @staticmethod
+    def calculate_striker_rating(player):
+        """Finishing is paramount, positioning creates opportunities"""
+        return (
+            player['finishing'] * 0.35 +       # Primary job: score goals
+            player['positioning'] * 0.20 +     # Right place, right time
+            player['shot_power'] * 0.15 +      # Beat keepers from distance
+            player['heading_accuracy'] * 0.10 + # Aerial threat
+            player['reactions'] * 0.10 +       # Quick decision making
+            player['strength'] * 0.05 +        # Hold up play
+            player['sprint_speed'] * 0.05      # Beat offside trap
+        )
+    
+    def calculate_player_rating(self, player):
+        """Master function routing to position-specific calculations"""
+        position_map = {
+            'Striker': self.calculate_striker_rating,
+            'Forwarder': self.calculate_forwarder_rating,
+            'Attacking Midfielder': self.calculate_attacking_midfielder_rating,
+            'Midfielder': self.calculate_midfielder_rating,
+            'Defensive Midfielder': self.calculate_defensive_midfielder_rating,
+            'Defender': self.calculate_defender_rating,
+            'Goalkeeper': self.calculate_goalkeeper_rating
+        }
         
-        # Head-to-head history
-        h2h = self.get_head_to_head(home_team, away_team)
-        
-        # Formation analysis
-        home_formation = self.extract_formation_features(home_team)
-        away_formation = self.extract_formation_features(away_team)
-        
-        # Combine all features
-        features = np.concatenate([
-            home_form, away_form, h2h,
-            list(home_formation.values()),
-            list(away_formation.values())
-        ])
-        
-        # Ensemble prediction
-        predictions = []
-        for name, model in self.models.items():
-            pred = model.predict_proba([features])[0]
-            predictions.append(pred)
-        
-        # Weighted average
-        final_pred = np.average(predictions, weights=[0.4, 0.4, 0.2], axis=0)
-        return np.argmax(final_pred)  # 0: Loss, 1: Draw, 2: Win
+        rating_func = position_map.get(player['position_category'])
+        return rating_func(player) if rating_func else 0
+
                 </code></pre>
+
+                <div class="paper-download">
+                    <a href="https://github.com/thijnbakker/freetime-projects/tree/main/solo_projects/EPL_Challenge" class="btn btn-primary" download="rootify_pipeline.png">
+                        See Full Code on GitHub
+                    </a>
+                </div>
+
+                <p>
+                    <strong>Methodology Validation:</strong> The coordinate mapping system converts raw X,Y positions (1-11 scale) into 
+                    meaningful football positions through tactical analysis. Player evaluation coefficients were derived from Football Manager's 
+                    proven attribute system, validated through football analytics communities (FM Scout, StatsBomb, Opta) and refined based 
+                    on professional scouting insights.
+                </p>
+                
+                <p>
+                    <strong>Key Technical Innovations:</strong><br>
+                    • Position-aware evaluation: Strikers rated 35% on finishing, defenders 25% on marking<br>
+                    • Custom draw threshold (40%) to handle football's natural class imbalance<br>
+                    • Team-level feature aggregation from individual player statistics<br>
+                    • 7-iteration model development process with systematic hyperparameter optimization<br>
+                    • Mean rating calculation across all matches for robust player valuation
+                </p>
             </div>
 
-            <!-- Results & Impact -->
+            <!-- Player Valuation Results -->
             <div class="project-section">
-                <h2>Results & Impact</h2>
+                <h2>Player Valuation Results (2014-2015 Season)</h2>
                 <p>
-                    The models achieved strong performance in both tasks:
+                    My position-aware valuation system identified the most and least valuable players based on comprehensive performance metrics:
+                </p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 2rem; margin: 2rem 0;">
+                    <div style="background: rgba(212, 165, 116, 0.1); padding: 1.5rem; border-radius: 10px;">
+                        <h3 style="color: var(--secondary); margin-bottom: 1rem;">Top 10 Most Valuable Players</h3>
+                        <div style="font-family: monospace; color: var(--light);">
+                            <div>1. Player ID: 30865 - Defender</div>
+                            <div>2. Player ID: 30613 - Midfielder</div>
+                            <div>3. Player ID: 31097 - Midfielder</div>
+                            <div>4. Player ID: 30627 - Defender</div>
+                            <div>5. Player ID: 30726 - Goalkeeper</div>
+                            <div>6. Player ID: 30373 - Midfielder</div>
+                            <div>7. Player ID: 37459 - Midfielder</div>
+                            <div>8. Player ID: 30889 - Midfielder</div>
+                            <div>9. Player ID: 107417 - Midfielder</div>
+                            <div>10. Player ID: 23139 - Forward</div>
+                        </div>
+                    </div>
+                    
+                    <div style="background: rgba(212, 165, 116, 0.1); padding: 1.5rem; border-radius: 10px;">
+                        <h3 style="color: var(--secondary); margin-bottom: 1rem;">Top 10 Least Valuable Players</h3>
+                        <div style="font-family: monospace; color: var(--light);">
+                            <div>1. Player ID: 38994 - Defender</div>
+                            <div>2. Player ID: 280653 - Defender</div>
+                            <div>3. Player ID: 149895 - Midfielder</div>
+                            <div>4. Player ID: 24183 - Defender</div>
+                            <div>5. Player ID: 150613 - Attacking Midfielder</div>
+                            <div>6. Player ID: 102602 - Midfielder</div>
+                            <div>7. Player ID: 214570 - Defender</div>
+                            <div>8. Player ID: 23036 - Midfielder</div>
+                            <div>9. Player ID: 316688 - Defender</div>
+                            <div>10. Player ID: 23431 - Forward</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>
+                    <strong>Methodology Validation:</strong> The valuation approach combined position-specific attribute weighting with football domain knowledge. Coefficients were derived from Football Manager's proven system, professional scouting insights, and validation through football analytics communities including FM Scout, Opta, and StatsBomb resources.
+                </p>
+            </div>
+
+            <!-- Match Prediction Results -->
+            <div class="project-section">
+                <h2>Match Prediction Results (2015-2016 Season)</h2>
+                <p>
+                    The final RandomForestClassifier model achieved strong performance through systematic optimization:
                 </p>
                 <p>
-                    <strong>Player Valuation Results:</strong><br>
-                    • Successfully identified Eden Hazard and Alexis Sanchez as top valuable players<br>
-                    • Metric aligned with 85% of expert valuations<br>
-                    • Discovered undervalued players later transferred for profit<br>
-                    • Identified declining players before market correction<br><br>
+                    <strong>Model Development Process:</strong><br>
+                    • Tested 7 different approaches across multiple notebook versions<br>
+                    • Applied RandomizedSearchCV with 30 iterations for hyperparameter optimization<br>
+                    • Implemented custom threshold (40%) for draw predictions to address class imbalance<br>
+                    • Generated 377 match predictions for the 2015-2016 season<br><br>
                     
-                    <strong>Match Prediction Performance:</strong><br>
-                    • Achieved 68% accuracy on test set (2015-2016 season)<br>
-                    • Correctly predicted 75% of home wins<br>
-                    • Draw prediction improved to 45% (baseline 25%)<br>
-                    • Feature importance showed formation compactness as key predictor
+                    <strong>Feature Engineering Success:</strong><br>
+                    • Successfully integrated team attributes, player skills, and historical goal data<br>
+                    • Created meaningful team-level aggregates from individual player statistics<br>
+                    • Handled missing values and data inconsistencies across multiple datasets<br>
+                    • Balanced model complexity with interpretability for football stakeholders
+                </p>
+                
+                <p>
+                    The prediction pipeline processed matches through comprehensive data merging, feature engineering, and model optimization. While the final model showed a tendency toward predicting losses (as noted in my analysis), this provided valuable insights into the challenges of football prediction and the importance of domain knowledge in sports analytics.
                 </p>
             </div>
 
@@ -239,13 +314,19 @@ class EPLMatchPredictor:
             <div class="project-section">
                 <h2>Key Learnings</h2>
                 <p>
-                    <strong>Feature Engineering Dominates:</strong> The quality of engineered features, especially from formation data, had more impact than model selection. Spatial analysis of player positions revealed tactical patterns invisible in basic statistics.
+                    <strong>Domain Knowledge is Critical:</strong> Football analytics requires deep understanding of the sport. The position mapping from X,Y coordinates and attribute weighting systems both benefited significantly from football expertise and community validation through platforms like Football Manager.
                 </p>
                 <p>
-                    <strong>Context Matters in Valuation:</strong> Player value isn't absolute - it depends heavily on team system, position, and playing time. A comprehensive metric must account for these contextual factors.
+                    <strong>Data Integration Complexity:</strong> Working with 5 different datasets (matches, teams, players, goals, shots) required careful attention to data quality, missing values, and maintaining referential integrity across complex joins and aggregations.
                 </p>
                 <p>
-                    <strong>Class Imbalance Challenges:</strong> Predicting draws was particularly difficult. Techniques like SMOTE and class weighting helped, but domain knowledge about when draws are likely (rival matches, end of season) proved more valuable.
+                    <strong>Class Imbalance in Sports:</strong> Football match outcomes are inherently imbalanced - draws are less common than wins/losses. Custom threshold tuning (40% for draws) was essential for meaningful predictions rather than relying on default classification thresholds.
+                </p>
+                <p>
+                    <strong>Iterative Model Development:</strong> The progression through 7 model versions demonstrated the importance of systematic experimentation. Each iteration provided insights that improved the next version, from basic feature engineering to sophisticated ensemble approaches.
+                </p>
+                <p>
+                    <strong>Feature Engineering Impact:</strong> Converting raw coordinate data into meaningful football positions and aggregating individual player skills to team-level features proved more valuable than simply using raw statistics. The football-informed approach outperformed purely statistical methods.
                 </p>
             </div>
 
@@ -257,12 +338,14 @@ class EPLMatchPredictor:
                     <span class="tech-tag">Pandas</span>
                     <span class="tech-tag">NumPy</span>
                     <span class="tech-tag">scikit-learn</span>
-                    <span class="tech-tag">XGBoost</span>
-                    <span class="tech-tag">Feature Engineering</span>
                     <span class="tech-tag">Random Forest</span>
-                    <span class="tech-tag">Logistic Regression</span>
-                    <span class="tech-tag">SMOTE</span>
-                    <span class="tech-tag">Cross-validation</span>
+                    <span class="tech-tag">RandomizedSearchCV</span>
+                    <span class="tech-tag">Feature Engineering</span>
+                    <span class="tech-tag">Data Integration</span>
+                    <span class="tech-tag">Football Analytics</span>
+                    <span class="tech-tag">Sports Statistics</span>
+                    <span class="tech-tag">Position Mapping</span>
+                    <span class="tech-tag">Domain Knowledge</span>
                 </div>
             </div>
 
