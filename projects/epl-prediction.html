@@ -85,21 +85,30 @@
                 <p>
                     I developed a systematic methodology combining football analytics expertise with machine learning:
                 </p>
-                <p>
-                    <strong>Player Valuation Strategy:</strong><br>
-                    • Converted player coordinates to 7 position categories (GK, DEF, DM, MID, AM, FW, ST)<br>
-                    • Created position-specific rating systems with weighted coefficients<br>
-                    • Drew inspiration from Football Manager attribute weights and professional scouting<br>
-                    • Calculated mean performance ratings across all matches per player<br>
-                    • Validated approach using football knowledge and analyst community insights<br><br>
-                    
-                    <strong>Match Prediction Pipeline:</strong><br>
-                    • Merged 5 datasets: matches, teams, players, goals, and potential shots<br>
-                    • Engineered team-level features by aggregating player statistics<br>
-                    • Used RandomForestClassifier with RandomizedSearchCV optimization<br>
-                    • Implemented custom threshold tuning for draw predictions<br>
-                    • Applied 7 different modeling approaches across multiple versions
-                </p>
+                
+                <!-- Player Valuation Strategy -->
+                <div class="info-box">
+                    <h3>Player Valuation Strategy</h3>
+                    <div class="info-box-content">
+                        <div>• Converted player coordinates to 7 position categories (GK, DEF, DM, MID, AM, FW, ST)</div>
+                        <div>• Created position-specific rating systems with weighted coefficients</div>
+                        <div>• Drew inspiration from Football Manager attribute weights and professional scouting</div>
+                        <div>• Calculated mean performance ratings across all matches per player</div>
+                        <div>• Validated approach using football knowledge and analyst community insights</div>
+                    </div>
+                </div>
+
+                <!-- Match Prediction Pipeline -->
+                <div class="info-box">
+                    <h3>Match Prediction Pipeline</h3>
+                    <div class="info-box-content">
+                        <div>• Merged 5 datasets: matches, teams, players, goals, and potential shots</div>
+                        <div>• Engineered team-level features by aggregating player statistics</div>
+                        <div>• Used RandomForestClassifier with RandomizedSearchCV optimization</div>
+                        <div>• Implemented custom threshold tuning for draw predictions</div>
+                        <div>• Applied 7 different modeling approaches across multiple versions</div>
+                    </div>
+                </div>
             </div>
 
             <!-- Technical Implementation -->
@@ -291,23 +300,32 @@ class PlayerEvaluationSystem:
                 <p>
                     The final RandomForestClassifier model achieved strong performance through systematic optimization:
                 </p>
-                <p>
-                    <strong>Model Development Process:</strong><br>
-                    • Tested 7 different approaches across multiple notebook versions<br>
-                    • Applied RandomizedSearchCV with 30 iterations for hyperparameter optimization<br>
-                    • Implemented custom threshold (40%) for draw predictions to address class imbalance<br>
-                    • Generated 377 match predictions for the 2015-2016 season<br><br>
-                    
-                    <strong>Feature Engineering Success:</strong><br>
-                    • Successfully integrated team attributes, player skills, and historical goal data<br>
-                    • Created meaningful team-level aggregates from individual player statistics<br>
-                    • Handled missing values and data inconsistencies across multiple datasets<br>
-                    • Balanced model complexity with interpretability for football stakeholders
-                </p>
                 
+                <!-- Model Development Process -->
+                <div class="info-box">
+                    <h3>Model Development Process</h3>
+                    <div class="info-box-content">
+                        <div>• Tested 7 different approaches across multiple notebook versions</div>
+                        <div>• Applied RandomizedSearchCV with 30 iterations for hyperparameter optimization</div>
+                        <div>• Implemented custom threshold (40%) for draw predictions to address class imbalance</div>
+                        <div>• Generated 377 match predictions for the 2015-2016 season</div>
+                    </div>
+                </div>
+
+                <!-- Feature Engineering Success -->
+                <div class="info-box">
+                    <h3>Feature Engineering Success</h3>
+                    <div class="info-box-content">
+                        <div>• Successfully integrated team attributes, player skills, and historical goal data</div>
+                        <div>• Created meaningful team-level aggregates from individual player statistics</div>
+                        <div>• Handled missing values and data inconsistencies across multiple datasets</div>
+                        <div>• Balanced model complexity with interpretability for football stakeholders</div>
+                    </div>
+                </div>
+                
+                <!-- Analysis Insights -->
                 <p>
-                    The prediction pipeline processed matches through comprehensive data merging, feature engineering, and model optimization. While the final model showed a tendency toward predicting losses (as noted in my analysis), this provided valuable insights into the challenges of football prediction and the importance of domain knowledge in sports analytics.
-                </p>
+                The prediction pipeline processed matches through comprehensive data merging, feature engineering, and model optimization. While the final model showed a tendency toward predicting losses (as noted in my analysis), this provided valuable insights into the challenges of football prediction and the importance of domain knowledge in sports analytics.</p>
             </div>
 
             <!-- Key Learnings -->

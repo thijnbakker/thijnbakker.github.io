@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Graph2Table - Thijn Bakker</title>
-    <meta name="description" content="Graph2Table project showcasing data science and AI skills">
+    <meta name="description" content="Graph2Table project showcasing computer vision and data extraction skills">
     <meta name="author" content="Thijn Bakker">
     
     <!-- Favicon -->
@@ -31,7 +31,7 @@
         </div>
     </nav>
 
-<!-- Project Hero -->
+    <!-- Project Hero -->
     <section class="project-hero">
         <div class="project-hero-content">
             <h1 class="hero-text">
@@ -40,8 +40,10 @@
             </h1>
             <p class="project-date">Computer Vision Challenge - 2025</p>
             <p class="project-client">Academic Challenge - Breda University of Applied Sciences</p>
+            <p class="project-members">Individual Project</p>
         </div>
     </section>
+    
     <!-- Project Content -->
     <section class="project-content">
         <div class="project-container">
@@ -62,209 +64,356 @@
                 </p>
                 <p>
                     <strong>Part 1 - Graph Classification:</strong><br>
-                    • Clean corrupted images from dataset<br>
-                    • Build classifier for different plot types (bar, line, pie, scatter)<br>
+                    • Clean corrupted images from dataset (3,202 → 3,190 valid images)<br>
+                    • Build classifier for 5 plot types (bar, line, pie, scatter, flowchart)<br>
                     • Achieve high accuracy with limited training time<br>
                     • Create robust model handling various image qualities<br><br>
                     
                     <strong>Part 2 - Data Extraction:</strong><br>
                     • Extract graph titles and axis labels using OCR<br>
-                    • Detect individual bars/lines and their values<br>
-                    • Convert visual elements to CSV format<br>
-                    • Handle different graph styles and colors
+                    • Detect individual bars and their numerical values<br>
+                    • Extract bar labels (categories) positioned below bars<br>
+                    • Convert visual elements to structured CSV format<br>
+                    • Handle different graph styles, colors, and layouts<br>
+                    • Work with both horizontal and vertical text orientation
                 </p>
             </div>
 
-            <!-- My Approach -->
+                        <!-- My Approach -->
             <div class="project-section">
                 <h2>My Approach</h2>
                 <p>
-                    Given the 24-hour time constraint, I focused on building a working MVP:
+                    Given the 2-week time constraint, I focused on building a reliable classification pipeline and comprehensive extraction system:
                 </p>
-                <p>
-                    <strong>Classification Pipeline:</strong><br>
-                    • Data cleaning using PIL to detect and remove corrupted images<br>
-                    • Transfer learning with ResNet50 for quick training<br>
-                    • Data augmentation to handle various graph styles<br>
-                    • Ensemble of CNN and traditional CV features<br><br>
+                
+                <!-- Data Preparation -->
+                <div class="info-box">
+                    <h3>Data Preparation</h3>
+                    <div class="info-box-content">
+                        <div>• Automated image format standardization (converted all to PNG)</div>
+                        <div>• Corruption detection and validation using PIL - zero corrupt files</div>
+                        <div>• Standardized resizing to 256x256 grayscale images</div>
+                        <div>• 80/20 train/validation split (2,551 training / 639 validation)</div>
+                    </div>
+                </div>
+
+                <!-- Classification Model -->
+                <div class="info-box">
+                    <h3>Classification Model Architecture</h3>
+                    <div class="info-box-content">
+                        <div>• Custom CNN with 2 convolutional layers (32 and 64 filters)</div>
+                        <div>• MaxPooling for spatial dimension reduction</div>
+                        <div>• Dense layer (128 units) with 50% Dropout for regularization</div>
+                        <div>• Adam optimizer with categorical crossentropy loss</div>
+                        <div>• Custom F1 score metric for multi-class evaluation</div>
+                    </div>
+                </div>
+
+                <!-- Training Optimization -->
+                <div class="info-box">
+                    <h3>Training Optimization</h3>
+                    <div class="info-box-content">
+                        <div>• Data augmentation: rotation (±20°), zoom (20%), width/height shifts (10%), shear (15%)</div>
+                        <div>• ReduceLROnPlateau: learning rate reduction on validation plateau</div>
+                        <div>• EarlyStopping: patience of 10 epochs to prevent overfitting</div>
+                        <div>• Trained for 69 epochs until convergence</div>
+                    </div>
+                </div>
+
+                <!-- Extraction Strategy Grid -->
+                <div class="info-box-grid">
+                    <!-- Text Detection & OCR -->
+                    <div class="info-box">
+                        <h3>Text Detection & OCR</h3>
+                        <div class="info-box-content monospace">
+                            <div>✓ Compared Tesseract vs EasyOCR</div>
+                            <div>✓ EasyOCR: superior for titles/labels</div>
+                            <div>✓ Tesseract: better for vertical text</div>
+                            <div style="margin-top: 1rem;"><strong>Results:</strong></div>
+                            <div>• "Bar Graph PPT" (Image 1)</div>
+                            <div>• "Activities at home" (Image 2)</div>
+                            <div>• X-axis: "Type of activity"</div>
+                            <div>• Y-axis: "Number of children"</div>
+                        </div>
+                    </div>
                     
-                    <strong>Extraction Strategy:</strong><br>
-                    • EasyOCR for text detection and recognition<br>
-                    • OpenCV contour detection for bar identification<br>
-                    • Color clustering to separate data series<br>
-                    • Hough transform for axis detection
-                </p>
+                    <!-- Bar Detection & Value Extraction -->
+                    <div class="info-box">
+                        <h3>Bar Detection & Values</h3>
+                        <div class="info-box-content monospace">
+                            <div>✓ HSV color space conversion</div>
+                            <div>✓ K-means clustering (4-15 clusters)</div>
+                            <div>✓ Morphological noise removal</div>
+                            <div>✓ Contour detection (ratio > 1.5)</div>
+                            <div>✓ Bounding box analysis</div>
+                            <div>✓ OCR value extraction above bars</div>
+                            <div style="margin-top: 1rem;"><strong>Success Rate:</strong></div>
+                            <div>• Image 1: 12/12 bars detected</div>
+                            <div>• Image 2: 4/4 bars detected</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Label Extraction & CSV Output Grid -->
+                <div class="info-box-grid">
+                    <!-- Label Extraction -->
+                    <div class="info-box">
+                        <h3>Label Extraction</h3>
+                        <div class="info-box-content monospace">
+                            <div>✓ ROI extraction below bars</div>
+                            <div>✓ 50px horizontal margin for complete text</div>
+                            <div>✓ Tesseract PSM mode 6</div>
+                            <div style="margin-top: 1rem;"><strong>Image 1 Labels:</strong></div>
+                            <div>January - December (12 months)</div>
+                            <div style="margin-top: 1rem;"><strong>Image 2 Labels:</strong></div>
+                            <div>Reading, Playing</div>
+                            <div>Baking, Washing hands</div>
+                        </div>
+                    </div>
+                    
+                    <!-- Final CSV Output -->
+                    <div class="info-box">
+                        <h3>CSV Output Generation</h3>
+                        <div class="info-box-content monospace">
+                            <div>✓ Category-value pair format</div>
+                            <div>✓ Database-ready structure</div>
+                            <div style="margin-top: 1rem;"><strong>Files Created:</strong></div>
+                            <div>• bar_values_image_1_v2.csv</div>
+                            <div>&nbsp;&nbsp;→ 12 rows (monthly data)</div>
+                            <div>• bar_values_image_2_v2.csv</div>
+                            <div>&nbsp;&nbsp;→ 4 rows (activity data)</div>
+                            <div style="margin-top: 1rem;"><strong>Format:</strong></div>
+                            <div>Bar Text | Value</div>
+                            <div>January | 4.3</div>
+                            <div>Reading | 8.0</div>
+                        </div>
+                    </div>
+                </div>
             </div>
 
             <!-- Technical Implementation -->
             <div class="project-section">
                 <h2>Technical Implementation</h2>
                 <p>
-                    The solution combined deep learning classification with classical computer vision:
+                    The solution combined deep learning classification with classical computer vision and OCR:
                 </p>
                 
                 <pre><code>
-# Graph Classification Model
-import torch
-import torch.nn as nn
-from torchvision import models, transforms
+# Part 1: Graph Classification
+
+from torchvision import datasets, transforms
+from PIL import Image
+
+# Data Cleaning
+valid_extensions = ('.jpg', '.jpeg', '.png', '.ppm', '.bmp', '.tif', '.tiff', '.webp')
+resize_transform = transforms.Compose([
+    transforms.Resize((256, 256)),
+    transforms.ToTensor(),
+    transforms.Grayscale(num_output_channels=1)
+])
+# Result: 3,190 clean images across 5 classes
+
+# CNN Architecture
+from keras.models import Sequential
+from keras.layers import Conv2D, MaxPooling2D, Flatten, Dense, Dropout
+
+def build_graph_classifier(input_shape, num_classes=5):
+    model = Sequential([
+        Conv2D(32, (3,3), activation='relu', input_shape=input_shape),
+        MaxPooling2D(),
+        Conv2D(64, (3,3), activation='relu'),
+        MaxPooling2D(),
+        Flatten(),
+        Dense(128, activation='relu'),
+        Dropout(0.5),
+        Dense(num_classes, activation='softmax')
+    ])
+    
+    model.compile(
+        optimizer='adam',
+        loss='categorical_crossentropy',
+        metrics=['accuracy', f1_score]
+    )
+    return model
+
+# Training Results: 88.9% validation accuracy, 87.9% F1 score
+
+# Part 2: Data Extraction
+
 import cv2
 import easyocr
-import numpy as np
+import pytesseract
+from sklearn.cluster import KMeans
 
-class GraphClassifier:
-    def __init__(self):
-        # Transfer learning with ResNet50
-        self.model = models.resnet50(pretrained=True)
-        num_features = self.model.fc.in_features
-        self.model.fc = nn.Linear(num_features, 5)  # 5 graph types
-        
-        self.transform = transforms.Compose([
-            transforms.Resize((224, 224)),
-            transforms.ToTensor(),
-            transforms.Normalize([0.485, 0.456, 0.406], 
-                              [0.229, 0.224, 0.225])
-        ])
-        
-    def clean_dataset(self, image_dir):
-        corrupted = []
-        for img_path in os.listdir(image_dir):
-            try:
-                img = Image.open(os.path.join(image_dir, img_path))
-                img.verify()
-            except:
-                corrupted.append(img_path)
-                os.remove(os.path.join(image_dir, img_path))
-        
-        print(f"Removed {len(corrupted)} corrupted images")
-        return corrupted
+# Step 1: Extract Title
+reader = easyocr.Reader(['en'])
+results = reader.readtext(image)
+title_text = [text for (bbox, text, conf) in results if conf > 0.1]
+# Results: "Activities at home", "Bar Graph PPT"
 
-# Data Extraction Pipeline
-class Graph2Table:
-    def __init__(self):
-        self.reader = easyocr.Reader(['en'])
-        
-    def extract_text_with_bbox(self, image_path):
-        image = cv2.imread(image_path)
-        results = self.reader.readtext(image)
-        
-        # Extract title (usually largest text at top)
-        title = self.find_title(results)
-        
-        # Draw bounding boxes
-        for (bbox, text, prob) in results:
-            (top_left, top_right, bottom_right, bottom_left) = bbox
-            top_left = tuple(map(int, top_left))
-            bottom_right = tuple(map(int, bottom_right))
-            cv2.rectangle(image, top_left, bottom_right, (0, 255, 0), 2)
-            cv2.putText(image, text, top_left, 
-                       cv2.FONT_HERSHEY_SIMPLEX, 0.5, (255, 0, 0), 1)
-        
-        # Save image with bounding boxes
-        output_path = image_path.replace('.png', '_bboxes.png')
-        cv2.imwrite(output_path, image)
-        
-        return title, results
-    
-    def extract_bar_values(self, image_path):
-        image = cv2.imread(image_path)
-        gray = cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)
-        
-        # Detect bars using contours
-        edges = cv2.Canny(gray, 50, 150)
-        contours, _ = cv2.findContours(edges, 
-                                       cv2.RETR_EXTERNAL, 
-                                       cv2.CHAIN_APPROX_SIMPLE)
-        
-        bars = []
-        for contour in contours:
-            x, y, w, h = cv2.boundingRect(contour)
-            
-            # Filter for bar-like shapes
-            if h > w and h > 50:  # Vertical bars
-                # Extract bar region
-                bar_region = image[y:y+h, x:x+w]
-                
-                # Get dominant color (bar value indicator)
-                avg_color = np.mean(bar_region.reshape(-1, 3), axis=0)
-                
-                # Calculate relative height (proxy for value)
-                relative_value = h / image.shape[0]
-                
-                bars.append({
-                    'x_position': x + w//2,
-                    'height': h,
-                    'relative_value': relative_value,
-                    'color': avg_color.tolist()
-                })
-        
-        # Sort bars by x position
-        bars = sorted(bars, key=lambda b: b['x_position'])
-        
-        # Extract x-axis labels using OCR
-        x_labels = self.extract_axis_labels(image, 'x')
-        
-        # Map bars to labels and values
-        data = []
-        for i, bar in enumerate(bars):
-            if i < len(x_labels):
-                data.append({
-                    'category': x_labels[i],
-                    'value': self.estimate_value(bar['relative_value'])
-                })
-        
-        return data
-    
-    def estimate_value(self, relative_height, y_max=100):
-        # Estimate actual value based on relative height
-        # In production, would extract y-axis scale
-        return round(relative_height * y_max, 2)
-    
-    def save_to_csv(self, data, output_path):
-        import pandas as pd
-        df = pd.DataFrame(data)
-        df.to_csv(output_path, index=False)
-        return df
-    
-    def process_graph(self, image_path):
-        # Full pipeline
-        title, text_results = self.extract_text_with_bbox(image_path)
-        bar_data = self.extract_bar_values(image_path)
-        
-        # Save CSV
-        csv_path = image_path.replace('.png', '.csv')
-        self.save_to_csv(bar_data, csv_path)
-        
-        print(f"Graph Title: {title}")
-        print(f"Extracted {len(bar_data)} data points")
-        print(f"Results saved to {csv_path}")
-        
-        return {
-            'title': title,
-            'data': bar_data,
-            'csv_path': csv_path
-        }
+# Step 2: Extract Axis Labels
+# Y-axis (rotate image 90°)
+rotated = cv2.rotate(image, cv2.ROTATE_90_CLOCKWISE)
+y_axis = reader.readtext(rotated)[0][1]
+# Result: "Number of children"
+
+# X-axis
+x_axis = results[-1][1]
+# Result: "Type of activity"
+
+# Step 3: Bar Detection
+hsv = cv2.cvtColor(image, cv2.COLOR_BGR2HSV)
+mask = cv2.inRange(hsv, lower_bound, upper_bound)
+contours, _ = cv2.findContours(mask, cv2.RETR_EXTERNAL, cv2.CHAIN_APPROX_SIMPLE)
+
+bars = []
+for cnt in contours:
+    x, y, w, h = cv2.boundingRect(cnt)
+    aspect_ratio = h / float(w)
+    if w > 20 and h > 100 and aspect_ratio > 1.5:
+        bars.append((x, y, w, h))
+
+# Step 4: Value Extraction
+for bar in sorted(bars, key=lambda b: b[0]):  # Sort by x-position
+    roi_above_bar = thresh[y-60:y-5, x:x+w]
+    roi_enlarged = cv2.resize(roi_above_bar, None, fx=2, fy=2)
+    value = pytesseract.image_to_string(roi_enlarged, 
+                                        config="--psm 7 -c tessedit_char_whitelist=0123456789.")
+    # Results: 8.0, 17.9, 10.0, 14.0 (Image 2)
+    #          4.3, 2.5, 3.5, 4.5, 2.4, 4.4, 1.8, 2.8, 2.0, 2.0, 3.0, 5.0 (Image 1)
+
+# Step 5: Label Extraction
+for bar in bars:
+    roi_below_bar = image[y+h+10:y+h+60, x-50:x+w+50]  # Added margin
+    label = pytesseract.image_to_string(roi_below_bar, config='--psm 6')
+    # Results: Reading, Playing, Baking, Washing hands (Image 2)
+    #          January-December (Image 1)
+
+# Step 6: CSV Generation
+import csv
+with open('output.csv', 'w', newline='') as file:
+    writer = csv.DictWriter(file, fieldnames=['Bar Text', 'Value'])
+    writer.writeheader()
+    writer.writerows(rows)
+# Generated: bar_values_image_1_v2.csv, bar_values_image_2_v2.csv
                 </code></pre>
             </div>
-
+            
+            <div class="paper-download">
+                <a href="https://github.com/thijnbakker/freetime-projects/tree/main/solo_projects/Graph2Table_Challenge" class="btn btn-primary" download="rootify_pipeline.png">
+                    See Full Code on GitHub
+                </a>
+            </div>
+            
             <!-- Results & Impact -->
             <div class="project-section">
                 <h2>Results & Impact</h2>
                 <p>
-                    Achieved strong results within the 24-hour hackathon constraint:
+                    Achieved strong results within the 2-week constraint:
                 </p>
-                <p>
-                    <strong>Classification Performance:</strong><br>
-                    • 94% accuracy on graph type classification<br>
-                    • Successfully handled 5 different plot types<br>
-                    • Robust to various image qualities and styles<br>
-                    • Processing time: <100ms per image<br><br>
+                
+                <!-- Part 1 Results -->
+                <div class="info-box">
+                    <h3>Part 1 - Classification Performance</h3>
+                    <div class="info-box-content">
+                        <div>• 88.9% validation accuracy across 5 graph types</div>
+                        <div>• 87.9% F1 score demonstrating balanced performance</div>
+                        <div>• Robust to various image qualities and styles</div>
+                        <div>• Processing time: <100ms per image</div>
+                        <div>• Zero corrupt files after automated cleaning</div>
+                    </div>
+                </div>
+
+                <!-- Model Metrics -->
+                <div class="info-box">
+                    <h3>Model Training Metrics</h3>
+                    <div class="info-box-content">
+                        <div>• Training accuracy: 89.2% (minimal overfitting)</div>
+                        <div>• Validation loss: 0.315 (stable convergence)</div>
+                        <div>• 69 training epochs with early stopping</div>
+                        <div>• Learning rate automatically adjusted during training</div>
+                    </div>
+                </div>
+
+                <!-- Extraction Results -->
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>
+                            <a href="https://github.com/thijnbakker/freetime-projects/blob/main/solo_projects/Graph2Table_Challenge/Graph2Table_Part_2/dataset_part2/image_1.png" 
+                            target="_blank" 
+                            style="color: var(--secondary); text-decoration: none;">
+                                Image 1: Bar Graph PPT ↗
+                            </a>
+                        </h3>
+                        <div class="info-box-content monospace">
+                            <div style="margin-bottom: 0.5rem;"><strong>Title:</strong> "Bar Graph PPT"</div>
+                            <div style="margin-bottom: 1rem;"><strong>12 Bars Detected:</strong></div>
+                            <div>January: 4.3</div>
+                            <div>February: 2.5</div>
+                            <div>March: 3.5</div>
+                            <div>April: 4.5</div>
+                            <div>May: 2.4</div>
+                            <div>June: 4.4</div>
+                            <div>July: 1.8</div>
+                            <div>August: 2.8</div>
+                            <div>September: 2.0</div>
+                            <div>October: 2.0</div>
+                            <div>November: 3.0</div>
+                            <div>December: 5.0</div>
+                        </div>
+                    </div>
                     
-                    <strong>Data Extraction Results:</strong><br>
-                    • Successfully extracted titles from 95% of graphs<br>
-                    • Bar value extraction accuracy: 87%<br>
-                    • Created functional CSV outputs for database insertion<br>
-                    • Demonstrated feasibility for production system
+                    <div class="info-box">
+                        <h3>
+                            <a href="https://github.com/thijnbakker/freetime-projects/blob/main/solo_projects/Graph2Table_Challenge/Graph2Table_Part_2/dataset_part2/image_2.png" 
+                            target="_blank" 
+                            style="color: var(--secondary); text-decoration: none;">
+                                Image 2: Activities at Home ↗
+                            </a>
+                        </h3>
+                        <div class="info-box-content monospace">
+                            <div style="margin-bottom: 0.5rem;"><strong>Title:</strong> "Activities at home"</div>
+                            <div><strong>X-axis:</strong> "Type of activity"</div>
+                            <div style="margin-bottom: 1rem;"><strong>Y-axis:</strong> "Number of children"</div>
+                            <div style="margin-bottom: 0.5rem;"><strong>4 Bars Extracted:</strong></div>
+                            <div>Reading: 8.0</div>
+                            <div>Playing: 17.9</div>
+                            <div>Baking: 10.0</div>
+                            <div>Washing hands: 14.0</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- OCR Comparison -->
+                <div class="info-box">
+                    <h3>OCR Technology Comparison</h3>
+                    <div class="info-box-content">
+                        <div>• <strong>EasyOCR:</strong> Superior for horizontal text detection, cleaner bounding boxes</div>
+                        <div>• <strong>Tesseract:</strong> Better for vertical text (with 90° rotation), more precise numerical detection</div>
+                        <div>• <strong>Hybrid Approach:</strong> Combining both tools yielded optimal extraction accuracy</div>
+                        <div>• <strong>CSV Output:</strong> Successfully generated database-ready files for both images</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Technical Challenges & Solutions -->
+            <div class="project-section">
+                <h2>Technical Challenges & Solutions</h2>
+                <p>
+                    <strong>Challenge 1: Overlapping Bar Detection</strong><br>
+                    Initial contour detection captured the entire graph as one large bar. Solution: Cropped image to exclude axes and legend, then applied K-means color clustering to segment individual bars based on color differences.<br><br>
+                    
+                    <strong>Challenge 2: Vertical Text Detection</strong><br>
+                    Y-axis labels were missed by standard OCR. Solution: Rotated image 90° clockwise before OCR processing, successfully extracting "Number of children".<br><br>
+                    
+                    <strong>Challenge 3: Label Text Outside Bar Region</strong><br>
+                    Initial ROI was too narrow to capture full category names. Solution: Added 50-pixel margin on left and right sides of bar bounding boxes, capturing complete labels like "Washing hands".<br><br>
+                    
+                    <strong>Challenge 4: Numerical Value Detection</strong><br>
+                    Tesseract initially detected "45" instead of "4.5". Solution: Configured Tesseract with PSM mode 7 and whitelist "0123456789.", then added decimal point formatting for 2-digit detections.<br><br>
+                    
+                    <strong>Challenge 5: Bar Filtering</strong><br>
+                    Background elements detected as bars. Solution: Implemented multi-criteria filtering: area > 200, width > 10, height > 20, aspect ratio > 1.5, excluded largest contour (graph border).
                 </p>
             </div>
 
@@ -272,16 +421,19 @@ class Graph2Table:
             <div class="project-section">
                 <h2>Key Learnings</h2>
                 <p>
-                    <strong>OCR Limitations:</strong> Text extraction quality varies significantly with image resolution and font styles. Pre-processing steps like denoising and contrast enhancement were crucial for accuracy.
+                    <strong>Data Quality Matters:</strong> The automated cleaning process successfully standardized 3,190 images to PNG format with zero corruption, proving that proper data preparation is crucial for model performance.
                 </p>
                 <p>
-                    <strong>Edge Cases Complexity:</strong> Handling overlapping bars, 3D graphs, and custom color schemes required adaptive thresholding and multiple extraction strategies.
+                    <strong>Simple Can Be Effective:</strong> A custom CNN with just 2 convolutional layers achieved 88.9% accuracy, demonstrating that complex architectures aren't always necessary for well-defined classification tasks.
                 </p>
                 <p>
-                    <strong>Time Management in Hackathons:</strong> Focusing on MVP features first (bar graphs only for extraction) allowed for a working demo, rather than attempting all graph types incompletely.
+                    <strong>Hybrid OCR Approach:</strong> Combining EasyOCR (horizontal text) with Tesseract (vertical text after rotation) yielded superior results compared to using either tool alone. EasyOCR provided cleaner bounding boxes while Tesseract excelled at precise numerical detection.
                 </p>
                 <p>
-                    <strong>Computer Vision Fundamentals:</strong> Classical CV techniques (contours, edge detection) often outperformed complex deep learning approaches for structured data extraction.
+                    <strong>Iterative Problem Solving:</strong> The extraction pipeline required multiple iterations - from basic contour detection to sophisticated color clustering and ROI expansion. Each challenge revealed a new insight about the data structure.
+                </p>
+                <p>
+                    <strong>Domain Adaptation:</strong> Different graphs required tailored approaches (15 clusters for Image 1 vs 4 clusters for Image 2), highlighting the importance of adaptive parameter tuning.
                 </p>
             </div>
 
@@ -290,15 +442,22 @@ class Graph2Table:
                 <h2>Technologies Used</h2>
                 <div class="tech-grid">
                     <span class="tech-tag">Python</span>
+                    <span class="tech-tag">TensorFlow</span>
                     <span class="tech-tag">PyTorch</span>
                     <span class="tech-tag">OpenCV</span>
                     <span class="tech-tag">EasyOCR</span>
-                    <span class="tech-tag">ResNet50</span>
-                    <span class="tech-tag">PIL</span>
+                    <span class="tech-tag">Tesseract OCR</span>
+                    <span class="tech-tag">Pillow</span>
+                    <span class="tech-tag">NumPy</span>
                     <span class="tech-tag">Pandas</span>
+                    <span class="tech-tag">Matplotlib</span>
+                    <span class="tech-tag">Seaborn</span>
+                    <span class="tech-tag">scikit-learn</span>
+                    <span class="tech-tag">Data Augmentation</span>
                     <span class="tech-tag">Contour Detection</span>
                     <span class="tech-tag">Edge Detection</span>
-                    <span class="tech-tag">Transfer Learning</span>
+                    <span class="tech-tag">Color Segmentation</span>
+                    <span class="tech-tag">Image Preprocessing</span>
                 </div>
             </div>
 
