@@ -14,7 +14,8 @@
     --secondary: #f4a460;
     --dark: #1a1410;
     --light: #faf6f0;
-    --gray: #8b7355;
+    --project-light: #d6cab8;
+    --gray: #9b8971;
     --gradient: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
     --hero-gradient: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
 }

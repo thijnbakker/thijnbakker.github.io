@@ -90,7 +90,7 @@
 }
 
 .project-section p {
-    color: var(--light);
+    color: var(--project-light);
     line-height: 1.8;
     margin-bottom: 1rem;
 }
@@ -271,12 +271,13 @@
 }
 
 .info-box-content {
-    color: var(--light);
+    color: var(--project-light);
     line-height: 1.8;
 }
 
 .info-box-content.monospace {
     font-family: monospace;
+    font-size: large;
 }
 
 .info-box-grid {
@@ -359,6 +360,7 @@
 
 .paper-page li {
     margin-bottom: 0.5rem;
+    color: var(--project-light);
 }
 
 .paper-navigation {
@@ -493,6 +495,7 @@
 
 .policy-page li {
     margin-bottom: 0.5rem;
+    color: var(--project-light);
 }
 
 .policy-navigation {
