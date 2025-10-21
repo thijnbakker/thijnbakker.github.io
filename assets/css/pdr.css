@@ -1,0 +1,324 @@
+/* ==================================
+   PDR PAGE STYLES
+   ================================== */
+
+   .pdr-hero {
+    min-height: 50vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    padding: 8rem 5% 4rem;
+}
+
+.pdr-hero h1 {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #d4a574 0%, #8b6f47 50%, #f4a460 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradient 3s ease infinite;
+    background-size: 200% 200%;
+}
+
+.pdr-subtitle {
+    color: var(--secondary);
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+}
+
+.pdr-quote {
+    font-style: italic;
+    color: var(--gray);
+    margin-top: 1rem;
+}
+
+.pdr-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+}
+
+.stat-card {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.1), rgba(244, 164, 96, 0.1));
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    text-align: center;
+    transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(212, 165, 116, 0.2);
+}
+
+.stat-number {
+    font-size: 3rem;
+    font-weight: bold;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--gray);
+    font-size: 1rem;
+}
+
+.event-card {
+    background: linear-gradient(135deg, rgba(212, 165, 116, 0.05), rgba(244, 164, 96, 0.05));
+    border: 1px solid rgba(212, 165, 116, 0.2);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    transition: all 0.3s ease;
+}
+
+.event-card:hover {
+    transform: translateX(10px);
+    border-color: var(--primary);
+    box-shadow: 0 10px 30px rgba(212, 165, 116, 0.2);
+}
+
+.event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.event-title {
+    font-size: 1.5rem;
+    color: var(--secondary);
+    margin-bottom: 0.5rem;
+}
+
+.event-badge {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    background: var(--primary);
+    color: white;
+    border-radius: 20px;
+    font-size: 0.875rem;
+    font-weight: 600;
+}
+
+.event-badge.upcoming {
+    background: linear-gradient(135deg, #d4a574, #f4a460);
+    animation: pulse 2s ease infinite;
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.8; }
+}
+
+.event-meta {
+    display: flex;
+    gap: 2rem;
+    color: var(--gray);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+
+.event-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.event-description {
+    color: var(--gray);
+    line-height: 1.6;
+}
+
+.cert-category {
+    margin-bottom: 3rem;
+}
+
+.cert-category h3 {
+    font-size: 1.75rem;
+    color: var(--secondary);
+    margin-bottom: 1.5rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 2px solid rgba(212, 165, 116, 0.3);
+}
+
+.cert-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1rem;
+}
+
+.cert-item {
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.15);
+    border-radius: 10px;
+    padding: 1.25rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+
+.cert-item:hover {
+    background: rgba(212, 165, 116, 0.1);
+    border-color: var(--primary);
+    transform: translateX(5px);
+}
+
+.cert-item.clickable-cert {
+    cursor: pointer;
+    position: relative;
+}
+
+.cert-item.clickable-cert::after {
+    content: '↗';
+    position: absolute;
+    top: 1.25rem;
+    right: 1.25rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 1rem;
+    color: var(--primary);
+}
+
+.cert-item.clickable-cert:hover::after {
+    opacity: 0.7;
+}
+
+.cert-item.clickable-cert:hover {
+    transform: translateX(8px);
+    box-shadow: 0 4px 15px rgba(212, 165, 116, 0.2);
+}
+
+.cert-content {
+    flex: 1;
+}
+
+.cert-name {
+    color: var(--project-light);
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+}
+
+.cert-provider {
+    color: var(--gray);
+    font-size: 0.875rem;
+}
+
+.timeline-container {
+    position: relative;
+    padding-left: 2rem;
+}
+
+.timeline-container::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 2px;
+    background: linear-gradient(to bottom, var(--primary), var(--secondary));
+}
+
+.ongoing-course {
+    position: relative;
+    margin-bottom: 2rem;
+    padding-left: 2rem;
+}
+
+.ongoing-course::before {
+    content: '';
+    position: absolute;
+    left: -2rem;
+    top: 0.5rem;
+    width: 16px;
+    height: 16px;
+    background: var(--primary);
+    border-radius: 50%;
+    border: 3px solid var(--dark);
+    animation: pulse 2s ease infinite;
+}
+
+.ongoing-title {
+    color: var(--secondary);
+    font-size: 1.25rem;
+    margin-bottom: 0.5rem;
+}
+
+.ongoing-provider {
+    color: var(--gray);
+    font-size: 0.95rem;
+}
+
+/* ==================================
+   CLICKABLE CARD ENHANCEMENTS
+   ================================== */
+
+.clickable-card {
+    cursor: pointer;
+    position: relative;
+}
+
+.clickable-card::after {
+    content: '🔗';
+    position: absolute;
+    top: 2rem;
+    right: 2rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    font-size: 1.2rem;
+}
+
+.clickable-card:hover::after {
+    opacity: 0.5;
+}
+
+.event-card.clickable-card:hover {
+    transform: translateX(15px);
+    box-shadow: 0 15px 40px rgba(212, 165, 116, 0.3);
+}
+
+.ongoing-course.clickable-card {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.ongoing-course.clickable-card:hover {
+    transform: translateX(10px);
+}
+
+.ongoing-course.clickable-card:hover .ongoing-title {
+    color: var(--primary);
+}
+
+/* ==================================
+   RESPONSIVE DESIGN
+   ================================== */
+
+@media (max-width: 768px) {
+    .pdr-hero h1 {
+        font-size: 2rem;
+    }
+
+    .pdr-stats {
+        grid-template-columns: 1fr;
+    }
+
+    .event-header {
+        flex-direction: column;
+    }
+
+    .cert-grid {
+        grid-template-columns: 1fr;
+    }
+}
