@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Map project titles to their URLs
     const projectUrls = {
+        'Wrist Fracture AI Segmentation - Team Specifix': 'projects/wrist-fracture-segmentation.html',
         'Rootify - Cloud ML for Plant Root Analysis': 'projects/rootify.html',
         'Emotion Classification from Video Dialogue': 'projects/emotion-classification.html',
         'Automated Plant Root Analysis & Robotics': 'projects/plant-robotics.html',
@@ -15,7 +16,8 @@ document.addEventListener('DOMContentLoaded', function() {
         'Smart Player Recruitment for NAC Breda': 'projects/nac-breda.html',
         'AI for Sustainable Development Goals': 'projects/sdg-analysis.html',
         'EPL Match Prediction & Player Valuation': 'projects/epl-prediction.html',
-        'Graph2Table: Visual Data to Structured Tables': 'projects/graph2table.html'
+        'Graph2Table: Visual Data to Structured Tables': 'projects/graph2table.html',
+        'DJ Genre Classification & Library Curation': 'projects/dj-genre-classification.html'
     };
     
     // Make entire project card clickable

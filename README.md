@@ -7,6 +7,9 @@ Visit my portfolio at: [https://thijnbakker.github.io](https://thijnbakker.githu
 
 ## 🚀 Featured Projects
 
+### Medical AI & Healthcare
+- **Wrist Fracture AI Segmentation (Team Specifix)** - 18-week medtech research project: automated radius/ulna bone segmentation from CT scans, benchmarking 10 architectures across 150+ experiments, EU MDR/GDPR-compliant (nnU-Net, ResU-Net, V-Net, 3D U-Net)
+
 ### Production Systems
 - **Rootify** - Cloud-based ML application for automated plant root analysis (Azure ML, Docker, Kubernetes)
 - **Emotion Classification** - NLP pipeline for German video dialogue emotion analysis (BERT, Transformers)
@@ -27,6 +30,7 @@ Visit my portfolio at: [https://thijnbakker.github.io](https://thijnbakker.githu
 - Python (PyTorch, TensorFlow, scikit-learn)
 - Machine Learning (Classical ML, Deep Learning, NLP)
 - Computer Vision (OpenCV, YOLO, U-Net)
+- Medical Imaging (nnU-Net, ResU-Net, V-Net, 3D Slicer)
 - Cloud & MLOps (Azure ML, Docker, Kubernetes)
 
 ### Tools & Technologies

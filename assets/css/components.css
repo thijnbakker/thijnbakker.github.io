@@ -130,6 +130,52 @@
 }
 
 /* ==================================
+   WIDE PROJECT CARD (multi-block projects)
+   ================================== */
+
+.project-card-wide {
+    grid-column: 1 / -1;
+}
+
+.wide-card-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+    gap: 1rem;
+    margin: 1.5rem 0;
+    padding: 1.25rem 0;
+    border-top: 1px solid rgba(212, 165, 116, 0.2);
+    border-bottom: 1px solid rgba(212, 165, 116, 0.2);
+}
+
+.mini-stat {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.mini-stat-number {
+    font-size: 1.75rem;
+    font-weight: bold;
+    background: var(--gradient);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.mini-stat-label {
+    font-size: 0.8rem;
+    color: var(--gray);
+    margin-top: 0.25rem;
+}
+
+@media (max-width: 768px) {
+    .wide-card-stats {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* ==================================
    SKILL & TECH TAGS
    ================================== */
 

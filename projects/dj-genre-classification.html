@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DJ Genre Classification - Thijn Bakker</title>
+    <meta name="description" content="Active-learning genre classification and curation system for a 7,600-track DJ library, built solo over 6 months">
+    <meta name="author" content="Thijn Bakker">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../assets/images/icons/headphones_icon.svg">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/projects.css">
+
+    <style>
+        /* Page-local additions — stat cards + simple CSS bar charts.
+           Self-contained so the shared stylesheets don't need edits. */
+        .dj-stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+            gap: 1.25rem;
+            margin: 1.5rem 0 2rem;
+        }
+        .dj-stat-card {
+            background: rgba(212, 165, 116, 0.08);
+            border: 1px solid rgba(212, 165, 116, 0.18);
+            border-radius: 14px;
+            padding: 1.25rem 1rem;
+            text-align: center;
+            transition: transform 0.25s ease, border-color 0.25s ease;
+        }
+        .dj-stat-card:hover {
+            transform: translateY(-3px);
+            border-color: var(--primary);
+        }
+        .dj-stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .dj-stat-label {
+            color: var(--gray);
+            font-size: 0.85rem;
+            margin-top: 0.35rem;
+            line-height: 1.3;
+        }
+
+        .dj-bar-row {
+            display: grid;
+            grid-template-columns: 150px 1fr 56px;
+            align-items: center;
+            gap: 0.75rem;
+            margin: 0.55rem 0;
+        }
+        .dj-bar-row .dj-bar-name {
+            color: var(--project-light);
+            font-size: 0.9rem;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        .dj-bar-track {
+            background: rgba(255, 255, 255, 0.06);
+            border-radius: 6px;
+            height: 10px;
+            overflow: hidden;
+        }
+        .dj-bar-fill {
+            height: 100%;
+            border-radius: 6px;
+            background: var(--gradient);
+        }
+        .dj-bar-fill.weak {
+            background: linear-gradient(135deg, #8b6f47 0%, #6b5138 100%);
+            opacity: 0.75;
+        }
+        .dj-bar-value {
+            color: var(--secondary);
+            font-size: 0.85rem;
+            text-align: right;
+            font-family: monospace;
+        }
+
+        .dj-phase-badge {
+            display: inline-block;
+            background: rgba(244, 164, 96, 0.15);
+            color: var(--secondary);
+            border: 1px solid rgba(244, 164, 96, 0.35);
+            border-radius: 20px;
+            padding: 0.25rem 0.9rem;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.02em;
+            margin-bottom: 0.75rem;
+        }
+
+        .dj-two-col {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 2rem;
+        }
+        @media (max-width: 768px) {
+            .dj-two-col { grid-template-columns: 1fr; }
+            .dj-bar-row { grid-template-columns: 110px 1fr 48px; }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">Thijn Bakker</a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#projects">Projects</a></li>
+                <li><a href="../pdr.html">Professional Development</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Project Hero -->
+    <section class="project-hero">
+        <div class="project-hero-content">
+            <h1 class="hero-text">
+                <span class="icon-mask" style="--icon-url: url('../assets/images/icons/headphones_icon.svg');"></span>
+                🎧 DJ Genre Classification & Library Curation
+            </h1>
+            <p class="project-date">April 2026 - Present · 6 months and counting</p>
+            <p class="project-client">Personal Project · Own DJ library (Denon SC5000 Prime x2 + X1800 Prime, Traktor Pro 3)</p>
+            <p class="project-members">Individual Project</p>
+        </div>
+    </section>
+
+    <!-- Project Content -->
+    <section class="project-content">
+        <div class="project-container">
+
+            <!-- Project Overview -->
+            <div class="project-section">
+                <h2>Project Overview</h2>
+                <p>
+                    I built a full genre-classification and curation system for my own DJ library: a raw dump of ~12,500 audio files with no consistent tagging, sitting on a USB drive, unusable for actual mixing. Over six months this grew from a one-off cleanup script into a proper active-learning pipeline — metadata APIs and audio embeddings feed a classifier, a purpose-built review app lets me correct it track by track, and every correction retrains the model so it gets better at the genres I actually care about.
+                </p>
+                <p>
+                    It's not a client project or a coursework challenge — it's the kind of system I'd want to build for a production ML team: multi-stage signal fusion, a human-in-the-loop feedback cycle, cross-platform infrastructure constraints solved with real architecture (not workarounds), and a classifier that's honest about where it's confident and where it isn't.
+                </p>
+                <div class="dj-stats-grid">
+                    <div class="dj-stat-card">
+                        <div class="dj-stat-number">7,607</div>
+                        <div class="dj-stat-label">tracks embedded &amp; classified</div>
+                    </div>
+                    <div class="dj-stat-card">
+                        <div class="dj-stat-number">37</div>
+                        <div class="dj-stat-label">genres in the trained taxonomy</div>
+                    </div>
+                    <div class="dj-stat-card">
+                        <div class="dj-stat-number">76.7%</div>
+                        <div class="dj-stat-label">5-fold CV accuracy</div>
+                    </div>
+                    <div class="dj-stat-card">
+                        <div class="dj-stat-number">2,588</div>
+                        <div class="dj-stat-label">hand-verified training labels</div>
+                    </div>
+                    <div class="dj-stat-card">
+                        <div class="dj-stat-number">2</div>
+                        <div class="dj-stat-label">machines (ARM64 + x86_64)</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- The Challenge -->
+            <div class="project-section">
+                <h2>The Challenge</h2>
+                <p>
+                    A DJ library isn't useful if you can't find the right track at the right moment. Mine had grown into a raw ~12,500-file dump — duplicates, junk files, inconsistent naming, no reliable genre tags — spread across an external Kingston drive. Loading that straight into Traktor would have meant scrolling through chaos mid-set.
+                </p>
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>Data Problems</h3>
+                        <div class="info-box-content">
+                            <div>• ~12,500 raw files: MP3, FLAC, M4A, WAV mixed together</div>
+                            <div>• Thousands of exact and near-duplicates from years of downloads</div>
+                            <div>• Junk files (.jpg, .cue, .nfo, .torrent) littering every folder</div>
+                            <div>• Filenames polluted with downloader prefixes and BPM/key tags</div>
+                            <div>• No consistent genre tagging at all</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>Hardware Constraints</h3>
+                        <div class="info-box-content">
+                            <div>• Dual Denon SC5000 Prime decks + X1800 Prime mixer</div>
+                            <div>• Traktor Pro 3 as the DJ software of record</div>
+                            <div>• Essentia (the audio-embedding library) is x86-only — won't build on the ARM64 machine I do most orchestration on</div>
+                            <div>• Traktor's own analysis engine had to own BPM/beatgrid to avoid conflicts with external tools</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- System Architecture -->
+            <div class="project-section">
+                <h2>System Architecture</h2>
+                <p>
+                    The system is four tools chained together, split across two physical machines because of the ARM64/x86_64 constraint above. Essentia's audio embeddings can only be extracted on the x86 Linux Mint machine; everything else — orchestration, the review app, the classifier training — runs wherever's convenient, usually a DGX Spark (ARM64, NVIDIA GB10).
+                </p>
+                <pre><code>
+┌───────────────────────────┐        ┌──────────────────────────┐
+│   PHASE 1                 │        │   PHASE 2                │
+│   Library Prep            │  --->  │   Auto-Classification    │
+│   (dedupe, clean, rename) │        │   (metadata + Essentia + │
+│   12,500 → ~7,200 tracks  │        │    LLM cascade, v1 → v6) │
+└───────────────────────────┘        └──────────────────────────┘
+                                                  │
+                                                  v
+┌─────────────────────────┐          ┌──────────────────────────┐
+│   PHASE 4               │  <---    │   PHASE 3                │
+│   Active-Learning       │          │   Review App (Flask)     │
+│   Classifier (v2)       │          │   human corrections →    │
+│   Essentia embeddings   │          │   🌱 SEEDS/ ground truth │
+│   + Logistic Regression │          │                          │
+│   76.7% CV accuracy     │          └──────────────────────────┘
+└─────────────────────────┘                      │
+        │                                        v
+        └──────────────> predictions.csv <───────┘
+                          feeds back into the Review App
+                          as "⚠ Likely wrong" prioritization
+
+┌─────────────────────────────────────────────────────────────┐
+│   PHASE 5 — Playlist Builder                                │
+│   Reads Traktor's collection.nml directly: BPM, key, genre, │
+│   recent additions, full-library search, harmonic prep      │
+└─────────────────────────────────────────────────────────────┘
+                </code></pre>
+                <p>
+                    The loop between Phase 3 and Phase 4 is the core idea: the classifier isn't a one-shot model, it's a system that gets retrained every time I correct it. More manual reviewing → more seed labels → a better classifier → better suggestions → faster reviewing.
+                </p>
+            </div>
+
+            <!-- Phase 1 -->
+            <div class="project-section">
+                <span class="dj-phase-badge">Phase 1</span>
+                <h2>Library Preparation</h2>
+                <p>
+                    Before any classification could happen, the raw dump needed to become a clean, deduplicated set of files with sane names. This ran as a chain of small, single-purpose Python scripts — each one auditable and re-runnable on its own.
+                </p>
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>Cleaning Pipeline</h3>
+                        <div class="info-box-content monospace">
+                            <div>01_create_folders.py</div>
+                            <div>02_clean_junk.py — strip .jpg/.cue/.nfo/.torrent</div>
+                            <div>03_fix_filenames.py — strip downloader tags</div>
+                            <div>04_filter_duration.py — flag corrupt / too short / too long</div>
+                            <div>dupeGuru (Tags + Contents scans)</div>
+                            <div>05_tag_from_filename.py</div>
+                            <div>06_convert_to_mp3.py — normalize format</div>
+                            <div>07_flatten.py</div>
+                            <div>08_rename_to_artist_title.py</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>Results</h3>
+                        <div class="info-box-content">
+                            <div>• 12,500 raw files → ~6,300-7,200 clean tracks</div>
+                            <div>• ~3,282 exact duplicates removed via dupeGuru (Artist+Title, 100% hardness)</div>
+                            <div>• 809 untagged files recovered via filename parsing</div>
+                            <div>• 5,444 files renamed to a consistent "Artist - Title" format</div>
+                            <div>• Corrupt (3), too-short (11), and too-long (96) files routed to review folders instead of silently dropped</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 2 -->
+            <div class="project-section">
+                <span class="dj-phase-badge">Phase 2</span>
+                <h2>Automated Classification Pipeline (v1 → v6)</h2>
+                <p>
+                    This is where most of the iteration happened. The goal: assign each track to one of ~50 sub-genres under a broad taxonomy (House, Techno, Trance, Breaks &amp; Bass, Electronic &amp; Leftfield, Classics &amp; Roots, Mainstream &amp; Pop) using whatever signal was available — metadata first, audio analysis as a fallback, an LLM as the last resort.
+                </p>
+                <div class="info-box">
+                    <h3>Priority-Ordered Signal Chain (final, v6)</h3>
+                    <div class="info-box-content monospace">
+                        <div>A. AcoustID fingerprint match → direct classification</div>
+                        <div>B. Discogs style match (specificity-ordered) → direct</div>
+                        <div>C. No metadata + Essentia genre confidence ≥ 0.35 → direct</div>
+                        <div>D. Unambiguous keyword in MusicBrainz/Last.fm tags → direct</div>
+                        <div>E. Everything else → Qwen3:14b, two-stage (broad category → sub-genre)</div>
+                    </div>
+                </div>
+                <p>
+                    Getting the LLM stage right took several failed attempts. Nemotron-3-super:120b was the first choice as final classifier — it's a reasoning model, and with a 50-token output cap it never got past "We need to classify..." before running out of tokens. Every single one of 6,277 test tracks fell through to "To Sort Manually." Switching to Qwen2.5:7b (and later Qwen3:14b with an explicit <code>/no_think</code> prefix to suppress its own reasoning) fixed that immediately.
+                </p>
+                <p>
+                    The single biggest accuracy win, though, was removing "To Sort Manually" as a valid answer entirely. Once the model couldn't cop out, the unsorted bucket went from ~66% → ~3% → 0%.
+                </p>
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>Classification Source Breakdown</h3>
+                        <div class="info-box-content">
+                            <div>• Discogs style match: 52%</div>
+                            <div>• Qwen two-stage LLM: 24%</div>
+                            <div>• Essentia confidence fallback: 19%</div>
+                            <div>• Direct tag keyword match: 4%</div>
+                            <div>• Unsorted: 0%</div>
+                            <div style="margin-top: 0.75rem; color: var(--gray); font-size: 0.85rem;">from a 1,650-track partial production run</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>Error Rate</h3>
+                        <div class="info-box-content">
+                            <div>• 3 misclassifications out of 1,650 tracks (0.18%)</div>
+                            <div>• All 3 traced to the same artist — corrupt/unusual files, not a systemic issue</div>
+                            <div>• Flagged concern: House at 51% of that run seemed disproportionately high — traced to Discogs mapping generic "House" labels into a catch-all sub-genre, fed directly into the Phase 3/4 review loop</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Phase 3 -->
+            <div class="project-section">
+                <span class="dj-phase-badge">Phase 3</span>
+                <h2>Human-in-the-Loop Review App</h2>
+                <p>
+                    The automated pipeline gets most tracks right, but "most" isn't good enough for a genre-sorted library you actually perform from. So I built a local Flask app to triage the library track by track — a purpose-built tool, not a spreadsheet.
+                </p>
+                <div class="dj-two-col">
+                    <div class="info-box">
+                        <h3>Core Workflow</h3>
+                        <div class="info-box-content">
+                            <div>• Grouped sidebar — sub-genres nested under their broad family, collapsible</div>
+                            <div>• Middle panel lists every track in a genre with ✓ reviewed / ⚑ flagged status</div>
+                            <div>• In-browser audio player with waveform, click-to-seek</div>
+                            <div>• Full keyboard control: Space (correct), W (flag wrong), M (manual sort), T (trash), Enter (apply new genre)</div>
+                            <div>• Typeahead genre picker with fuzzy matching</div>
+                            <div>• Bulk reassign via shift-click multi-select</div>
+                            <div>• Create a brand-new genre from the UI — folder + taxonomy entry persist automatically</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>The 🌱 SEEDS Mechanism</h3>
+                        <div class="info-box-content">
+                            <div>Every manual correction moves the file into a dedicated <code>🌱 SEEDS/&lt;genre&gt;/</code> folder and rewrites its tag to match — turning a one-off correction into a permanent, trustworthy training label.</div>
+                            <div style="margin-top: 0.75rem;">This solved a real bug: an earlier version trained on the pipeline's <em>own</em> passive predictions as if they were ground truth, which just taught the classifier to repeat its mistakes. Restricting training data to seeds-only fixed it.</div>
+                        </div>
+                    </div>
+                </div>
+                <p style="margin-top: 1.5rem;">
+                    Every move — dry-run or real — is atomic and logged to <code>changelog.jsonl</code> (6,813 entries and counting): tag rewrite, file move, and a rollback path if the move half-fails. Nothing is silently lost.
+                </p>
+
+                <div class="demo-container">
+                    <img src="../assets/images/dj-genre-classification/reviewer_sidebar.png" alt="DJ Library Reviewer sidebar showing grouped genres, orange likely-wrong badges, and the SEEDS group" class="demo-gif">
+                    <p class="demo-caption">
+                        The reviewer's sidebar — genres grouped by broad family, orange badges marking tracks the classifier disagrees with, and a live 🌱 SEEDS count feeding the next training run
+                    </p>
+                </div>
+
+                <div class="demo-container">
+                    <img src="../assets/images/dj-genre-classification/reviewer_track_detail.png" alt="DJ Library Reviewer track detail view with BPM, key, energy, and classifier suggestion chips" class="demo-gif">
+                    <p class="demo-caption">
+                        Reviewing a Hard Groove track — BPM/key/energy at a glance, raw Essentia and Discogs signals underneath, and one-click classifier suggestions ranked by confidence
+                    </p>
+                </div>
+
+                <div class="demo-container">
+                    <img src="../assets/images/dj-genre-classification/reviewer_disagreement.png" alt="Reviewer flagging a Deep House track as a likely Melodic House misclassification" class="demo-gif">
+                    <p class="demo-caption">
+                        The active-learning loop in action: this track sits in Deep House, but the classifier flags it "⚠ Melodic House" at 58% confidence — exactly the kind of blurry-genre disagreement the review workflow is built to surface
+                    </p>
+                </div>
+            </div>
+
+                <div class="demo-container">
+                    <p class="demo-caption" style="margin-top: 0; margin-bottom: 1rem;">
+                        Try the actual trained classifier — upload a track, get a genre prediction with honest, calibrated confidence
+                    </p>
+                    <a href="https://dj-genre-classifier.streamlit.app" target="_blank" class="demo-button">
+                        ⭐ Try Live Demo
+                    </a>
+                </div>
+                
+            <!-- Phase 4 -->
+            <div class="project-section">
+                <span class="dj-phase-badge">Phase 4</span>
+                <h2>Active-Learning Classifier</h2>
+                <p>
+                    Once enough seeds existed, I trained a proper classifier on top of them — this is the piece I'd point to as the most "ML engineering" part of the project. It's deliberately simple: not because a bigger model wasn't available, but because a well-calibrated linear model on strong embeddings beat the complexity budget for the problem.
+                </p>
+                <pre><code>
+# Feature extraction — Essentia Discogs-EffNet, 1280-dim embeddings
+# (runs on the x86_64 Mint machine; Essentia won't build on ARM64)
+audio = es.MonoLoader(filename=track, sampleRate=16000, resampleQuality=4)()
+emb_model = es.TensorflowPredictEffnetDiscogs(
+    graphFilename="discogs-effnet-bs64-1.pb", output="PartitionedCall:1"
+)
+embedding = emb_model(audio)   # -> (n_frames, 1280), averaged per track
+
+# Classifier — logistic regression + sigmoid calibration
+pipeline = Pipeline([
+    ("scaler", StandardScaler()),
+    ("lr", LogisticRegression(
+        C=1.0, class_weight="balanced", max_iter=2000, solver="lbfgs",
+    )),
+])
+
+# Stratified 5-fold CV for an honest per-class accuracy read
+skf = StratifiedKFold(n_splits=5, shuffle=True, random_state=42)
+# ... fit/predict per fold, pool results for classification_report ...
+
+# Final model: calibrated so confidence scores are trustworthy,
+# not the over-confident 0.99s a raw LR gives on a memorizable set
+calibrated = CalibratedClassifierCV(pipeline, method="sigmoid", cv=3)
+calibrated.fit(X, y)
+# In-sample accuracy: 96.3%  |  5-fold CV accuracy: 76.7%
+# (the ~20pt gap is the tell that in-sample alone would be misleading —
+#  CV is the number that matters)
+                </code></pre>
+                <p>
+                    <strong>Design choices that mattered:</strong> <code>class_weight="balanced"</code> so genres like Trance (471 labels) don't drown out Reggaeton (11 labels); a hard floor of 8 labels per class below which a genre gets dropped from training entirely rather than let the model hallucinate on it; and sigmoid calibration so a 0.4 confidence score actually means "40% of the time this is right," not "the model is being falsely modest."
+                </p>
+
+                <h3 style="margin-top: 2rem; color: var(--secondary);">Per-Genre Performance (F1 score)</h3>
+                <p style="color: var(--gray); font-size: 0.9rem; margin-bottom: 1rem;">Trained on 2,588 seed-verified labels across 37 genres that cleared the minimum-label threshold.</p>
+
+                <div class="info-box">
+                    <h3>Strongest Classes</h3>
+                    <div class="info-box-content">
+                        <div class="dj-bar-row"><span class="dj-bar-name">Downtempo</span><div class="dj-bar-track"><div class="dj-bar-fill" style="width:95.5%"></div></div><span class="dj-bar-value">0.955</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Hard Groove</span><div class="dj-bar-track"><div class="dj-bar-fill" style="width:95.2%"></div></div><span class="dj-bar-value">0.952</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Hard Techno</span><div class="dj-bar-track"><div class="dj-bar-fill" style="width:93.8%"></div></div><span class="dj-bar-value">0.938</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Trance</span><div class="dj-bar-track"><div class="dj-bar-fill" style="width:93.4%"></div></div><span class="dj-bar-value">0.934</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Schranz</span><div class="dj-bar-track"><div class="dj-bar-fill" style="width:90.9%"></div></div><span class="dj-bar-value">0.909</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Drum & Bass</span><div class="dj-bar-track"><div class="dj-bar-fill" style="width:89.4%"></div></div><span class="dj-bar-value">0.894</span></div>
+                    </div>
+                </div>
+                <div class="info-box">
+                    <h3>Weakest Classes</h3>
+                    <div class="info-box-content">
+                        <div class="dj-bar-row"><span class="dj-bar-name">Rave</span><div class="dj-bar-track"><div class="dj-bar-fill weak" style="width:15.7%"></div></div><span class="dj-bar-value">0.157</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Indie</span><div class="dj-bar-track"><div class="dj-bar-fill weak" style="width:20.0%"></div></div><span class="dj-bar-value">0.200</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Deep House</span><div class="dj-bar-track"><div class="dj-bar-fill weak" style="width:31.0%"></div></div><span class="dj-bar-value">0.310</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Progressive House</span><div class="dj-bar-track"><div class="dj-bar-fill weak" style="width:35.1%"></div></div><span class="dj-bar-value">0.351</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Dutch</span><div class="dj-bar-track"><div class="dj-bar-fill weak" style="width:40.0%"></div></div><span class="dj-bar-value">0.400</span></div>
+                        <div class="dj-bar-row"><span class="dj-bar-name">Minimal - Deep Tech</span><div class="dj-bar-track"><div class="dj-bar-fill weak" style="width:45.7%"></div></div><span class="dj-bar-value">0.457</span></div>
+                    </div>
+                </div>
+                <p>
+                    The pattern is consistent with the genres themselves: Hard Groove, Hard Techno, and Schranz are sonically distinct and have enough labeled examples. Deep House, Progressive House, and Melodic House sit on a genuinely blurry continuum — a human reviewer disagrees with themself on some of these tracks, so 76.7% overall accuracy with those specific classes underperforming isn't a modeling failure, it's an honest reflection of genre ambiguity. That's exactly the signal the Phase 3 review app uses to prioritize what to check first.
+                </p>
+            </div>
+
+            <!-- Phase 5 -->
+            <div class="project-section">
+                <span class="dj-phase-badge">Phase 5</span>
+                <h2>Playlist Builder</h2>
+                <p>
+                    The last piece talks directly to Traktor. It parses <code>collection.nml</code> (Traktor's own library file) to pull BPM, musical key, and genre per track, then layers a browsing UI on top: recently-added tracks, full-library search, and album art — all without touching Traktor itself.
+                </p>
+                <div class="info-box">
+                    <h3>What It Reads</h3>
+                    <div class="info-box-content monospace">
+                        <div>Traktor's TEMPO / MUSICAL_KEY / LOCATION nodes → BPM, key, file path</div>
+                        <div>ID3 / FLAC tags directly from disk → artist, title, genre, comment</div>
+                        <div>Mixed In Key's energy rating (written into the comment tag)</div>
+                        <div>Endpoints: /api/tree, /api/recent, /api/search, /api/playlist/save</div>
+                    </div>
+                </div>
+
+                <div class="demo-container">
+                    <img src="../assets/images/dj-genre-classification/playlist_builder.png" alt="Playlist Builder browsing the Electronic to Techno to Hard Groove folder tree with a drag-to-build playlist panel" class="demo-gif">
+                    <p class="demo-caption">
+                        Browsing straight into Electronic → Techno → Hard Groove — drag tracks into the panel on the right to build a set, then push it to Traktor as a native playlist
+                    </p>
+                </div>
+            </div>
+
+            <!-- Technical Challenges -->
+            <div class="project-section">
+                <h2>Technical Challenges & Solutions</h2>
+                <p>
+                    <strong>Challenge 1: Essentia won't build on ARM64.</strong><br>
+                    The DGX Spark (ARM64) is my main orchestration machine, but Essentia hardcodes an <code>-msse</code> x86 build flag. Solution: moved all embedding extraction to a separate Linux Mint x86_64 box and shipped a pre-computed <code>embeddings.npz</code> back — a real distributed-architecture decision, not a hack.<br><br>
+
+                    <strong>Challenge 2: Reasoning models can't follow "answer with one word."</strong><br>
+                    Nemotron-3-super:120b burned its entire token budget reasoning out loud and never reached an answer, sending 100% of tracks to the unsorted bucket. Solution: switched to Qwen models, which needed an explicit <code>/no_think</code> directive of their own to suppress the same behavior.<br><br>
+
+                    <strong>Challenge 3: Passive-label poisoning.</strong><br>
+                    An early version trained the classifier on tracks that had simply <em>stayed</em> in their pipeline-assigned folder, treating that as a positive label. That taught the model to reproduce its own mistakes. Solution: the seeds-only training set — only tracks a human explicitly moved count as ground truth.<br><br>
+
+                    <strong>Challenge 4: Overconfident predictions.</strong><br>
+                    Raw logistic regression on 1280-dim embeddings memorized training data and output near-1.0 confidence on everything, useless for triage. Solution: <code>CalibratedClassifierCV</code> with sigmoid calibration, bringing mean confidence down to a realistic ~0.41-0.47 — low enough to be honest, still useful for sorting "check this first."<br><br>
+
+                    <strong>Challenge 5: Traktor's beatgrid vs. external tools.</strong><br>
+                    Batch-analyzing tracks in Traktor occasionally set the wrong beatgrid phase, and running Traktor in standalone/Engine DJ mode on the SC5000 decks caused misalignment entirely. Solution: individual (not batch) analysis for problem tracks, Computer Mode via a custom MIDI TSI hardware mapping instead of standalone mode, and Mixed In Key handling key detection exclusively so it never fights Traktor's own BPM analysis.
+                </p>
+            </div>
+
+            <!-- Key Learnings -->
+            <div class="project-section">
+                <h2>Key Learnings</h2>
+                <p>
+                    <strong>"Training a model" is mostly infrastructure work.</strong> The actual classifier here is a few dozen lines of scikit-learn. Everything that made it work — embedding extraction across two machines, a labeling tool that produces trustworthy ground truth, a signal-priority chain that only falls back to the LLM when metadata fails — is systems engineering, and that's where most of the six months went.
+                </p>
+                <p>
+                    <strong>Removing an escape hatch beats improving confidence.</strong> Deleting "To Sort Manually" as a valid LLM answer did more for the automated pipeline's accuracy than any prompt tweak. Forcing commitment surfaced better signal than hedging did.
+                </p>
+                <p>
+                    <strong>Passive labels are a trap.</strong> Using a model's own outputs as training data — even when they look reasonable — teaches it to be confidently wrong in the same way, every time. Ground truth has to come from an independent source, in this case a human explicitly moving a file.
+                </p>
+                <p>
+                    <strong>Calibration matters more than most people give it credit for.</strong> A model that's 76.7% accurate but knows when it's guessing is more useful in a real workflow than one that's 85% accurate but always "sure." The whole review-prioritization feature depends on the confidence numbers being honest.
+                </p>
+                <p>
+                    <strong>Cross-platform constraints can be architectural decisions, not annoyances.</strong> Essentia's ARM64 limitation could have been a dead end. Instead it forced a genuinely better design: a clean, resumable interface (a single <code>.npz</code> file) between two machines with different jobs.
+                </p>
+            </div>
+
+            <!-- Technologies Used -->
+            <div class="project-section">
+                <h2>Technologies Used</h2>
+                <div class="tech-grid">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Essentia</span>
+                    <span class="tech-tag">scikit-learn</span>
+                    <span class="tech-tag">Logistic Regression</span>
+                    <span class="tech-tag">Flask</span>
+                    <span class="tech-tag">Ollama</span>
+                    <span class="tech-tag">Qwen2.5 / Qwen3</span>
+                    <span class="tech-tag">Librosa</span>
+                    <span class="tech-tag">Mutagen</span>
+                    <span class="tech-tag">NumPy</span>
+                    <span class="tech-tag">AcoustID API</span>
+                    <span class="tech-tag">Discogs API</span>
+                    <span class="tech-tag">MusicBrainz API</span>
+                    <span class="tech-tag">Last.fm API</span>
+                    <span class="tech-tag">Traktor Pro 3</span>
+                    <span class="tech-tag">Mixed In Key</span>
+                    <span class="tech-tag">dupeGuru</span>
+                    <span class="tech-tag">Active Learning</span>
+                    <span class="tech-tag">Cross-Platform Systems Design</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Back to Projects -->
+    <section class="back-navigation">
+        <a href="../index.html#other-projects" class="btn btn-secondary">← Back to Projects</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2025 Thijn Bakker. Built with passion and lots of coffee ☕</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/main.js"></script>
+</body>
+</html>

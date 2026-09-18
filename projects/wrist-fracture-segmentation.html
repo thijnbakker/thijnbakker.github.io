@@ -1,0 +1,733 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Wrist Fracture AI Segmentation - Thijn Bakker</title>
+    <meta name="description" content="AI-based radius and ulna bone segmentation from CT scans for wrist fracture surgical planning, developed with Specifix">
+    <meta name="author" content="Thijn Bakker">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="../assets/images/icons/bone_icon.png">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/projects.css">
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">Thijn Bakker</a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#projects">Projects</a></li>
+                <li><a href="../pdr.html">Professional Development</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Project Hero -->
+    <section class="project-hero">
+        <div class="project-hero-content">
+            <h1>🦴 Wrist Fracture AI Segmentation for Surgical Planning</h1>
+            <p class="project-date">September 2025 - January 2026 (18-week / half-year project)</p>
+            <p class="project-client">Client:
+                <a href="https://specifix.online" target="_blank" style="color: var(--secondary);">Specifix</a> - AI-powered pre-operative planning for wrist fracture surgery
+            </p>
+            <p class="project-members">Team Members (Team Specifix):
+                <a href="https://www.linkedin.com/in/daanquaadvliet/" target="_blank" style="color: var(--secondary);">Daan Quaadvliet</a>,
+                <a href="https://www.linkedin.com/in/zsombor-szocs-7529532a2" target="_blank" style="color: var(--secondary);">Zsombor Szőcs</a>,
+                <a href="https://www.linkedin.com/in/anastasiia-mokhonko/" target="_blank" style="color: var(--secondary);">Anastasiia Mokhonko</a>,
+                <a href="https://www.linkedin.com/in/artem-musaelan-50a54a327/" target="_blank" style="color: var(--secondary);">Artjom Musaelans</a>
+            </p>
+            <p class="project-members">Role: Team Lead & Data Scientist - Radius & Ulna Bone Segmentation</p>
+        </div>
+    </section>
+
+    <!-- Project Content -->
+    <section class="project-content">
+        <div class="project-container">
+
+            <!-- Project Overview -->
+            <div class="project-section">
+                <h2>Project Overview</h2>
+                <p>
+                    An 18-week research project with <a href="https://specifix.online" target="_blank" style="color: var(--secondary);">Specifix</a>, a Belgian medtech startup building AI-powered pre-operative planning software for wrist fracture surgery. Our goal was to develop efficient AI models for automated radius and ulna bone segmentation from CT scans, directly addressing the 30-45 minute manual segmentation bottleneck that slows down surgical planning today. Wrist fractures account for up to 25% of pediatric fractures and 18% of elderly fractures globally, so faster, reliable segmentation has real clinical value.
+                </p>
+            </div>
+
+            <!-- The Challenge -->
+            <div class="project-section">
+                <h2>The Challenge</h2>
+                <p>
+                    Specifix's existing planning workflow relied on manual segmentation of radius and ulna bones from 3D CT scans, a slow and repetitive process that created a bottleneck ahead of surgery. The project needed to address:
+                </p>
+                <p>
+                    • Building a reliable preprocessing pipeline for 162 real patient CT cases with inconsistent voxel spacing, intensity ranges, and file naming<br>
+                    • Selecting a segmentation architecture that balances clinical accuracy against computational cost, since Specifix wanted to minimize inference and training expenses<br>
+                    • Extending single-bone (radius) segmentation to a harder multiclass problem separating radius and ulna<br>
+                    • Navigating the regulatory reality of medical AI: EU MDR Class IIa classification, GDPR-compliant patient data handling, and EU AI Act high-risk system requirements<br>
+                    • Validating that any proposed solution would meaningfully reduce the surgeon's segmentation time without compromising safety
+                </p>
+            </div>
+
+            <!-- Our Approach -->
+            <div class="project-section">
+                <h2>Our Approach</h2>
+                <p>
+                    We treated this as a research-driven specialisation project, running a wide architecture search before converging on an efficient production candidate:
+                </p>
+                <p>
+                    <strong>1. Data Engineering First:</strong> Built a multi-step preprocessing pipeline transforming fragmented, inconsistently-named NRRD files into standardized, model-ready patches<br>
+                    <strong>2. Baseline Before Custom:</strong> Established a state-of-the-art nnU-Net baseline before attempting any custom architecture, so every later comparison had a fair reference point<br>
+                    <strong>3. Broad Architecture Search:</strong> Systematically compared 10 architectures (3D U-Net, V-Net, Res-U-Net, nnU-Net and several custom variants) rather than committing early to one approach<br>
+                    <strong>4. Efficiency as a First-Class Metric:</strong> Tracked parameter count and GPU training hours alongside Dice score, since the client explicitly wanted to minimize compute cost<br>
+                    <strong>5. Multiclass Extension:</strong> Once single-bone segmentation was solid, extended the pipeline and models to jointly segment both the radius and ulna<br>
+                    <strong>6. Regulatory Awareness Throughout:</strong> Ran the legal/ethical analysis in parallel with model development instead of as an afterthought
+                </p>
+            </div>
+
+            <!-- Technical Implementation -->
+            <div class="project-section">
+                <h2>Technical Implementation</h2>
+                <p>
+                    The data pipeline transformed raw hospital CT exports into clean, patch-based training data through a series of dedicated stages:
+                </p>
+
+                <div class="info-box">
+                    <h3>Data Preprocessing Pipeline</h3>
+                    <div class="info-box-content">
+                        <div>1. Raw CT Scans - 162 patient cases (NRRD format), 1,499 training patches extracted in total</div>
+                        <div>2. Data Cleaning - removed corrupted files and standardized fragmented exports</div>
+                        <div>3. Label Merging - combined radius and ulna masks from separate source files</div>
+                        <div>4. Voxel Spacing Standardization - resampled every scan to a consistent resolution</div>
+                        <div>5. Intensity Normalization - normalized Hounsfield units to enhance bone tissue contrast</div>
+                        <div>6. Train/Val/Test Split - patient-level split to avoid data leakage</div>
+                        <div>7. Patch Extraction - 128×128×128 voxel patches (64³ for early iterations)</div>
+                        <div>8. Intelligent Filtering - bone-content-aware sampling, ~90% background reduction</div>
+                        <div>9. HDF5 Batching - packaged final patches for efficient GPU-side loading</div>
+                    </div>
+                </div>
+
+                <pre><code>
+# Efficient Custom Res-U-Net vs. nnU-Net Baseline
+class ModelBenchmark:
+    """
+    Comparing a state-of-the-art baseline against a purpose-built,
+    lightweight architecture for radius bone segmentation.
+    """
+    def __init__(self):
+        self.nnunet_baseline = {
+            'architecture': 'nnU-Net (3D Full Resolution)',
+            'dice_score': 0.90,
+            'parameters': 31_000_000,
+            'training_time_hours': 63
+        }
+
+        self.custom_resunet = {
+            'architecture': 'Custom Res-U-Net',
+            'dice_score': 0.869,
+            'parameters': 3_200_000,       # ~90% fewer parameters
+            'training_time_hours': 7       # ~89% less training time
+        }
+
+    def compare(self):
+        param_reduction = 1 - (self.custom_resunet['parameters'] /
+                                self.nnunet_baseline['parameters'])
+        time_reduction = 1 - (self.custom_resunet['training_time_hours'] /
+                               self.nnunet_baseline['training_time_hours'])
+        dice_gap = self.nnunet_baseline['dice_score'] - self.custom_resunet['dice_score']
+
+        return {
+            'parameter_reduction': f"{param_reduction:.0%}",   # ~90%
+            'time_reduction': f"{time_reduction:.0%}",         # ~89%
+            'dice_gap': f"{dice_gap:.3f}"                      # ~0.031
+        }
+
+# Across the full architecture search:
+# 150+ experiments | ~1,170 GPU hours | 10 architectures evaluated
+                </code></pre>
+
+                <p>
+                    <strong>Multiclass Extension:</strong> After validating single-bone (radius) segmentation, we extended the pipeline and models to jointly segment radius and ulna. Early multiclass runs suffered from class confusion (the model defaulting to the majority class when uncertain), which we diagnosed by comparing binary "bone vs. background" Dice against per-class Dice, then addressed through class-weighted loss functions and connectivity constraints between classes.
+                </p>
+            </div>
+
+            <!-- Results & Impact -->
+            <div class="project-section">
+                <h2>Results & Impact</h2>
+
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>Single-Bone (Radius) Segmentation</h3>
+                        <div class="info-box-content monospace">
+                            <div><strong>nnU-Net baseline:</strong></div>
+                            <div>90.0% Dice | 31M params</div>
+                            <div>63h training | ~6.5 min inference</div>
+                            <div style="margin-top: 1rem;"><strong>Custom ResU-Net v4 (24f):</strong></div>
+                            <div>86.9% Dice | 3.2M params</div>
+                            <div>7h training | &lt;4 min inference</div>
+                            <div style="margin-top: 1rem;"><strong>Efficiency gain:</strong></div>
+                            <div>~90% fewer parameters</div>
+                            <div>~89% less training time</div>
+                            <div>for a ~3-point Dice trade-off</div>
+                        </div>
+                    </div>
+
+                    <div class="info-box">
+                        <h3>Multiclass (Radius + Ulna) Segmentation</h3>
+                        <div class="info-box-content monospace">
+                            <div><strong>Radius Dice:</strong> 75.7%</div>
+                            <div><strong>Ulna Dice:</strong> 85.7%</div>
+                            <div><strong>Mean Dice:</strong> 80.7%</div>
+                            <div style="margin-top: 1rem;"><strong>Experiment tracking:</strong></div>
+                            <div>150+ training runs launched</div>
+                            <div>60 successfully completed</div>
+                            <div>~1,170 GPU hours total</div>
+                            <div>10 architectures · 9 loss functions</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>
+                    Other baselines evaluated for context: 3D U-Net (77.6% Dice, 12.9M params) and V-Net-Res (82.4% Dice, 11.6M params) - both were outperformed by the custom ResU-Net on the accuracy-vs-efficiency trade-off, which is why ResU-Net became the recommended production candidate.
+                </p>
+
+                <p>
+                    • <strong>Clinical Time Savings:</strong> Validated an estimated 85-90% reduction in segmentation time versus Specifix's manual workflow (30-45 minutes manually vs. automated inference)<br>
+                    • <strong>Compute Efficiency:</strong> The custom Res-U-Net matched the nnU-Net baseline's accuracy within a few Dice points while needing roughly a tenth of the parameters and training time, directly addressing Specifix's cost constraints<br>
+                    • <strong>Architecture Benchmarking:</strong> Delivered a full comparison report ranking nnU-Net, V-Net, 3D U-Net, Res-U-Net and custom variants on accuracy, parameter count, and training/inference cost<br>
+                    • <strong>Stakeholder Reporting:</strong> Built an interactive Power BI dashboard (with a model-selection slicer, added after client feedback) so Specifix could compare every trained model against their own priorities<br>
+                    • <strong>Deployment Recommendation:</strong> Since Specifix already has a deployment pipeline, we delivered production-ready preprocessing, training, and inference code plus a clear model recommendation rather than shipping a redundant deployment ourselves
+                </p>
+            </div>
+
+            <!-- Dashboard -->
+            <div class="project-section">
+                <h2>Dashboard</h2>
+                <p>We built an interactive Power BI dashboard so Specifix could compare every trained model side by side, filter by architecture, and dig into overfitting and hyperparameter effects. Two versions were delivered: one for the single-bone radius segmentation task, and one extended for the multiclass radius + ulna task.</p>
+
+                <div class="presentation-slider">
+                    <div class="slide-container">
+                        <div class="slide active">
+                            <img src="../presentations/wrist-fracture-segmentation/Dashboard1.jpg" alt="Wrist Fracture Segmentation Dashboard - Screenshot 1">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Dashboard2.jpg" alt="Wrist Fracture Segmentation Dashboard - Screenshot 2">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Dashboard3.jpg" alt="Wrist Fracture Segmentation Dashboard - Screenshot 3">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Dashboard4.jpg" alt="Wrist Fracture Segmentation Dashboard - Screenshot 4">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Dashboard5.jpg" alt="Wrist Fracture Segmentation Dashboard - Screenshot 5">
+                        </div>
+                    </div>
+
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">5</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changeSlide(1)">›</button>
+                    </div>
+
+                    <div class="slide-indicators">
+                        <button class="indicator active" onclick="currentSlide(1)"></button>
+                        <button class="indicator" onclick="currentSlide(2)"></button>
+                        <button class="indicator" onclick="currentSlide(3)"></button>
+                        <button class="indicator" onclick="currentSlide(4)"></button>
+                        <button class="indicator" onclick="currentSlide(5)"></button>
+                    </div>
+                </div>
+
+                <div class="paper-download" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <a href="../assets/images/wrist-fracture-segmentation/radius_segmentation_dashboard_final.pbix" class="btn btn-primary" download="radius_segmentation_dashboard_final.pbix" style="flex: 1; min-width: 220px;">
+                        Radius Segmentation Dashboard (PBIX)
+                    </a>
+                    <a href="../assets/images/wrist-fracture-segmentation/multiclass_segmentation_dashboard_final.pbix" class="btn btn-primary" download="multiclass_segmentation_dashboard_final.pbix" style="flex: 1; min-width: 220px;">
+                        Multiclass Segmentation Dashboard (PBIX)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Regulatory & Ethical Framework -->
+            <div class="project-section">
+                <h2>Regulatory &amp; Ethical Framework</h2>
+                <p>
+                    Because Specifix's software supports surgical decision-making, we treated legal and ethical compliance as a core deliverable rather than an afterthought:
+                </p>
+                <p>
+                    <strong>EU AI Act:</strong> Classified the segmentation system as a high-risk medical AI application and worked through the associated transparency, human-oversight, and documentation obligations<br>
+                    <strong>EU MDR (Medical Device Regulation):</strong> Analyzed Class IIa certification requirements relevant to AI-assisted surgical planning tools<br>
+                    <strong>GDPR:</strong> Built data handling practices around anonymization, access control, and secure processing of patient CT data<br>
+                    <strong>Bias &amp; Fairness:</strong> Assessed potential bias from demographic representation and scanner variability in the training data, and proposed stratified validation as a mitigation<br>
+                    <strong>Explainability:</strong> Used 3D Slicer visualizations and multi-metric evaluation (Dice, IoU, Hausdorff distance) so predictions remain interpretable to clinical stakeholders, not just a black-box output
+                </p>
+            </div>
+
+            <!-- Key Learnings -->
+            <div class="project-section">
+                <h2>Key Learnings</h2>
+                <p>
+                    <strong>Efficiency Is a Design Constraint, Not an Afterthought:</strong> Treating parameter count and training time as first-class metrics alongside Dice score, rather than optimizing for accuracy alone, led directly to a model that was actually usable within the client's compute budget.
+                </p>
+                <p>
+                    <strong>Validate Loss Functions Against Real Predictions:</strong> A late-stage bug where a multiclass model was accidentally trained with the wrong loss function caused it to silently collapse into predicting only "bone" instead of distinguishing radius from ulna. Good validation scores alone did not catch this - only full-volume inference did. This reinforced the importance of sanity-checking predictions directly, not just trusting aggregate metrics.
+                </p>
+                <p>
+                    <strong>Establish a Baseline Before Getting Creative:</strong> Running the nnU-Net baseline first, even though it was expensive, gave every later architecture experiment a fair and credible point of comparison.
+                </p>
+                <p>
+                    <strong>Medical AI Changes the Rules:</strong> Working with real patient CT data made regulatory and ethical considerations (EU MDR, GDPR, EU AI Act) a genuine part of the technical workflow, not a separate compliance exercise bolted on at the end.
+                </p>
+                <p>
+                    <strong>Log Everything, Immediately:</strong> Maintaining a running model log across 150+ experiments (architecture, hyperparameters, Dice scores, training time, and notes) was essential to keep the architecture search comparable and to avoid losing results that couldn't easily be reproduced.
+                </p>
+            </div>
+
+            <!-- Project Presentation -->
+            <div class="project-section">
+                <h2>Project Presentation</h2>
+                <p>Here's the final presentation I delivered for the Wrist Fracture AI Segmentation project, covering the data pipeline, the architecture search across nnU-Net, ResU-Net, V-Net and 3D U-Net, the multiclass results, and the regulatory framework:</p>
+
+                <div class="presentation-slider">
+                    <div class="slide-container">
+                        <div class="slide active">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide1.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 1">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide2.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 2">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide3.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 3">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide4.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 4">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide5.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 5">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide6.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 6">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide7.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 7">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide8.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 8">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide9.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 9">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide10.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 10">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide11.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 11">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide12.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 12">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide13.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 13">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide14.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 14">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide15.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 15">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide16.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 16">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide17.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 17">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide18.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 18">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide19.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 19">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide20.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 20">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide21.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 21">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide22.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 22">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide23.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 23">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide24.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 24">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide25.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 25">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide26.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 26">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide27.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 27">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide28.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 28">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide29.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 29">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide30.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 30">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide31.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 31">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide32.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 32">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide33.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 33">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide34.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 34">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide35.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 35">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide36.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 36">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide37.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 37">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide38.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 38">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide39.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 39">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide40.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 40">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide41.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 41">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide42.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 42">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide43.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 43">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide44.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 44">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide45.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 45">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide46.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 46">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide47.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 47">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide48.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 48">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide49.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 49">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide50.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 50">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide51.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 51">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide52.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 52">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide53.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 53">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide54.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 54">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide55.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 55">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide56.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 56">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide57.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 57">
+                        </div>
+                        <div class="slide">
+                            <img src="../presentations/wrist-fracture-segmentation/Slide58.jpg" alt="Wrist Fracture Segmentation Presentation - Slide 58">
+                        </div>
+                    </div>
+
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn" onclick="changeSlide(-1)">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">58</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changeSlide(1)">›</button>
+                    </div>
+
+                    <div class="slide-indicators">
+                        <button class="indicator active" onclick="currentSlide(1)"></button>
+                        <button class="indicator" onclick="currentSlide(2)"></button>
+                        <button class="indicator" onclick="currentSlide(3)"></button>
+                        <button class="indicator" onclick="currentSlide(4)"></button>
+                        <button class="indicator" onclick="currentSlide(5)"></button>
+                        <button class="indicator" onclick="currentSlide(6)"></button>
+                        <button class="indicator" onclick="currentSlide(7)"></button>
+                        <button class="indicator" onclick="currentSlide(8)"></button>
+                        <button class="indicator" onclick="currentSlide(9)"></button>
+                        <button class="indicator" onclick="currentSlide(10)"></button>
+                        <button class="indicator" onclick="currentSlide(11)"></button>
+                        <button class="indicator" onclick="currentSlide(12)"></button>
+                        <button class="indicator" onclick="currentSlide(13)"></button>
+                        <button class="indicator" onclick="currentSlide(14)"></button>
+                        <button class="indicator" onclick="currentSlide(15)"></button>
+                        <button class="indicator" onclick="currentSlide(16)"></button>
+                        <button class="indicator" onclick="currentSlide(17)"></button>
+                        <button class="indicator" onclick="currentSlide(18)"></button>
+                        <button class="indicator" onclick="currentSlide(19)"></button>
+                        <button class="indicator" onclick="currentSlide(20)"></button>
+                        <button class="indicator" onclick="currentSlide(21)"></button>
+                        <button class="indicator" onclick="currentSlide(22)"></button>
+                        <button class="indicator" onclick="currentSlide(23)"></button>
+                        <button class="indicator" onclick="currentSlide(24)"></button>
+                        <button class="indicator" onclick="currentSlide(25)"></button>
+                        <button class="indicator" onclick="currentSlide(26)"></button>
+                        <button class="indicator" onclick="currentSlide(27)"></button>
+                        <button class="indicator" onclick="currentSlide(28)"></button>
+                        <button class="indicator" onclick="currentSlide(29)"></button>
+                        <button class="indicator" onclick="currentSlide(30)"></button>
+                        <button class="indicator" onclick="currentSlide(31)"></button>
+                        <button class="indicator" onclick="currentSlide(32)"></button>
+                        <button class="indicator" onclick="currentSlide(33)"></button>
+                        <button class="indicator" onclick="currentSlide(34)"></button>
+                        <button class="indicator" onclick="currentSlide(35)"></button>
+                        <button class="indicator" onclick="currentSlide(36)"></button>
+                        <button class="indicator" onclick="currentSlide(37)"></button>
+                        <button class="indicator" onclick="currentSlide(38)"></button>
+                        <button class="indicator" onclick="currentSlide(39)"></button>
+                        <button class="indicator" onclick="currentSlide(40)"></button>
+                        <button class="indicator" onclick="currentSlide(41)"></button>
+                        <button class="indicator" onclick="currentSlide(42)"></button>
+                        <button class="indicator" onclick="currentSlide(43)"></button>
+                        <button class="indicator" onclick="currentSlide(44)"></button>
+                        <button class="indicator" onclick="currentSlide(45)"></button>
+                        <button class="indicator" onclick="currentSlide(46)"></button>
+                        <button class="indicator" onclick="currentSlide(47)"></button>
+                        <button class="indicator" onclick="currentSlide(48)"></button>
+                        <button class="indicator" onclick="currentSlide(49)"></button>
+                        <button class="indicator" onclick="currentSlide(50)"></button>
+                        <button class="indicator" onclick="currentSlide(51)"></button>
+                        <button class="indicator" onclick="currentSlide(52)"></button>
+                        <button class="indicator" onclick="currentSlide(53)"></button>
+                        <button class="indicator" onclick="currentSlide(54)"></button>
+                        <button class="indicator" onclick="currentSlide(55)"></button>
+                        <button class="indicator" onclick="currentSlide(56)"></button>
+                        <button class="indicator" onclick="currentSlide(57)"></button>
+                        <button class="indicator" onclick="currentSlide(58)"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Academic Research Paper -->
+            <div class="project-section">
+                <h2>Academic Research Paper</h2>
+                <p>Here's our technical research report, "AI-Based Radius and Ulna Bone Segmentation for Wrist Fracture Surgical Planning," covering the full methodology, benchmark results, and regulatory analysis behind the project:</p>
+
+                <div class="paper-viewer">
+                    <div class="paper-container">
+                        <div class="paper-page active" data-page="1">
+                            <div class="page-content">
+                                <h3>AI-Based Radius and Ulna Bone Segmentation for Wrist Fracture Surgical Planning</h3>
+                                <p><strong>Authors:</strong> Thijn Bakker, Daan Quaadvliet, Zsombor Szőcs, Anastasiia Mokhonko, Artjom Musaelans<br>
+                                <strong>Supervisors:</strong> Arash Sadeghzadeh (Academic Supervisor, BUas), Dr. Soha Mahdi (Industry Supervisor, Co-founder &amp; CTO, Specifix B.V.)<br>
+                                <strong>Institution:</strong> Breda University of Applied Sciences, in collaboration with Specifix B.V.<br>
+                                <strong>Date:</strong> January 21, 2026</p>
+
+                                <h4>Abstract</h4>
+                                <p>This report documents the development and validation of efficient custom deep learning architectures for automated radius and ulna bone segmentation from CT scans, built to support pre-operative planning for distal radius fractures. The work responds to a real computational bottleneck: Specifix's existing nnU-Net-based workflow delivers strong accuracy but at a compute cost that slows down iteration and deployment. We trained nnU-Net ourselves to establish a rigorous benchmark, then developed custom ResU-Net architectures that approach its clinical accuracy with a fraction of the resources.</p>
+
+                                <p><strong>Keywords:</strong> Medical Image Segmentation, Deep Learning, nnU-Net, ResU-Net, Computational Efficiency, Wrist Fracture, EU MDR</p>
+                            </div>
+                        </div>
+
+                        <div class="paper-page" data-page="2">
+                            <div class="page-content">
+                                <h4>1. Clinical Background &amp; Problem Definition</h4>
+                                <p>Distal radius fractures are among the most common orthopedic injuries worldwide, accounting for roughly 8-18% of all fractures, rising to as much as 25% of pediatric injuries and 18% of fractures in elderly patients. Surgeons currently spend 30-45 minutes per case manually segmenting the radius (and often the ulna) from CT scans before surgical planning can begin.</p>
+
+                                <h5>Key Challenges Identified</h5>
+                                <ul>
+                                    <li>Manual segmentation creates treatment delays, resource misallocation, and inter-operator variability in surgical planning quality</li>
+                                    <li>Fractured anatomy can break the radius into multiple displaced fragments that still need to be recognized as one structure</li>
+                                    <li>The radius and ulna share very similar CT density characteristics, making them easy to confuse algorithmically</li>
+                                    <li>The available dataset (162 CT cases from Specifix, via Radboud University Medical Center) is small by deep-learning standards</li>
+                                </ul>
+
+                                <p>Specifix currently relies on nnU-Net, a state-of-the-art but computationally expensive framework. The project's goal was to establish nnU-Net as a rigorous benchmark, then design purpose-built architectures that could approach its accuracy while dramatically cutting parameter count, training time, and inference time.</p>
+                            </div>
+                        </div>
+
+                        <div class="paper-page" data-page="3">
+                            <div class="page-content">
+                                <h4>2. Data Preparation</h4>
+                                <p>The raw dataset arrived as fragmented NRRD files (162 cases, expanded from an initial 114 by treating contralateral healthy scans as independent cases) and required an 8-step preprocessing pipeline: cleaning and case restructuring, label merging and naming standardization, voxel spacing standardization to 0.6mm isotropic resolution, Hounsfield-unit intensity normalization, a stratified 70/15/15 train/validation/test split, 128×128×128 voxel patch extraction, intelligent bone-aware patch filtering, and HDF5 batching for efficient GPU loading.</p>
+
+                                <h4>3. Research Methodology</h4>
+                                <p>The team ran a systematic architecture search: over 150 training runs across 3D U-Net, ResU-Net, V-Net, MultiScale ResU-Net, and a self-configured nnU-Net benchmark. Every architecture was evaluated under identical preprocessing, identical splits, and consistent logging so results were directly comparable. Evaluation combined patch-level Dice scoring (matching the training distribution) with full-volume inference (matching real deployment), plus sliding-window inference with Gaussian weighting and post-processing (largest-component selection, hole filling, morphological closing) to keep predictions clinically usable.</p>
+                            </div>
+                        </div>
+
+                        <div class="paper-page" data-page="4">
+                            <div class="page-content">
+                                <h4>4. Results: Benchmark vs. Custom Architectures</h4>
+                                <p>The nnU-Net benchmark reached 90.0% test Dice (post-processed) with 31M parameters, 63 hours of training, and roughly 6.5 minutes of inference per case - confirming both the feasibility of the task and the computational cost the project set out to reduce.</p>
+
+                                <ul>
+                                    <li><strong>nnU-Net 3D:</strong> 31.0M params · 90.0% Dice · 63.0h training</li>
+                                    <li><strong>ResU-Net v4 (24f):</strong> 3.2M params · 86.9% Dice · 7.0h training · &lt;4 min inference</li>
+                                    <li><strong>ResU-Net v5 (20f):</strong> 2.2M params · 86.2% Dice · 8.6h training</li>
+                                    <li><strong>V-Net-Res:</strong> 11.6M params · 82.4% Dice · 12.5h training</li>
+                                    <li><strong>3D U-Net (32f):</strong> 12.9M params · 77.6% Dice · 2.7h training</li>
+                                </ul>
+
+                                <p>ResU-Net v4 became the recommended production candidate: roughly a 90% reduction in parameters and an 89% reduction in training time for about a 3-point Dice trade-off against the nnU-Net benchmark. 18 of 23 test cases (78.3%) met the clinical threshold of DSC ≥ 0.85.</p>
+
+                                <p>Extending to multiclass radius+ulna segmentation, the best model reached 80.7% mean Dice (radius 75.7%, ulna 85.7%) using only 2.9M parameters and 3 hours of training - ulna consistently segmented more easily than radius, likely due to its larger, more consistent anatomy. A notable finding across both tasks: the best-performing models were trained without data augmentation, suggesting the preprocessing pipeline already provided sufficient consistency.</p>
+                            </div>
+                        </div>
+
+                        <div class="paper-page" data-page="5">
+                            <div class="page-content">
+                                <h4>5. Regulatory &amp; Ethical Framework</h4>
+                                <p>Because the system supports surgical decision-making, it is classified as a high-risk AI system under EU AI Act Article 6.1 and as a Class IIa medical device under MDR Rule 11 (Annex VIII) - triggering requirements for risk management, technical documentation, transparency, human oversight, and accuracy validation, plus CE marking and ISO 13485-compliant quality management for the MDR side.</p>
+
+                                <p>The ethical analysis drew on four complementary frameworks: the UNESCO Recommendation on Ethics of AI, the EU High-Level Expert Group Guidelines on trustworthy AI, WHO standards for medical AI, and WMA guidance on physicians' professional duties. Risk assessment covered segmentation accuracy, automation bias, privacy/security, fairness (given known demographic gaps in the dataset), and edge-case failures - each paired with a concrete mitigation such as mandatory surgeon review, manual correction tools, and encrypted data storage.</p>
+
+                                <p>The resulting human-AI collaboration model keeps a surgeon in the loop for every case: automated outputs are always reviewed, correctable, and require explicit approval before use in planning.</p>
+                            </div>
+                        </div>
+
+                        <div class="paper-page" data-page="6">
+                            <div class="page-content">
+                                <h4>6. Conclusions &amp; Recommendations</h4>
+                                <p>The project met its central objective: custom architectures (ResU-Net v4/v5) reached 86.2-86.9% test Dice, above the 85% clinical acceptability threshold and within 3.1-3.8 points of the nnU-Net benchmark, while cutting parameters by 90-93% and training time by 86-89%. Every model kept full-case processing under 10 minutes, an 85-90% improvement over the 30-45 minute manual workflow.</p>
+
+                                <h5>Deployment Recommendation</h5>
+                                <p>Deploy ResU-Net v4 for routine, cost-sensitive segmentation; reserve the nnU-Net benchmark for complex cases where the extra ~3 points of accuracy are worth the compute cost. A hybrid strategy - routing by case complexity or model confidence - was proposed as a practical middle ground.</p>
+
+                                <h5>Next Steps</h5>
+                                <ul>
+                                    <li>Expand the dataset toward 1,000+ multi-center cases with demographic documentation to support fairness validation</li>
+                                    <li>Consolidate the risk management file into ISO 14971 format and pursue early notified-body engagement for CE marking</li>
+                                    <li>Build structured user training covering common AI error patterns and appropriate escalation to manual review</li>
+                                    <li>Explore transfer of the pipeline to other orthopedic structures (carpal bones, ankle, spine) and adjacent tasks like fracture classification</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="paper-navigation">
+                        <button class="nav-btn prev-btn" onclick="changePaperPage(-1)">‹</button>
+                        <span class="page-counter">
+                            <span class="current-page">1</span> / <span class="total-pages">6</span>
+                        </span>
+                        <button class="nav-btn next-btn" onclick="changePaperPage(1)">›</button>
+                    </div>
+
+                    <div class="paper-indicators">
+                        <button class="indicator active" onclick="currentPaperPage(1)" title="Title & Abstract"></button>
+                        <button class="indicator" onclick="currentPaperPage(2)" title="Problem Definition"></button>
+                        <button class="indicator" onclick="currentPaperPage(3)" title="Data & Methodology"></button>
+                        <button class="indicator" onclick="currentPaperPage(4)" title="Results"></button>
+                        <button class="indicator" onclick="currentPaperPage(5)" title="Regulatory & Ethical Framework"></button>
+                        <button class="indicator" onclick="currentPaperPage(6)" title="Conclusions"></button>
+                    </div>
+                </div>
+
+                <div class="paper-download">
+                    <a href="../assets/images/wrist-fracture-segmentation/Final_report_Specifix.pdf" class="btn btn-primary" download="Final_report_Specifix.pdf">
+                        Download Full Research Report (PDF)
+                    </a>
+                </div>
+            </div>
+
+            <!-- References -->
+            <div class="project-section">
+                <h2>References &amp; Acknowledgments</h2>
+                <p>
+                    This work builds directly on the architectures below, and would not have been possible without the clinical data and domain expertise contributed by our partners:
+                </p>
+                <p>
+                    1. Isensee, F., et al. (2021). nnU-Net: a self-configuring method for deep learning-based biomedical image segmentation. <em>Nature Methods</em>, 18(2), 203-211.<br>
+                    2. Çiçek, Ö., et al. (2016). 3D U-Net: Learning dense volumetric segmentation from sparse annotation. <em>MICCAI 2016</em>.<br>
+                    3. Milletari, F., et al. (2016). V-Net: Fully convolutional neural networks for volumetric medical image segmentation. <em>3DV 2016</em>.
+                </p>
+                <p>
+                    With thanks to <a href="https://specifix.online" target="_blank" style="color: var(--secondary);">Specifix B.V.</a> for the clinical dataset and domain expertise, Radboud University Medical Center for clinical data access, and Breda University of Applied Sciences for computational resources.
+                </p>
+            </div>
+
+            <!-- Technologies Used -->
+            <div class="project-section">
+                <h2>Technologies Used</h2>
+                <div class="tech-grid">
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">PyTorch</span>
+                    <span class="tech-tag">3D U-Net</span>
+                    <span class="tech-tag">V-Net</span>
+                    <span class="tech-tag">Res-U-Net</span>
+                    <span class="tech-tag">nnU-Net</span>
+                    <span class="tech-tag">Medical Imaging (CT/NRRD)</span>
+                    <span class="tech-tag">3D Slicer</span>
+                    <span class="tech-tag">Weights &amp; Biases</span>
+                    <span class="tech-tag">HDF5</span>
+                    <span class="tech-tag">Poetry</span>
+                    <span class="tech-tag">Power BI</span>
+                    <span class="tech-tag">DAX</span>
+                    <span class="tech-tag">Azure DevOps</span>
+                    <span class="tech-tag">GitHub Actions / CI</span>
+                    <span class="tech-tag">EU MDR Compliance</span>
+                    <span class="tech-tag">GDPR</span>
+                    <span class="tech-tag">EU AI Act</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Back to Projects -->
+    <section class="back-navigation">
+        <a href="../index.html#projects" class="btn btn-secondary">← Back to Projects</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Thijn Bakker. Built with passion and lots of coffee ☕</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/components/slider.js"></script>
+    <script src="../assets/js/components/paper-viewer.js"></script>
+</body>
+</html>
