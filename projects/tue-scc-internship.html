@@ -1,0 +1,686 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI &amp; HPC Research Engineer Internship - TU/e Supercomputing Centre - Thijn Bakker</title>
+    <meta name="description" content="Internship at the TU/e Supercomputing Centre AI Team: cross-platform benchmarking of NVIDIA Isaac Sim and Isaac Lab on Blackwell HPC infrastructure, containerised deployment on SPIKE-1, and hands-on researcher support">
+    <meta name="author" content="Thijn Bakker">
+
+    <!-- Favicon -->
+    <link rel="icon" type="image/svg+xml" href="../assets/images/icons/server_icon.svg">
+
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="../assets/css/main.css">
+    <link rel="stylesheet" href="../assets/css/components.css">
+    <link rel="stylesheet" href="../assets/css/projects.css">
+</head>
+<body>
+    <div class="bg-animation"></div>
+
+    <!-- Navigation -->
+    <nav id="navbar">
+        <div class="nav-container">
+            <a href="../index.html" class="logo">Thijn Bakker</a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../index.html#about">About</a></li>
+                <li><a href="../index.html#internships">Internships</a></li>
+                <li><a href="../index.html#projects">Projects</a></li>
+                <li><a href="../pdr.html">Professional Development</a></li>
+                <li><a href="../index.html#contact">Contact</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Project Hero -->
+    <section class="project-hero">
+        <div class="project-hero-content">
+            <h1>&#x1F5A5;&#xFE0F; Supercomputing Robotics: Isaac Sim across TU/e's HPC Platforms</h1>
+            <p class="project-date">February 2026 - June 2026 (20-week work placement · Hybrid, Eindhoven)</p>
+            <p class="project-client">Company:
+                <a href="https://supercomputing.tue.nl" target="_blank" style="color: var(--secondary);">TU/e Supercomputing Centre (SCC)</a> - AI Team, Eindhoven University of Technology
+            </p>
+            <p class="project-members">Supervisors: Nick Brummans (AI Team lead, function supervisor) · Richard Zoontjens (SCC lead, company supervisor)</p>
+            <p class="project-members">Role: AI &amp; HPC Research Engineer (Intern) - Isaac Sim Benchmarking, Deployment &amp; Researcher Support</p>
+        </div>
+    </section>
+
+    <!-- Project Content -->
+    <section class="project-content">
+        <div class="project-container">
+
+            <!-- Overview -->
+            <div class="project-section">
+                <h2>Internship Overview</h2>
+                <p>
+                    For my third-year work placement I joined the AI Team of the <a href="https://supercomputing.tue.nl" target="_blank" style="color: var(--secondary);">TU/e Supercomputing Centre</a>. The SCC does not own one big supercomputer; its job is to help researchers reach the <em>right</em> compute for their problem, under the motto "Compute to Compete." I arrived just as the centre was learning to use its newest hardware: SPIKE-1, four NVIDIA DGX B200 systems (eight Blackwell GPUs each, hosted in a data centre in Finland), alongside a desktop-class DGX Spark.
+                </p>
+                <p>
+                    The question I ended up answering sounds simple: <strong>which platform fits which robotics-simulation workload, and how do we get researchers running on it independently?</strong> Over five months that turned into three interlocking strands: cross-platform benchmarking of NVIDIA Isaac Sim and Isaac Lab, a containerised Isaac Sim deployment on SPIKE-1, and hands-on support for two research teams. A communication layer of presentations and documentation tied it all together.
+                </p>
+            </div>
+
+            <!-- The Challenge -->
+            <div class="project-section">
+                <h2>The Challenge</h2>
+                <p>
+                    The SCC had invested heavily in Blackwell hardware, but nobody had yet characterised how it behaved for robotics simulation, a workload more and more TU/e researchers were asking for. Three concrete problems followed:
+                </p>
+                <p>
+                    &bull; <strong>No evidence for platform choice:</strong> researchers had to choose between the DGX Spark, SPIKE-1, SURF Research Cloud and Snellius without any benchmarks to go on<br>
+                    &bull; <strong>No reproducible deployment:</strong> there was no way to run Isaac Sim on SPIKE-1's containerised, Run:AI-orchestrated environment, so every researcher would have to reinvent the wheel<br>
+                    &bull; <strong>GPU physics appeared broken:</strong> during physics simulation the Blackwell GPUs sat at 0-3% utilisation, which, if true, would block all GPU-accelerated reinforcement learning on the centre's newest hardware<br>
+                    &bull; <strong>Shadow IT:</strong> some departments were considering buying their own DGX Sparks; the SCC wanted to show it could provide and support this capability centrally
+                </p>
+            </div>
+
+            <!-- Approach -->
+            <div class="project-section">
+                <h2>My Approach</h2>
+                <p>
+                    I chose an empirical, documentation-first approach: build one reproducible benchmark, run it identically on every platform, and write honest, self-contained documentation per platform, including the failures.
+                </p>
+                <p>
+                    <strong>1. Isolate Variables:</strong> Separate physics from rendering, headless from GUI, and CPU from GPU execution, so every measured difference has a single cause<br>
+                    <strong>2. One Repository per Platform:</strong> Each platform got its own self-contained repo (README, user guide, numbered setup guides, benchmark JSONs and plots) that works on its own<br>
+                    <strong>3. Document the Dead Ends:</strong> When a platform proved unworkable, I documented why instead of quietly dropping it, a failed platform written down saves the next person weeks<br>
+                    <strong>4. No Sales Pitch:</strong> Presentations drew conclusions from the data and positioned HPC as one option among several, rather than promoting SPIKE-1 regardless of fit<br>
+                    <strong>5. Platform as a Workshop:</strong> Instead of running researchers' jobs for them, build an iteration loop they can use without the SCC in the way
+                </p>
+            </div>
+
+            <!-- Platforms -->
+            <div class="project-section">
+                <h2>The Platforms</h2>
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>DGX Spark</h3>
+                        <div class="info-box-content">
+                            <div>GB10 Blackwell · ARM64 · unified CPU/GPU memory</div>
+                            <div>Best for interactive development and small-to-medium physics</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>SPIKE-1</h3>
+                        <div class="info-box-content">
+                            <div>NVIDIA DGX B200 · x86_64 · 183 GB VRAM per GPU</div>
+                            <div>Run:AI + Harbor · best for large-scale headless RL training</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>SURF Research Cloud</h3>
+                        <div class="info-box-content">
+                            <div>NVIDIA A10 · browser access via Guacamole</div>
+                            <div>Best for GUI-based development at moderate scale</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>SURF Snellius</h3>
+                        <div class="info-box-content">
+                            <div>A100 / H100 · Slurm + Apptainer</div>
+                            <div>Documented dead end for Isaac Sim in its current configuration</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Benchmark design -->
+            <div class="project-section">
+                <h2>Benchmark Design</h2>
+                <p>
+                    Early on I learned that <code>render=True</code> versus <code>render=False</code> changes everything: with rendering on, even headless, the GPU lights up, but that activity is rendering, not physics. I built separate modes (<code>--mode physics / render / combined</code>) and consolidated the suite into seven reproducible categories, each run headless on every platform and exported as JSON plus plots.
+                </p>
+                <div class="info-box">
+                    <h3>Seven Benchmark Categories</h3>
+                    <div class="info-box-content">
+                        <div>1. Rendering throughput (ray-traced warehouse scene)</div>
+                        <div>2. Physics on CPU (articulated robots, render off)</div>
+                        <div>3. Physics on GPU (up to 10,000 rigid bodies)</div>
+                        <div>4. Combined real-world workload (physics + rendering)</div>
+                        <div>5. Isaac Lab RL environment stepping (Cartpole, G1 humanoid, Shadow hand, ANYmal-D)</div>
+                        <div>6. GUI versus headless overhead</div>
+                        <div>7. Scene loading</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- PhysX case study -->
+            <div class="project-section">
+                <h2>Case Study: "Broken" GPU Physics on Blackwell</h2>
+                <p>
+                    The most important result of the internship started with an alarming symptom. On both the DGX Spark (GB10) and SPIKE-1 (B200), across Isaac Sim 5.0.0, 5.1.0 and 6.0.0-dev, GPU utilisation sat at 0-3% during physics while rendering used the GPU normally. The clearest signal: all three physics backends gave identical, CPU-only numbers.
+                </p>
+
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>The Symptom</h3>
+                        <div class="info-box-content monospace">
+                            <div><strong>Backend: GB10 / B200</strong></div>
+                            <div>warp (GPU): 31.4 / 26.0 FPS</div>
+                            <div>torch: 31.4 / 26.1 FPS</div>
+                            <div>numpy (CPU): 31.3 / 27.0 FPS</div>
+                            <div style="margin-top: 1rem;">Identical numbers = everything</div>
+                            <div>was silently running on the CPU</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>The Investigation</h3>
+                        <div class="info-box-content">
+                            <div>&bull; Built a physics-only benchmark, which exposed my own earlier false positive (94% GPU utilisation was rendering, not physics)</div>
+                            <div>&bull; Reproduced on two GPU models and two CPU architectures (ARM Grace, x86 Xeon)</div>
+                            <div>&bull; Escalated through the NVIDIA Developer Forums and an NVIDIA Enterprise Support case, working with an L3 support engineer</div>
+                            <div>&bull; Publicly corrected my wrong conclusion on the forum instead of quietly editing it</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>
+                    <strong>Root cause:</strong> Isaac Sim's <code>World()</code> does not enable GPU dynamics by default. The settings that report "GPU physics enabled" are only hints; the PhysX SDK reads attributes on the USD physics-scene prim and silently falls back to the CPU when they are missing. Documented behaviour, not a driver bug, so no driver downgrade was needed (which matters, because the GB10 will not boot on older drivers).
+                </p>
+
+                <pre><code>
+# The fix: set GPU dynamics explicitly on the physics scene prim
+from pxr import PhysxSchema
+
+my_world = World(
+    stage_units_in_meters=1.0,
+    physics_dt=1.0 / 60.0,
+    physics_prim_path="/World/PhysicsScene",
+)
+
+physx_scene = PhysxSchema.PhysxSceneAPI.Apply(
+    my_world.stage.GetPrimAtPath("/World/PhysicsScene")
+)
+physx_scene.CreateEnableGPUDynamicsAttr().Set(True)
+physx_scene.CreateBroadphaseTypeAttr().Set("GPU")
+
+# Validated two independent ways (10,000 rigid cubes):
+# SPIKE-1 (B200):   214.7 FPS CPU  ->  376.0 FPS GPU   (+75%, 1.75x)
+# DGX Spark (GB10): 353 FPS CPU    ->  542 FPS GPU     (+53%)
+                </code></pre>
+
+                <p>
+                    The scaling result was the second surprise: at 10,000 bodies the GB10 beat the far larger B200. Unified memory lets the Spark share physics data between CPU and GPU without copying it across PCIe every step, which gives it a structural edge for small-to-medium physics.
+                </p>
+                <p>
+                    Read the public thread: <a href="https://forums.developer.nvidia.com/t/physx-gpu-not-working-on-dgx-spark-gb10-blackwell-arm64-isaac-sim-5-1-0/361709" target="_blank" style="color: var(--gray);">PhysX GPU not working on DGX Spark (GB10 Blackwell, ARM64), NVIDIA Developer Forums</a>
+                </p>
+            </div>
+
+            <!-- Results -->
+            <div class="project-section">
+                <h2>Benchmark Results: Which Platform Wins?</h2>
+                <p>
+                    The headline conclusion: <strong>there is no single best platform</strong>. The right choice depends on the workload, the budget and the timeline. These are the final numbers I presented at the end of the placement:
+                </p>
+
+                <div class="table-wrapper">
+                    <table class="results-table">
+                        <thead>
+                            <tr>
+                                <th>Benchmark</th>
+                                <th>SPIKE-1<br><span>B200</span></th>
+                                <th>Research Cloud<br><span>A10</span></th>
+                                <th>DGX Spark<br><span>GB10</span></th>
+                                <th>Why?</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>RL training<br><span>32K envs, headless</span></td>
+                                <td class="best">385K FPS</td>
+                                <td>184K FPS</td>
+                                <td>125K FPS</td>
+                                <td>Raw GPU compute dominates at scale</td>
+                            </tr>
+                            <tr>
+                                <td>RL training<br><span>16K envs, GUI</span></td>
+                                <td class="best">70K FPS</td>
+                                <td>47K FPS</td>
+                                <td>55K FPS</td>
+                                <td>Unified memory helps the Spark beat the A10 when rendering and physics mix</td>
+                            </tr>
+                            <tr>
+                                <td>Scene rendering<br><span>warehouse, headless</span></td>
+                                <td class="best">510 FPS</td>
+                                <td>31 FPS</td>
+                                <td>72 FPS</td>
+                                <td>5th-gen RT cores on the B200; the A10 is compute-focused</td>
+                            </tr>
+                            <tr>
+                                <td>CPU physics<br><span>10 robots, render off</span></td>
+                                <td>60 FPS</td>
+                                <td>78 FPS</td>
+                                <td class="best">122 FPS</td>
+                                <td>Unified memory: zero PCIe copy overhead every physics step</td>
+                            </tr>
+                            <tr>
+                                <td>GPU physics<br><span>10K rigid cubes</span></td>
+                                <td>376 FPS</td>
+                                <td>475 FPS</td>
+                                <td class="best">542 FPS</td>
+                                <td>Same effect; GPU physics crosses over CPU around 2K-10K objects</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p>
+                    From all benchmark categories I distilled a platform-versus-workload matrix that researchers can use to pick a starting point:
+                </p>
+
+                <div class="table-wrapper">
+                    <table class="fit-matrix">
+                        <thead>
+                            <tr>
+                                <th></th>
+                                <th>DGX Spark<br><span>GB10</span></th>
+                                <th>SURF RC<br><span>A10</span></th>
+                                <th>SPIKE-1<br><span>B200</span></th>
+                                <th>Snellius<br><span>A100 / H100</span></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Interactive development</td>
+                                <td class="fit-best">Best fit<span>Local, no queue</span></td>
+                                <td class="fit-good">Good<span>Browser access</span></td>
+                                <td class="fit-limited">Limited<span>Queue, overhead</span></td>
+                                <td class="fit-poor">Poor<span>Batch only</span></td>
+                            </tr>
+                            <tr>
+                                <td>Rendering throughput</td>
+                                <td class="fit-limited">Limited<span>~87 FPS</span></td>
+                                <td class="fit-good">Good<span>Has RT cores</span></td>
+                                <td class="fit-best">Best fit<span>510 FPS</span></td>
+                                <td class="fit-poor">Poor<span>No RT cores</span></td>
+                            </tr>
+                            <tr>
+                                <td>Physics (small to medium)</td>
+                                <td class="fit-good">Good<span>Unified memory</span></td>
+                                <td class="fit-best">Best fit<span>Fast CPU solver</span></td>
+                                <td class="fit-limited">Limited<span>PCIe overhead</span></td>
+                                <td class="fit-good">Good<span>Strong CPU</span></td>
+                            </tr>
+                            <tr>
+                                <td>Large-scale parallel RL</td>
+                                <td class="fit-limited">Limited<span>Slow at scale</span></td>
+                                <td class="fit-limited">Limited<span>Single GPU</span></td>
+                                <td class="fit-best">Best fit<span>16K+ envs, multi-GPU</span></td>
+                                <td class="fit-good">Good<span>Strong, queued</span></td>
+                            </tr>
+                            <tr>
+                                <td>LLM inference and hosting</td>
+                                <td class="fit-limited">Limited<span>Prototyping only</span></td>
+                                <td class="fit-poor">Poor<span>Too small</span></td>
+                                <td class="fit-best">Best fit<span>Large VRAM</span></td>
+                                <td class="fit-good">Good<span>H100 strong</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- Deployment -->
+            <div class="project-section">
+                <h2>Containerised Deployment on SPIKE-1</h2>
+                <p>
+                    To make Isaac Sim usable on SPIKE-1 I built a cross-architecture container pipeline. The DGX Spark is ARM64 and SPIKE-1 is x86_64, so images are cross-compiled with Docker <code>buildx</code>, pushed to the TU/e Harbor registry, and launched as Run:AI workloads. Four variants cover the realistic use cases:
+                </p>
+
+                <div class="info-box">
+                    <h3>Deployment Pipeline</h3>
+                    <div class="info-box-content">
+                        <div><strong>Code locally</strong> &rarr; <strong>Docker build</strong> (linux/amd64) &rarr; <strong>Harbor registry</strong> &rarr; <strong>Run:AI submit</strong> &rarr; <strong>SPIKE-1 B200s</strong> (train + log to W&amp;B)</div>
+                        <div style="margin-top: 1rem;">&bull; <strong>IsaacSim-VNC</strong> - Isaac Sim with TurboVNC for interactive GUI work</div>
+                        <div>&bull; <strong>IsaacSim-noVNC</strong> - headless Isaac Sim for clean throughput</div>
+                        <div>&bull; <strong>IsaacSim-IsaacLab-VNC</strong> - adds Isaac Lab, with GUI</div>
+                        <div>&bull; <strong>IsaacSim-IsaacLab-noVNC</strong> - adds Isaac Lab, headless</div>
+                    </div>
+                </div>
+
+                <p>
+                    For researchers I adopted one deliberate rule: <strong>the container provides only the environment</strong> (CUDA, drivers, <code>uv</code>, system libraries) and <strong>the researcher's code is cloned fresh into a workspace</strong> on every run. Editing happens in VS Code over SSH, and code changes never need an image rebuild. That is what turned SPIKE-1 from a job-submission service into a fast iteration loop.
+                </p>
+                <p>
+                    Along the way I characterised the platform limits too: WebRTC streaming is not possible under the current Run:AI setup (the port-forward is TCP-only, WebRTC needs UDP), which is why TurboVNC is the supported route, and the Isaac Sim GUI crashes above 32K environments on a buffer-aliasing assertion that is distinct from genuine out-of-memory failures.
+                </p>
+            </div>
+
+            <!-- Researcher support -->
+            <div class="project-section">
+                <h2>Researcher Support</h2>
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>Humanoid &amp; Quadruped RL</h3>
+                        <div class="info-box-content">
+                            <div>Kayden Knapik (TU/e Mechanical Engineering) and the Tech United RL team, training BoosterT1 humanoid and BDX-R quadruped walking policies with mjlab + RSL-RL + PPO</div>
+                            <div style="margin-top: 0.75rem;">&bull; Built a repo-agnostic training container that clones the latest commit at startup</div>
+                            <div>&bull; Multi-GPU training at ~381K steps/s on 3&times; B200</div>
+                            <div>&bull; W&amp;B logging so the team could follow training without SSH</div>
+                            <div>&bull; Onboarded the team to their own SURF Research Cloud account, with a cost-per-credit table to manage their budget</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>Isaac ROS Navigation</h3>
+                        <div class="info-box-content">
+                            <div>GAIA, a TU/e student startup building an autonomous trash-cleaning robot</div>
+                            <div style="margin-top: 0.75rem;">&bull; Onboarded them on SURF Research Cloud (A10)</div>
+                            <div>&bull; Set up Isaac Sim and Isaac ROS with Nvblox, NVIDIA's GPU-accelerated 3D reconstruction, in Docker</div>
+                            <div>&bull; Resolved storage routing and long-running remote-desktop disconnects together with SURF support</div>
+                            <div>&bull; Ten people collaborating on one system</div>
+                        </div>
+                    </div>
+                </div>
+
+                <p>
+                    Running the BoosterT1 training across six hardware configurations gave a clean apples-to-apples comparison at 4,096 environments. One useful realisation for the team: on this workload, three GPUs do not make one run three times faster, they give three parallel runs at the same speed, so we positioned SPIKE-1 for parameter sweeps rather than single-run acceleration.
+                </p>
+
+                <div class="bar-chart">
+                    <h3>Iterations per second, BoosterT1 at 4K envs</h3>
+                    <div class="bar-row">
+                        <span class="bar-label">RTX 5090</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 100%;"></div></div>
+                        <span class="bar-value">1.60</span>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">B200 (SPIKE-1)</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 73%;"></div></div>
+                        <span class="bar-value">1.17</span>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">H100 NVL</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 65%;"></div></div>
+                        <span class="bar-value">1.04</span>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">A100 80GB</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 47%;"></div></div>
+                        <span class="bar-value">0.75</span>
+                    </div>
+                    <div class="bar-row">
+                        <span class="bar-label">GB10 (Spark)</span>
+                        <div class="bar-track"><div class="bar-fill" style="width: 26%;"></div></div>
+                        <span class="bar-value">0.41</span>
+                    </div>
+                    <p class="bar-note">At 16K environments the B200 reached 193K environment steps/s, the highest raw throughput, but revealed a host-RAM leak in the training code (~6% of system memory per hour) that does not occur at 4K. Since 4K environments already saturate the reward signal, 4K became the recommended setting.</p>
+                </div>
+
+                <div class="video-grid">
+                    <figure>
+                        <video controls preload="metadata" playsinline>
+                            <source src="../assets/images/tue-scc-internship/videos/Tech_United_Training_V2.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Tech United RL training run</figcaption>
+                    </figure>
+                    <figure>
+                        <video controls preload="metadata" playsinline>
+                            <source src="../assets/images/tue-scc-internship/videos/Team_Tech_United_RL_Progress_V2.mp4" type="video/mp4">
+                        </video>
+                        <figcaption>Tech United RL policy progress</figcaption>
+                    </figure>
+                </div>
+            </div>
+
+            <!-- Training telemetry -->
+            <div class="project-section">
+                <h2>Training Telemetry</h2>
+                <p>Plots generated from the Weights &amp; Biases runs across all hardware configurations: reward convergence, throughput, curriculum progress, value loss, and the host-RAM leak at 16K environments.</p>
+
+                <div class="presentation-slider">
+                    <div class="slide-container">
+                        <div class="slide active">
+                            <img src="../assets/images/tue-scc-internship/plots/01_reward_vs_iteration.png" alt="Reward versus iteration across hardware">
+                        </div>
+                        <div class="slide">
+                            <img src="../assets/images/tue-scc-internship/plots/02_reward_vs_time.png" alt="Reward versus wall-clock time across hardware">
+                        </div>
+                        <div class="slide">
+                            <img src="../assets/images/tue-scc-internship/plots/03_throughput_fps.png" alt="Training throughput in FPS across hardware">
+                        </div>
+                        <div class="slide">
+                            <img src="../assets/images/tue-scc-internship/plots/04_curriculum.png" alt="Curriculum progress during training">
+                        </div>
+                        <div class="slide">
+                            <img src="../assets/images/tue-scc-internship/plots/05_value_loss.png" alt="Value loss during training">
+                        </div>
+                        <div class="slide">
+                            <img src="../assets/images/tue-scc-internship/plots/06_host_ram_leak.png" alt="Host RAM usage on the B200 at 4K versus 16K environments">
+                        </div>
+                    </div>
+
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">6</span>
+                        </span>
+                        <button class="nav-btn next-btn">›</button>
+                    </div>
+
+                    <div class="slide-indicators">
+                        <button class="indicator active"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- What went wrong -->
+            <div class="project-section">
+                <h2>What Went Wrong (and How I Fixed It)</h2>
+                <p>
+                    <strong>DGX Spark:</strong> a routine <code>sudo apt upgrade</code> bricked the machine with a kernel panic (<code>VFS: Unable to mount root fs</code>). I recovered it through the GRUB recovery menu and a USB flash drive, and the lesson made it into the setup guide in bold.<br>
+                    <strong>SURF Research Cloud:</strong> the default 595 driver caused segfaults, so step one of every setup is now purging it and installing the 580 series. Installing <code>ros-humble-desktop</code> destroys the remote-desktop session, so the guide avoids it.<br>
+                    <strong>Snellius:</strong> all four Isaac Sim test jobs failed (a PhysX GPU memory error, a fatal H100 crash after 88 ms, and toolchain incompatibilities). Fixing it would need a driver downgrade that is not possible on a national system, so I documented it as an honest dead end with root-cause analysis.<br>
+                    <strong>Version pinning:</strong> Isaac Lab's <code>main</code> branch is incompatible with Isaac Sim 5.1.0, so every guide pins Isaac Lab v2.3.2.
+                </p>
+            </div>
+
+            <!-- Spreading the word -->
+            <div class="project-section">
+                <h2>Spreading the Word</h2>
+                <p>
+                    I came to see communication as the mechanism that made the technical work valuable, not a side task. A researcher who trains a model on their laptop for two weeks, not knowing it could finish in two hours on the right platform, does not have a technical problem; they have a communication problem.
+                </p>
+                <p>
+                    &bull; <strong>Presentations:</strong> BME-HUB, the Mechanical Engineering IT-Committee, a Robotics Lab workshop on Isaac Sim &amp; reinforcement learning, the PAR AI Guild, and my final BUas presentation<br>
+                    &bull; <strong>Events:</strong> NVIDIA "From Spark to SPIKE" in Eindhoven and the 4TU LLM hosting event in Delft<br>
+                    &bull; <strong>Documentation:</strong> a complete handover with per-platform repositories, user guides, container templates and researcher-facing setup guides, so researchers with robotics-on-HPC questions are pointed to the docs rather than to a person
+                </p>
+            </div>
+
+            <!-- Impact -->
+            <div class="project-section">
+                <h2>Results &amp; Impact</h2>
+                <div class="info-box-grid">
+                    <div class="info-box">
+                        <h3>Technical Outcomes</h3>
+                        <div class="info-box-content monospace">
+                            <div><strong>4</strong> HPC platforms benchmarked</div>
+                            <div><strong>7</strong> benchmark categories</div>
+                            <div><strong>1.75&times;</strong> GPU physics on B200</div>
+                            <div><strong>4</strong> container variants in Harbor</div>
+                            <div><strong>381K</strong> steps/s on 3&times; B200</div>
+                        </div>
+                    </div>
+                    <div class="info-box">
+                        <h3>For the Organisation</h3>
+                        <div class="info-box-content">
+                            <div>&bull; Unblocked GPU-accelerated robotics simulation on all Blackwell hardware, without a driver downgrade</div>
+                            <div>&bull; Evidence-based platform choice for researchers</div>
+                            <div>&bull; Researchers iterate independently, reducing SCC support load and raising SPIKE-1 utilisation</div>
+                            <div>&bull; Reusable documentation and container patterns that outlive the internship</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Key Learnings -->
+            <div class="project-section">
+                <h2>Key Learnings</h2>
+                <p>
+                    <strong>Test to Find Out:</strong> Published benchmarks assume a mature software stack. Blackwell plus Isaac Sim was new enough that documented and real behaviour diverged, which is exactly why first-hand experiments had value.
+                </p>
+                <p>
+                    <strong>Being Correct Beats Being First:</strong> My first PhysX conclusion was wrong and I had to correct it publicly. Isolating subsystems and validating the fix two independent ways is what produced an answer people could trust.
+                </p>
+                <p>
+                    <strong>Always Document Everything, Including Failures:</strong> The Snellius dead end and the bricked Spark are now pages in a guide instead of traps for the next person.
+                </p>
+                <p>
+                    <strong>Talk to Colleagues:</strong> The breakthroughs came from people: NVIDIA's support engineers, SURF support, and a team that reviewed my benchmarks for rigour. Knowing when to stop debugging alone and bring in the right person is a skill.
+                </p>
+                <p>
+                    <strong>Scope to Finish:</strong> My recurring feedback was to focus and not try to do everything. Learning to let a good idea go and head for the finish line was one of the most useful things I took away.
+                </p>
+            </div>
+
+            <!-- Presentation -->
+            <div class="project-section">
+                <h2>Final Presentation</h2>
+                <p>Here's "Supercomputing Robotics: A journey from laptop to datacenter and everything in between", the final presentation I gave about the internship, covering the team, the three projects, what went wrong, and what I left behind:</p>
+
+                <div class="presentation-slider">
+                    <div class="slide-container">
+                        <div class="slide active"><img src="../presentations/tue-scc-internship/Slide1.jpg" alt="SCC Internship Presentation - Slide 1"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide2.jpg" alt="SCC Internship Presentation - Slide 2"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide3.jpg" alt="SCC Internship Presentation - Slide 3"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide4.jpg" alt="SCC Internship Presentation - Slide 4"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide5.jpg" alt="SCC Internship Presentation - Slide 5"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide6.jpg" alt="SCC Internship Presentation - Slide 6"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide7.jpg" alt="SCC Internship Presentation - Slide 7"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide8.jpg" alt="SCC Internship Presentation - Slide 8"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide9.jpg" alt="SCC Internship Presentation - Slide 9"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide10.jpg" alt="SCC Internship Presentation - Slide 10"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide11.jpg" alt="SCC Internship Presentation - Slide 11"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide12.jpg" alt="SCC Internship Presentation - Slide 12"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide13.jpg" alt="SCC Internship Presentation - Slide 13"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide14.jpg" alt="SCC Internship Presentation - Slide 14"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide15.jpg" alt="SCC Internship Presentation - Slide 15"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide16.jpg" alt="SCC Internship Presentation - Slide 16"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide17.jpg" alt="SCC Internship Presentation - Slide 17"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide18.jpg" alt="SCC Internship Presentation - Slide 18"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide19.jpg" alt="SCC Internship Presentation - Slide 19"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide20.jpg" alt="SCC Internship Presentation - Slide 20"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide21.jpg" alt="SCC Internship Presentation - Slide 21"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide22.jpg" alt="SCC Internship Presentation - Slide 22"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide23.jpg" alt="SCC Internship Presentation - Slide 23"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide24.jpg" alt="SCC Internship Presentation - Slide 24"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide25.jpg" alt="SCC Internship Presentation - Slide 25"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide26.jpg" alt="SCC Internship Presentation - Slide 26"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide27.jpg" alt="SCC Internship Presentation - Slide 27"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide28.jpg" alt="SCC Internship Presentation - Slide 28"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide29.jpg" alt="SCC Internship Presentation - Slide 29"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide30.jpg" alt="SCC Internship Presentation - Slide 30"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide31.jpg" alt="SCC Internship Presentation - Slide 31"></div>
+                        <div class="slide"><img src="../presentations/tue-scc-internship/Slide32.jpg" alt="SCC Internship Presentation - Slide 32"></div>
+                    </div>
+
+                    <div class="slide-navigation">
+                        <button class="nav-btn prev-btn">‹</button>
+                        <span class="slide-counter">
+                            <span class="current-slide">1</span> / <span class="total-slides">32</span>
+                        </span>
+                        <button class="nav-btn next-btn">›</button>
+                    </div>
+
+                    <div class="slide-indicators">
+                        <button class="indicator active"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                        <button class="indicator"></button>
+                    </div>
+                </div>
+
+                <div class="paper-download" style="display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center;">
+                    <a href="../assets/images/tue-scc-internship/Final_presentation_Internship.pdf" class="btn btn-primary" download="Supercomputing_Robotics_Final_Presentation.pdf" style="flex: 1; min-width: 220px;">
+                        Final Presentation (PDF)
+                    </a>
+                    <a href="../assets/images/tue-scc-internship/Isaac_Sim_Benchmarks.pdf" class="btn btn-primary" download="Isaac_Sim_Benchmarks.pdf" style="flex: 1; min-width: 220px;">
+                        Isaac Sim Benchmarks Deck (PDF)
+                    </a>
+                </div>
+            </div>
+
+            <!-- Technologies Used -->
+            <div class="project-section">
+                <h2>Technologies Used</h2>
+                <div class="tech-grid">
+                    <span class="tech-tag">NVIDIA Isaac Sim</span>
+                    <span class="tech-tag">NVIDIA Isaac Lab</span>
+                    <span class="tech-tag">PhysX</span>
+                    <span class="tech-tag">Isaac ROS / Nvblox</span>
+                    <span class="tech-tag">mjlab</span>
+                    <span class="tech-tag">RSL-RL / PPO</span>
+                    <span class="tech-tag">PyTorch</span>
+                    <span class="tech-tag">NVIDIA Warp</span>
+                    <span class="tech-tag">Python</span>
+                    <span class="tech-tag">Docker / buildx</span>
+                    <span class="tech-tag">Harbor Registry</span>
+                    <span class="tech-tag">Run:AI / Kubernetes</span>
+                    <span class="tech-tag">Slurm</span>
+                    <span class="tech-tag">Apptainer</span>
+                    <span class="tech-tag">DGX B200</span>
+                    <span class="tech-tag">DGX Spark (GB10)</span>
+                    <span class="tech-tag">SURF Research Cloud</span>
+                    <span class="tech-tag">SURF Snellius</span>
+                    <span class="tech-tag">Weights &amp; Biases</span>
+                    <span class="tech-tag">TurboVNC</span>
+                    <span class="tech-tag">ROS 2</span>
+                    <span class="tech-tag">GitLab</span>
+                    <span class="tech-tag">Jira / Confluence</span>
+                    <span class="tech-tag">Scrum</span>
+                </div>
+            </div>
+
+        </div>
+    </section>
+
+    <!-- Back to Internships -->
+    <section class="back-navigation">
+        <a href="../index.html#internships" class="btn btn-secondary">← Back to Internships</a>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2026 Thijn Bakker. Built with passion and lots of coffee &#x2615;</p>
+    </footer>
+
+    <!-- JavaScript -->
+    <script src="../assets/js/main.js"></script>
+    <script src="../assets/js/components/slider.js"></script>
+</body>
+</html>

@@ -6,6 +6,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Map project titles to their URLs
     const projectUrls = {
+        'AI & HPC Research Engineer - TU/e Supercomputing Centre': 'projects/tue-scc-internship.html',
         'Wrist Fracture AI Segmentation - Team Specifix': 'projects/wrist-fracture-segmentation.html',
         'Rootify - Cloud ML for Plant Root Analysis': 'projects/rootify.html',
         'Emotion Classification from Video Dialogue': 'projects/emotion-classification.html',

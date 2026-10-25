@@ -673,3 +673,173 @@
         display: none;
     }
 }
+
+/* ==================================
+   RESULTS TABLES, FIT MATRIX, BAR CHART, VIDEO GRID
+   (used by tue-scc-internship.html)
+   ================================== */
+
+.table-wrapper {
+    overflow-x: auto;
+    margin: 1.5rem 0 2rem;
+    border-radius: 10px;
+    border: 1px solid rgba(212, 165, 116, 0.2);
+}
+
+.results-table,
+.fit-matrix {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 640px;
+    color: var(--project-light);
+    font-size: 0.95rem;
+}
+
+.results-table th,
+.fit-matrix th {
+    background: rgba(212, 165, 116, 0.15);
+    color: var(--secondary);
+    text-align: left;
+    padding: 0.9rem 1rem;
+    font-weight: 600;
+}
+
+.results-table th span,
+.fit-matrix th span,
+.results-table td span {
+    display: block;
+    color: var(--gray);
+    font-size: 0.8rem;
+    font-weight: 400;
+}
+
+.results-table td,
+.fit-matrix td {
+    padding: 0.8rem 1rem;
+    border-top: 1px solid rgba(212, 165, 116, 0.1);
+    vertical-align: top;
+}
+
+.results-table td.best {
+    color: var(--secondary);
+    font-weight: 700;
+}
+
+.results-table td:not(:first-child):not(:last-child),
+.results-table th:not(:first-child):not(:last-child) {
+    white-space: nowrap;
+}
+
+.fit-matrix td:first-child {
+    font-weight: 600;
+}
+
+.fit-matrix td.fit-best,
+.fit-matrix td.fit-good,
+.fit-matrix td.fit-limited,
+.fit-matrix td.fit-poor {
+    font-weight: 600;
+    border-left: 3px solid transparent;
+}
+
+.fit-matrix td span {
+    display: block;
+    font-weight: 400;
+    font-size: 0.8rem;
+    color: var(--gray);
+}
+
+.fit-matrix td.fit-best    { background: rgba(244, 164, 96, 0.22); color: var(--secondary); border-left-color: var(--secondary); }
+.fit-matrix td.fit-good    { background: rgba(212, 165, 116, 0.12); color: var(--primary); border-left-color: var(--primary); }
+.fit-matrix td.fit-limited { background: rgba(139, 111, 71, 0.12); color: var(--project-light); border-left-color: var(--primary-dark); }
+.fit-matrix td.fit-poor    { background: rgba(0, 0, 0, 0.15); color: var(--gray); }
+
+.bar-chart {
+    background: rgba(212, 165, 116, 0.1);
+    padding: 1.5rem;
+    border-radius: 10px;
+    margin: 1.5rem 0 2rem;
+}
+
+.bar-chart h3 {
+    color: var(--secondary);
+    margin-bottom: 1.25rem;
+}
+
+.bar-row {
+    display: grid;
+    grid-template-columns: 130px 1fr 50px;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 0.75rem;
+}
+
+.bar-label {
+    color: var(--project-light);
+    font-size: 0.9rem;
+}
+
+.bar-track {
+    background: rgba(0, 0, 0, 0.25);
+    border-radius: 6px;
+    height: 18px;
+    overflow: hidden;
+}
+
+.bar-fill {
+    height: 100%;
+    background: var(--gradient);
+    border-radius: 6px;
+}
+
+.bar-value {
+    color: var(--secondary);
+    font-family: 'Courier New', monospace;
+    font-weight: 700;
+    text-align: right;
+}
+
+.project-section .bar-note {
+    color: var(--gray);
+    font-size: 0.9rem;
+    margin: 1rem 0 0;
+}
+
+.video-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    margin: 2rem 0;
+}
+
+.video-grid figure {
+    margin: 0;
+    background: rgba(212, 165, 116, 0.05);
+    border: 1px solid rgba(212, 165, 116, 0.1);
+    border-radius: 15px;
+    padding: 1rem;
+}
+
+.video-grid video {
+    width: 100%;
+    border-radius: 10px;
+    display: block;
+}
+
+.video-grid figcaption {
+    color: var(--gray);
+    font-size: 0.9rem;
+    text-align: center;
+    margin-top: 0.75rem;
+}
+
+@media (max-width: 768px) {
+    .video-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .bar-row {
+        grid-template-columns: 100px 1fr 45px;
+        gap: 0.5rem;
+    }
+}
